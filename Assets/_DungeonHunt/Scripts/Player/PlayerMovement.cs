@@ -5,25 +5,25 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInputReader))]
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("ÀÌµ¿ ÆÄ¶ó¹ÌÅÍ")]
+    [Header("ì´ë™ íŒŒë¼ë¯¸í„°")]
     public float MoveMaxSpeed = 6f;
     public float MoveAccelTime = 0.08f;
     public float MoveDecelTime = 0.08f;
 
-    [Header("È¸ÇÇ ÆÄ¶ó¹ÌÅÍ")]
+    [Header("íšŒí”¼ íŒŒë¼ë¯¸í„°")]
     public float DodgeLength = 3f;
     public float DodgeDuration = 0.25f;
     public float DodgeInvincibleDuration = 0.15f;
     public int DodgeMaxCharge = 2;
     public float DodgeChargeTime = 2f;
 
-    // ---- »óÅÂ ÀÎ½ºÅÏ½º ----
+    // ---- ìƒíƒœ ì¸ìŠ¤í„´ìŠ¤ ----
     public readonly IdleState IdleState = new IdleState();
     public readonly MoveState MoveState = new MoveState();
     public readonly DodgeState DodgeState = new DodgeState();
     public IMovementState CurrentState { get; private set; }
 
-    // ---- ·±Å¸ÀÓ °ª ----
+    // ---- ëŸ°íƒ€ì„ ê°’ ----
     public Vector2 CurrentVelocity { get; set; }
     public int DodgeCharge { get; private set; }
     public float DodgeElapsed { get; set; }

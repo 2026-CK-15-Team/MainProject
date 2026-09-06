@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" addBOMForNewFiles="with BOM">
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Common/Aimutility.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Common/Idamageable.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Enemies/DummyEnemy.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Managers/RoomEncounter.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Player/PlayerHealth.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Player/PlayerInputReader.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Player/PlayerMovement.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Weapons/FireMode/ConeFireMode.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Weapons/FireMode/IWeaponFireMode.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Weapons/FireMode/ProjectileFireMode.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Weapons/Projectile.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Weapons/WeaponController.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Weapons/WeaponDefinition.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Weapons/WeaponType.cs" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Assets/_DungeonHunt/Scripts/Weapons/Weaponruntime.cs" charset="UTF-8" />
+  </component>
+</project>

@@ -11,6 +11,6 @@ public class WeaponScriptable : ScriptableObject
     public float FireInterval;
     public int Damage;
     public float ProjectileSpeed;
-    public float Range;           // ¼¦°Ç: ¿øÃß ÆÇÁ¤ ¹İ°æ
-    public float ConeAngle;       // ¼¦°Ç: ¿øÃß °¢µµ(µµ)
+    public float Range;           // ìƒ·ê±´: ì›ì¶” íŒì • ë°˜ê²½
+    public float ConeAngle;       // ìƒ·ê±´: ì›ì¶” ê°ë„(ë„)
 }

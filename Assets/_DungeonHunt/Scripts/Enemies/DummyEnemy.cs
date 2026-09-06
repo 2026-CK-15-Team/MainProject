@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DummyEnemy : MonoBehaviour, IDamageable
 {
-    [Header("´õ¹Ì Àû ÆÄ¶ó¹ÌÅÍ ¿òÁ÷ÀÓx")]
+    [Header("ë”ë¯¸ ì  íŒŒë¼ë¯¸í„° ì›€ì§ì„x")]
     public int MaxHP = 30;
     public int ContactDamage = 1;
     

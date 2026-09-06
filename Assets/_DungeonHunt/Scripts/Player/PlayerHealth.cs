@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-    [Header("Ã¼·Â ÆÄ¶ó¹ÌÅÍ")]
+    [Header("ì²´ë ¥ íŒŒë¼ë¯¸í„°")]
     public int MaxHP = 5;
     public float HitInvincibleDuration = 0.5f;
 

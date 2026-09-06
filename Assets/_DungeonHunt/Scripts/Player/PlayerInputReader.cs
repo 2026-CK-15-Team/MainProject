@@ -9,7 +9,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
     public bool IsAttackHeld { get; private set; }
 
     public event Action DodgePressed;
-    public event Action<int> WeaponChangeRequested; // -1 = ÀÌÀü ¹«±â, +1 = ´ÙÀ½ ¹«±â
+    public event Action<int> WeaponChangeRequested; // -1 = ì´ì „ ë¬´ê¸°, +1 = ë‹¤ìŒ ë¬´ê¸°
     private PlayerControls controls;
 
     private void Awake()
