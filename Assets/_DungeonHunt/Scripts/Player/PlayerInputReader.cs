@@ -10,6 +10,10 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
 
     public event Action DodgePressed;
     public event Action<int> WeaponChangeRequested; // -1 = 이전 무기, +1 = 다음 무기
+    public event Action InteractPressed;
+    public event Action AttackPressed; // 누르는 순간 1회
+    public event Action ReloadPressed;
+    public event Action PausePressed;
     private PlayerControls controls;
 
     private void Awake()
@@ -20,7 +24,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
 
     private void OnEnable() => controls.Enable();
     private void OnDisable() => controls.Disable();
-    
+
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -34,7 +38,11 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
 
     public void OnAttack(InputAction.CallbackContext context)
     {
-        if (context.performed) IsAttackHeld = true;
+        if (context.performed)
+        {
+            IsAttackHeld = true;
+            AttackPressed?.Invoke();
+        }
         if (context.canceled) IsAttackHeld = false;
     }
 
@@ -51,7 +59,22 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
         int direction = value > 0f ? 1 : -1;
         WeaponChangeRequested?.Invoke(direction);
     }
-    
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed) InteractPressed?.Invoke();
+    }
+
+    public void OnReload(InputAction.CallbackContext context)
+    {
+        if (context.performed) ReloadPressed?.Invoke();
+    }
+
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        if (context.performed) PausePressed?.Invoke();
+    }
+
     private void OnDestroy()
     {
         controls.Dispose();

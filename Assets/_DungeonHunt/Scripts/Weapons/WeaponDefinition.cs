@@ -13,4 +13,8 @@ public class WeaponScriptable : ScriptableObject
     public float ProjectileSpeed;
     public float Range;           // 샷건: 원추 판정 반경
     public float ConeAngle;       // 샷건: 원추 각도(도)
+    public float KnockbackDistance;
+    public float HitShakeAmplitude;
+    public Sprite Icon;
+    public GameObject ConeFlashPrefab; // 샷건 전용, 발사 순간 원추 플래시
 }

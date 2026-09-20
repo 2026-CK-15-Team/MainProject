@@ -6,16 +6,17 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("이동 파라미터")]
-    public float MoveMaxSpeed = 6f;
+    public float MoveMaxSpeed = 3.0f;
     public float MoveAccelTime = 0.08f;
     public float MoveDecelTime = 0.08f;
 
     [Header("회피 파라미터")]
-    public float DodgeLength = 3f;
-    public float DodgeDuration = 0.25f;
-    public float DodgeInvincibleDuration = 0.15f;
+    public float DodgeLength = 1.8f;
+    public float DodgeDuration = 0.32f;
+    public float DodgeInvincibleDuration = 0.20f;
     public int DodgeMaxCharge = 2;
-    public float DodgeChargeTime = 2f;
+    public float DodgeChargeTime = 1.15f;
+    public float JustDodgeWindow = 0.10f;
 
     // ---- 상태 인스턴스 ----
     public readonly IdleState IdleState = new IdleState();
@@ -32,12 +33,29 @@ public class PlayerMovement : MonoBehaviour
     public bool IsDodgeInvincible =>
         CurrentState == DodgeState && DodgeElapsed < DodgeInvincibleDuration;
 
+    public bool IsWithinJustDodgeWindow =>
+        CurrentState == DodgeState && DodgeElapsed <= JustDodgeWindow;
+
+    private bool justDodgeTriggeredThisDodge;
+
+    public bool TryTriggerJustDodge()
+    {
+        if (!IsWithinJustDodgeWindow) return false;
+        if (justDodgeTriggeredThisDodge) return false;
+
+        justDodgeTriggeredThisDodge = true;
+        PlaytestLogger.Log("JustDodge", "success");
+        JustDodgeTriggered?.Invoke();
+        return true;
+    }
+
     public float AccelSpeedPerSecond => MoveMaxSpeed / Mathf.Max(MoveAccelTime, 0.0001f);
     public float DecelSpeedPerSecond => MoveMaxSpeed / Mathf.Max(MoveDecelTime, 0.0001f);
 
     public event Action DodgeStart;
     public event Action DodgeEnd;
     public event Action DodgeInvincibilityEnd;
+    public event Action JustDodgeTriggered;
 
     public PlayerInputReader Input { get; private set; }
 
@@ -58,12 +76,18 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (HitStopState.IsActive)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         TickDodgeChargeRegen(Time.fixedDeltaTime);
 
         CurrentState.Tick(this, Time.fixedDeltaTime);
         WantsDodge = false;
 
-        rb.MovePosition(rb.position + CurrentVelocity * Time.fixedDeltaTime);
+        rb.linearVelocity = CurrentVelocity;
     }
 
     public void ChangeState(IMovementState next)
@@ -78,11 +102,21 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 GetAimDirection() =>
         AimUtility.ScreenPointToWorldDirection(Input.AimScreenPosition, transform.position);
 
-    public void RaiseDodgeStart() => DodgeStart?.Invoke();
+    public void RaiseDodgeStart()
+    {
+        justDodgeTriggeredThisDodge = false;
+        PlaytestLogger.Log("Dodge", $"chargeLeft={DodgeCharge}");
+        DodgeStart?.Invoke();
+    }
     public void RaiseDodgeEnd() => DodgeEnd?.Invoke();
     public void RaiseDodgeInvincibilityEnd() => DodgeInvincibilityEnd?.Invoke();
 
-    private void OnDodgePressed() => WantsDodge = true;
+    private void OnDodgePressed()
+    {
+        if (ModalGate.AnyModalOpen) return;
+        if (HitStopState.IsActive) return;
+        WantsDodge = true;
+    }
 
     private void TickDodgeChargeRegen(float deltaTime)
     {

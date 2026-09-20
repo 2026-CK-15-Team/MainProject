@@ -14,11 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponScriptable
   WeaponType: 0
   WeaponName: TestPistol
-  MaxAmmo: 8
-  ReloadTime: 1.2
-  SwapReadyDelay: 0.2
-  FireInterval: 0.25
+  MaxAmmo: 12
+  ReloadTime: 1.05
+  SwapReadyDelay: 0.12
+  FireInterval: 0.24
   Damage: 10
-  ProjectileSpeed: 14
-  Range: 0
+  ProjectileSpeed: 16
+  Range: 5
   ConeAngle: 0
+  KnockbackDistance: 0.2
+  HitShakeAmplitude: 0.018
+  Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  ConeFlashPrefab: {fileID: 0}

@@ -3,34 +3,58 @@ using UnityEngine;
 
 public class DummyEnemy : MonoBehaviour, IDamageable
 {
-    [Header("더미 적 파라미터 움직임x")]
-    public int MaxHP = 30;
+    [Header("근접 유지형 기준값 (테스트용 스텁)")]
+    public int MaxHP = 40;
     public int ContactDamage = 1;
-    
-    public int CurrentHP { get; private set; }
+    public float SpawnContactDamageGrace = 0.25f;
+    public int CurrencyDrop = 1;
+
+    [SerializeField] private GameObject damageNumberPrefab;
+
+    [SerializeField] private int currentHP;
+    public int CurrentHP => currentHP;
 
     public event Action<DummyEnemy> Died;
+    public event Action Damaged;
+
+    private float spawnGraceEndTime;
 
     private void Awake()
     {
-        CurrentHP = MaxHP;
+        currentHP = MaxHP;
+        spawnGraceEndTime = Time.time + SpawnContactDamageGrace;
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, bool isJustDodgeEligible = false, bool isCritical = false)
     {
-        if (CurrentHP <= 0) return; 
+        if (currentHP <= 0) return;
 
-        CurrentHP -= Mathf.RoundToInt(amount);
-        Debug.Log(CurrentHP);
-        if (CurrentHP <= 0)
+        currentHP -= Mathf.RoundToInt(amount);
+        Damaged?.Invoke();
+        SpawnDamageNumber(amount, isCritical);
+
+        if (currentHP <= 0)
         {
+            HitStopState.Trigger(HitStopState.KillHitstopDuration);
+            RunCurrency.Gain(CurrencyDrop);
             Died?.Invoke(this);
             Destroy(gameObject);
         }
     }
-    
+
+    private void SpawnDamageNumber(float amount, bool isCritical)
+    {
+        if (damageNumberPrefab == null) return;
+
+        GameObject go = Instantiate(damageNumberPrefab, transform.position, Quaternion.identity);
+        if (go.TryGetComponent<DamageNumber>(out var number))
+            number.Show(amount, isCritical);
+    }
+
     private void OnTriggerStay2D(Collider2D other)
     {
+        if (Time.time < spawnGraceEndTime) return;
+
         if (other.TryGetComponent<IDamageable>(out var damageable))
             damageable.TakeDamage(ContactDamage);
     }

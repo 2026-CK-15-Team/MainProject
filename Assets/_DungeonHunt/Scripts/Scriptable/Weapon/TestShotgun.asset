@@ -14,11 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponScriptable
   WeaponType: 1
   WeaponName: TestShotgun
-  MaxAmmo: 2
-  ReloadTime: 1.2
-  SwapReadyDelay: 0.2
-  FireInterval: 0.8
-  Damage: 25
+  MaxAmmo: 6
+  ReloadTime: 1.35
+  SwapReadyDelay: 0.12
+  FireInterval: 0.58
+  Damage: 28
   ProjectileSpeed: 0
-  Range: 2.5
-  ConeAngle: 30
+  Range: 2
+  ConeAngle: 58
+  KnockbackDistance: 0.55
+  HitShakeAmplitude: 0.04
+  Icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  ConeFlashPrefab: {fileID: 8386791528463660166, guid: c11037d5429afb74ca792aa2a5a70f7d, type: 3}
