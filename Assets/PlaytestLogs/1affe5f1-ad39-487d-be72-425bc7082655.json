@@ -1,0 +1,309 @@
+{
+    "RunID": "1affe5f1-ad39-487d-be72-425bc7082655",
+    "BuildVersion": "1.0",
+    "RNGSeed": 51870000,
+    "Result": "InProgress",
+    "RunTime": 0.0,
+    "Events": [
+        {
+            "timestamp": 0.2717505991458893,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=29"
+        },
+        {
+            "timestamp": 0.35256868600845339,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=28"
+        },
+        {
+            "timestamp": 0.43510130047798159,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=27"
+        },
+        {
+            "timestamp": 0.5171999931335449,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=26"
+        },
+        {
+            "timestamp": 0.5984441041946411,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=25"
+        },
+        {
+            "timestamp": 0.6812307238578796,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=24"
+        },
+        {
+            "timestamp": 0.7623242735862732,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=23"
+        },
+        {
+            "timestamp": 0.8438292741775513,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=22"
+        },
+        {
+            "timestamp": 0.9251875877380371,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=21"
+        },
+        {
+            "timestamp": 1.0087329149246216,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=20"
+        },
+        {
+            "timestamp": 1.0954731702804566,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=19"
+        },
+        {
+            "timestamp": 1.178450345993042,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=18"
+        },
+        {
+            "timestamp": 1.260450839996338,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=17"
+        },
+        {
+            "timestamp": 1.3408774137496949,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=16"
+        },
+        {
+            "timestamp": 1.4236537218093873,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=15"
+        },
+        {
+            "timestamp": 1.5056982040405274,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=14"
+        },
+        {
+            "timestamp": 1.5861024856567383,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=13"
+        },
+        {
+            "timestamp": 1.666463851928711,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=12"
+        },
+        {
+            "timestamp": 4.659998416900635,
+            "type": "Dodge",
+            "data": "chargeLeft=1"
+        },
+        {
+            "timestamp": 5.659997940063477,
+            "type": "Dodge",
+            "data": "chargeLeft=0"
+        },
+        {
+            "timestamp": 6.239997863769531,
+            "type": "RoomEntered",
+            "data": "EntryTrigger"
+        },
+        {
+            "timestamp": 7.556414604187012,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=11"
+        },
+        {
+            "timestamp": 7.636864185333252,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=10"
+        },
+        {
+            "timestamp": 7.719642162322998,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=9"
+        },
+        {
+            "timestamp": 7.800576210021973,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=8"
+        },
+        {
+            "timestamp": 7.8811869621276859,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=7"
+        },
+        {
+            "timestamp": 7.964813709259033,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=6"
+        },
+        {
+            "timestamp": 8.046748161315918,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=5"
+        },
+        {
+            "timestamp": 8.099997520446778,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=1"
+        },
+        {
+            "timestamp": 8.142145156860352,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=4"
+        },
+        {
+            "timestamp": 8.226180076599121,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=3"
+        },
+        {
+            "timestamp": 8.30788803100586,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=2"
+        },
+        {
+            "timestamp": 8.390198707580567,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=1"
+        },
+        {
+            "timestamp": 8.471954345703125,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=0"
+        },
+        {
+            "timestamp": 9.999996185302735,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=5,crit=False"
+        },
+        {
+            "timestamp": 10.065869331359864,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=29"
+        },
+        {
+            "timestamp": 10.145907402038575,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=28"
+        },
+        {
+            "timestamp": 10.228254318237305,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=27"
+        },
+        {
+            "timestamp": 10.309053421020508,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=26"
+        },
+        {
+            "timestamp": 10.390130996704102,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=25"
+        },
+        {
+            "timestamp": 10.459996223449707,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=2"
+        },
+        {
+            "timestamp": 10.500201225280762,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=24"
+        },
+        {
+            "timestamp": 10.582226753234864,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=23"
+        },
+        {
+            "timestamp": 10.663215637207032,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=22"
+        },
+        {
+            "timestamp": 10.719996452331543,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=4,crit=False"
+        },
+        {
+            "timestamp": 10.743693351745606,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=21"
+        },
+        {
+            "timestamp": 10.82370662689209,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=20"
+        },
+        {
+            "timestamp": 10.90394401550293,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=19"
+        },
+        {
+            "timestamp": 10.986303329467774,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=18"
+        },
+        {
+            "timestamp": 10.999996185302735,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=3"
+        },
+        {
+            "timestamp": 11.066829681396485,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=17"
+        },
+        {
+            "timestamp": 11.148835182189942,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=16"
+        },
+        {
+            "timestamp": 11.231138229370118,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=15"
+        },
+        {
+            "timestamp": 11.311429023742676,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=14"
+        },
+        {
+            "timestamp": 11.393688201904297,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=13"
+        },
+        {
+            "timestamp": 11.475258827209473,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=12"
+        },
+        {
+            "timestamp": 11.557894706726075,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=11"
+        },
+        {
+            "timestamp": 11.639068603515625,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=10"
+        },
+        {
+            "timestamp": 11.6799955368042,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=4"
+        },
+        {
+            "timestamp": 11.6799955368042,
+            "type": "RoomCleared",
+            "data": "CombatRoom1"
+        }
+    ]
+}

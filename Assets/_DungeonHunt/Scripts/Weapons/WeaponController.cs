@@ -11,6 +11,7 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private WeaponScriptable[] definitions = new WeaponScriptable[3];
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform muzzle;
+    [SerializeField] private MuzzleFlash muzzleFlash;
 
     private WeaponRuntime[] weaponSlots;
     private Dictionary<WeaponType, int> indexByType;
@@ -64,7 +65,7 @@ public class WeaponController : MonoBehaviour
         CurrentWeapon.TryStartReload();
         PlaytestLogger.Log("ReloadStart", CurrentWeapon.Definition.WeaponType.ToString());
     }
-
+    
     private void OnAttackPressed()
     {
         if (ModalGate.AnyModalOpen) return;
@@ -153,7 +154,7 @@ public class WeaponController : MonoBehaviour
 
     public void ClearAllEnhancedAmmo()
     {
-        //Debug.Log("[SwapEnhance] 모든 무기 강화탄 제거 (무기 특화 Tier1 활성화)");
+        Debug.Log("[SwapEnhance] 모든 무기 강화탄 제거 (무기 특화 Tier1 활성화)");
         foreach (var weapon in weaponSlots)
             weapon.IsMagazineEnhanced = false;
     }
@@ -169,10 +170,11 @@ public class WeaponController : MonoBehaviour
     private void Fire()
     {
         WeaponType type = CurrentWeapon.Definition.WeaponType;
-        //Debug.Log($"[SwapEnhance] {type} 발사 | 강화탄={CurrentWeapon.IsMagazineEnhanced} | 최종피해={CurrentWeapon.EffectiveDamage:F1}");
-        //PlaytestLogger.Log("Fire", $"weapon={type},enhanced={CurrentWeapon.IsMagazineEnhanced},ammoLeft={CurrentWeapon.Ammo - 1}");
+        Debug.Log($"[SwapEnhance] {type} 발사 | 강화탄={CurrentWeapon.IsMagazineEnhanced} | 최종피해={CurrentWeapon.EffectiveDamage:F1}");
+        PlaytestLogger.Log("Fire", $"weapon={type},enhanced={CurrentWeapon.IsMagazineEnhanced},ammoLeft={CurrentWeapon.Ammo - 1}");
 
         CurrentWeapon.ConsumeShot();
+        muzzleFlash?.Show();
 
         Vector3 origin = muzzle != null ? muzzle.position : transform.position;
         Vector2 direction = AimUtility.ScreenPointToWorldDirection(input.AimScreenPosition, origin);

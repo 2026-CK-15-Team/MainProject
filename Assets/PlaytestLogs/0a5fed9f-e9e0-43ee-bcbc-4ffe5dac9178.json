@@ -1,0 +1,89 @@
+{
+    "RunID": "0a5fed9f-e9e0-43ee-bcbc-4ffe5dac9178",
+    "BuildVersion": "1.0",
+    "RNGSeed": 51656453,
+    "Result": "RunOver",
+    "RunTime": 9.0348539352417,
+    "Events": [
+        {
+            "timestamp": 2.5199990272521974,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=5,crit=False"
+        },
+        {
+            "timestamp": 3.0799989700317385,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=4,crit=False"
+        },
+        {
+            "timestamp": 4.899998188018799,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=3,crit=False"
+        },
+        {
+            "timestamp": 5.5999979972839359,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=2,crit=False"
+        },
+        {
+            "timestamp": 6.5252366065979,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=29"
+        },
+        {
+            "timestamp": 6.611980438232422,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=28"
+        },
+        {
+            "timestamp": 6.692608833312988,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=27"
+        },
+        {
+            "timestamp": 6.779350757598877,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=26"
+        },
+        {
+            "timestamp": 6.866862773895264,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=25"
+        },
+        {
+            "timestamp": 6.948557376861572,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=24"
+        },
+        {
+            "timestamp": 7.030277729034424,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=23"
+        },
+        {
+            "timestamp": 7.472053527832031,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=22"
+        },
+        {
+            "timestamp": 7.553244113922119,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=21"
+        },
+        {
+            "timestamp": 7.739997386932373,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=1,crit=False"
+        },
+        {
+            "timestamp": 8.299997329711914,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=0,crit=False"
+        },
+        {
+            "timestamp": 8.299997329711914,
+            "type": "Death",
+            "data": "position=(-4.41, 0.00, 0.00)"
+        }
+    ]
+}

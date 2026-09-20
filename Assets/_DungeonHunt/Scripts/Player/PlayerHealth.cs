@@ -67,11 +67,22 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         Debug.Log("Player Died");
         PlaytestLogger.Log("Death", $"position={transform.position}");
+
+        if (TryGetComponent<PlayerMovement>(out var movementComponent)) movementComponent.enabled = false;
+        if (TryGetComponent<WeaponController>(out var weaponComponent)) weaponComponent.enabled = false;
+
+        var fade = FindObjectOfType<DeathFadeUI>();
+        if (fade != null)
+            fade.PlayThen(FinalizeDeathTransition);
+        else
+            FinalizeDeathTransition();
+    }
+
+    private void FinalizeDeathTransition()
+    {
         PlaytestLogger.FinalizeRun("RunOver");
         RunCurrency.Reset();
         RunProgressState.Reset();
         FindObjectOfType<ResultScreenController>()?.ShowOver();
-        if (TryGetComponent<PlayerMovement>(out var movementComponent)) movementComponent.enabled = false;
-        if (TryGetComponent<WeaponController>(out var weaponComponent)) weaponComponent.enabled = false;
     }
 }

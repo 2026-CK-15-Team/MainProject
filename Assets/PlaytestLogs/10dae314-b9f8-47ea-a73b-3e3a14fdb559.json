@@ -1,0 +1,49 @@
+{
+    "RunID": "10dae314-b9f8-47ea-a73b-3e3a14fdb559",
+    "BuildVersion": "1.0",
+    "RNGSeed": 51914046,
+    "Result": "RunOver",
+    "RunTime": 12.315620422363282,
+    "Events": [
+        {
+            "timestamp": 0.1359671950340271,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,ammoLeft=29"
+        },
+        {
+            "timestamp": 1.6199994087219239,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=5,crit=False"
+        },
+        {
+            "timestamp": 3.839998722076416,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=4,crit=False"
+        },
+        {
+            "timestamp": 4.399998664855957,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=3,crit=False"
+        },
+        {
+            "timestamp": 6.919997692108154,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=2,crit=False"
+        },
+        {
+            "timestamp": 7.479997158050537,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=1,crit=False"
+        },
+        {
+            "timestamp": 11.579996109008789,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=0,crit=False"
+        },
+        {
+            "timestamp": 11.579996109008789,
+            "type": "Death",
+            "data": "position=(-4.46, 1.74, 0.00)"
+        }
+    ]
+}
