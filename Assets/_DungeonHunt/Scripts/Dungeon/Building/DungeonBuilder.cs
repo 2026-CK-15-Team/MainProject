@@ -11,7 +11,13 @@ public class DungeonBuilder : MonoBehaviour
     [Tooltip("복도 타일맵이 있는 Grid. 방 프리팹이랑 셀 크기 같아야 함.")]
     [SerializeField] private Grid grid;
     [SerializeField] private Tilemap corridorFloorTilemap;
+
+    [Tooltip("충돌 있는 벽")]
     [SerializeField] private Tilemap corridorWallTilemap;
+
+    [Tooltip("아래 벽 중 캐릭터를 가리는 칸. 충돌 없음, 캐릭터보다 위에 그림")]
+    [SerializeField] private Tilemap corridorWallFrontTilemap;
+
     [SerializeField] private Transform roomRoot;
 
     [Header("테스트")]
@@ -28,24 +34,27 @@ public class DungeonBuilder : MonoBehaviour
         Clear();
 
         FloorConfig floor = runConfig.Floors[floorIndex];
+        WallStyle style = runConfig.WallStyle;
         FloorPlan plan = RunPlanner.Plan(runConfig, runSeed)[floorIndex];
         List<RoomTemplateData> templates = floor.RoomPrefabs.Select(prefab => prefab.Template).ToList();
-        FloorBlueprint blueprint = FloorGenerator.Generate(plan, templates, floor.MinRoomSpacing);
+        FloorBlueprint blueprint = FloorGenerator.Generate(plan, templates, floor.MinRoomSpacing, style);
 
         foreach (PlacedRoom placed in blueprint.Rooms)
         {
             Vector3 position = grid.CellToWorld((Vector3Int)placed.Position);
             Room room = Instantiate(floor.RoomPrefabs[placed.TemplateIndex], position, Quaternion.identity, roomRoot);
             room.name = $"{placed.Node.Type}_{placed.Node.Id}";
-            room.Initialize(placed.Node, placed.GetSealedCells(), floor.WallTile);
+            room.Initialize(placed.Node);
+            PaintWalls(room.FloorTilemap, room.WallTilemap, room.WallFrontTilemap, placed.GetSealedCells(style), floor, frontFloorTile: null);
             rooms.Add(room);
 
             if (placed.Node.Type == RoomType.Start)
                 StartRoom = room;
         }
 
-        Paint(corridorFloorTilemap, blueprint.CorridorFloor, floor.CorridorFloorTile);
-        Paint(corridorWallTilemap, blueprint.CorridorWalls, floor.WallTile);
+        Vector3Int[] floorCells = blueprint.CorridorFloor.Select(cell => (Vector3Int)cell).ToArray();
+        corridorFloorTilemap.SetTiles(floorCells, Enumerable.Repeat(floor.CorridorFloorTile, floorCells.Length).ToArray());
+        PaintWalls(corridorFloorTilemap, corridorWallTilemap, corridorWallFrontTilemap, blueprint.CorridorWalls, floor, floor.CorridorFloorTile);
     }
 
     public void Clear()
@@ -64,6 +73,8 @@ public class DungeonBuilder : MonoBehaviour
 
         corridorFloorTilemap.ClearAllTiles();
         corridorWallTilemap.ClearAllTiles();
+        if (corridorWallFrontTilemap != null)
+            corridorWallFrontTilemap.ClearAllTiles();
     }
 
     [ContextMenu("Build Test Floor")]
@@ -72,10 +83,26 @@ public class DungeonBuilder : MonoBehaviour
     [ContextMenu("Clear")]
     private void ClearFromMenu() => Clear();
 
-    private static void Paint(Tilemap tilemap, ICollection<Vector2Int> cells, TileBase tile)
+    // 가리는 칸은 Front 타일맵에 칠하고 밑에 바닥 깔아줌(frontFloorTile이 null이면 원래 바닥 유지).
+    // 나머지 벽 칸은 Wall 타일맵에 칠하고 바닥 지움.
+    private static void PaintWalls(Tilemap floorMap, Tilemap wallMap, Tilemap frontMap, IEnumerable<WallCell> cells, FloorConfig floor, TileBase frontFloorTile)
     {
-        Vector3Int[] positions = cells.Select(cell => (Vector3Int)cell).ToArray();
-        TileBase[] tiles = Enumerable.Repeat(tile, positions.Length).ToArray();
-        tilemap.SetTiles(positions, tiles);
+        foreach (WallCell wall in cells)
+        {
+            var position = (Vector3Int)wall.Cell;
+            TileBase tile = floor.GetWallTile(wall);
+
+            if (wall.IsFront)
+            {
+                (frontMap != null ? frontMap : wallMap).SetTile(position, tile);
+                if (frontFloorTile != null)
+                    floorMap.SetTile(position, frontFloorTile);
+            }
+            else
+            {
+                wallMap.SetTile(position, tile);
+                floorMap.SetTile(position, null);
+            }
+        }
     }
 }

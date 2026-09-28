@@ -41,8 +41,8 @@ public static class LayoutValidator
         return errors;
     }
 
-    // 복도가 방 안을 뚫거나 다른 복도랑 붙으면 의도 안 한 연결이 생김.
-    public static List<string> ValidateBlueprint(FloorBlueprint blueprint)
+    // 복도가 방 안을 뚫거나 다른 복도랑 벽 두께보다 가까우면 사이에 벽이 제대로 안 들어감.
+    public static List<string> ValidateBlueprint(FloorBlueprint blueprint, WallStyle style)
     {
         var errors = new List<string>();
         var ownerByCell = new Dictionary<Vector2Int, Corridor>();
@@ -61,14 +61,24 @@ public static class LayoutValidator
         {
             foreach (Vector2Int cell in corridor.Cells)
             {
-                foreach (RoomSide side in RoomSideUtility.All)
-                {
-                    if (ownerByCell.TryGetValue(cell + side.ToOffset(), out Corridor other) && other != corridor)
-                        errors.Add($"복도끼리 붙어 있음: {cell}");
-                }
+                if (HasOtherCorridorNearby(cell, corridor, ownerByCell, style))
+                    errors.Add($"복도끼리 너무 붙어 있음: {cell}");
             }
         }
         return errors;
+    }
+
+    private static bool HasOtherCorridorNearby(Vector2Int cell, Corridor corridor, Dictionary<Vector2Int, Corridor> ownerByCell, WallStyle style)
+    {
+        for (int dx = -style.Side; dx <= style.Side; dx++)
+        {
+            for (int dy = -style.Bottom; dy <= style.Top; dy++)
+            {
+                if (ownerByCell.TryGetValue(cell + new Vector2Int(dx, dy), out Corridor other) && other != corridor)
+                    return true;
+            }
+        }
+        return false;
     }
 
     private static void ValidateRoomCounts(DungeonLayout layout, List<string> errors)

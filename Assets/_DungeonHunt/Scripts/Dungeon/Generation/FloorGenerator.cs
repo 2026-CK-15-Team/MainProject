@@ -8,7 +8,7 @@ public static class FloorGenerator
     // 템플릿 배정용 난수를 연결 구조용 난수랑 분리하려는 값
     private const int TemplateSeedSalt = 0x7E3A11;
 
-    public static FloorBlueprint Generate(FloorPlan plan, IReadOnlyList<RoomTemplateData> templates, int minRoomSpacing)
+    public static FloorBlueprint Generate(FloorPlan plan, IReadOnlyList<RoomTemplateData> templates, int minRoomSpacing, WallStyle wallStyle)
     {
         ThrowIfMissingTypes(plan, templates);
 
@@ -18,7 +18,7 @@ public static class FloorGenerator
         int[] templateIndices = TemplateSelector.Assign(layout, templates, rng);
         RoomTemplateData[] assigned = templateIndices.Select(index => templates[index]).ToArray();
 
-        return LayoutSolver.Solve(layout, assigned, templateIndices, minRoomSpacing);
+        return LayoutSolver.Solve(layout, assigned, templateIndices, minRoomSpacing, wallStyle);
     }
 
     private static void ThrowIfMissingTypes(FloorPlan plan, IReadOnlyList<RoomTemplateData> templates)

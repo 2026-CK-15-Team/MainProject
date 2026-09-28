@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -18,12 +19,29 @@ public class FloorConfig : ScriptableObject
     [Tooltip("이 층에서 쓸 방 프리팹. 종류별로 최소 1개씩 있어야 함.")]
     public Room[] RoomPrefabs;
 
-    [Tooltip("방 사이 최소 간격(칸). 복도 꺾을 공간(제일 넓은 문 폭 + 4)보다 작으면 알아서 늘어남.")]
+    [Tooltip("방 사이 최소 간격(칸). 복도 꺾을 공간(문 폭 + 벽 두께)보다 작으면 알아서 늘어남.")]
     [Min(0)] public int MinRoomSpacing = 6;
 
     [Header("타일")]
     public TileBase CorridorFloorTile;
 
-    [Tooltip("복도 벽이랑 안 쓰는 문 막을 때 씀.")]
-    public TileBase WallTile;
+    [Tooltip("바닥 위쪽 벽 (벽면 + 천장 닿는 칸). 복도 벽이랑 안 쓰는 문 막을 때 씀")]
+    public TileBase TopWallTile;
+
+    [Tooltip("바닥 아래쪽 벽의 천장 닿는 칸 (충돌)")]
+    public TileBase BottomWallTile;
+
+    [Tooltip("바닥 아래쪽 벽이 바닥 위로 겹쳐 캐릭터 가리는 칸 (충돌 없음)")]
+    public TileBase BottomWallFrontTile;
+
+    [Tooltip("좌우 벽")]
+    public TileBase SideWallTile;
+
+    public TileBase GetWallTile(WallCell wall) => wall.Part switch
+    {
+        WallPart.Top => TopWallTile,
+        WallPart.Bottom => wall.IsFront ? BottomWallFrontTile : BottomWallTile,
+        WallPart.Side => SideWallTile,
+        _ => throw new ArgumentOutOfRangeException(nameof(wall))
+    };
 }

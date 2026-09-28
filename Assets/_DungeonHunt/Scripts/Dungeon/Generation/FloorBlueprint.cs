@@ -19,7 +19,7 @@ public class FloorBlueprint
     public IReadOnlyList<PlacedRoom> Rooms => rooms;
     public IReadOnlyList<Corridor> Corridors => corridors;
     public HashSet<Vector2Int> CorridorFloor { get; } = new HashSet<Vector2Int>();
-    public HashSet<Vector2Int> CorridorWalls { get; } = new HashSet<Vector2Int>();
+    public List<WallCell> CorridorWalls { get; } = new List<WallCell>();
 
     public bool IsInsideRoom(Vector2Int cell) => rooms.Exists(room => room.Bounds.Contains(cell));
 
@@ -53,19 +53,30 @@ public class PlacedRoom
 
     public void OpenDoorway(RoomSide side, int start, int width) => openings[side] = (start, width);
 
-    // 막아야 할 문 칸(방 기준 좌표). 안 쓰는 문 전체 + 복도보다 넓은 문에서 남는 칸.
-    public List<Vector2Int> GetSealedCells()
+    // 막아야 할 문 자리(방 기준 좌표). 안 쓰는 문 전체 + 복도보다 넓은 문에서 남는 칸을
+    // 경계선부터 안쪽으로 그 방향 벽 두께만큼 채움.
+    public List<WallCell> GetSealedCells(WallStyle style)
     {
-        var cells = new List<Vector2Int>();
+        var cells = new List<WallCell>();
         foreach (Doorway doorway in Template.Doorways)
         {
             bool isOpen = openings.TryGetValue(doorway.Side, out (int start, int width) opening);
+            int thickness = style.ThicknessOf(doorway.Side);
+            WallPart part = WallStyle.PartOf(doorway.Side);
+            Vector2Int inward = -doorway.Side.ToOffset();
+
             for (int i = 0; i < doorway.Width; i++)
             {
                 int along = doorway.Start + i;
                 if (isOpen && along >= opening.start && along < opening.start + opening.width) continue;
 
-                cells.Add(doorway.GetCell(Template.Size, i));
+                Vector2Int boundary = doorway.GetCell(Template.Size, i);
+                for (int depth = 0; depth < thickness; depth++)
+                {
+                    // 아래 벽은 바깥 천장선 1줄 빼고 전부 가리는 칸
+                    bool isFront = doorway.Side == RoomSide.Down && depth >= thickness - style.FrontRowCount;
+                    cells.Add(new WallCell(boundary + inward * depth, part, isFront));
+                }
             }
         }
         return cells;
@@ -82,4 +93,19 @@ public class Corridor
 
     public RoomLink Link { get; }
     public IReadOnlyList<Vector2Int> Cells { get; }
+}
+
+// 벽 한 칸. IsFront면 바닥 위에 겹쳐 그려서 캐릭터를 가리는 칸(밑에 바닥 있음, 충돌 없음).
+public readonly struct WallCell
+{
+    public WallCell(Vector2Int cell, WallPart part, bool isFront)
+    {
+        Cell = cell;
+        Part = part;
+        IsFront = isFront;
+    }
+
+    public Vector2Int Cell { get; }
+    public WallPart Part { get; }
+    public bool IsFront { get; }
 }

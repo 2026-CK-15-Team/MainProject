@@ -29,9 +29,10 @@ Project 창 우클릭 → `Create > Dungeon`
 | Has Loop | 순환 1개 만들지 여부. 켜면 전투방 4개 이상 필요 |
 | Has Stairs | 보스방 뒤 계단방 여부. 마지막 층은 끄면 됨 |
 | Room Prefabs | 이 층에서 쓸 방 프리팹들. 나오는 방 종류마다 최소 1개 |
-| Min Room Spacing | 방 사이 최소 간격(칸). 너무 작으면 알아서 늘어남 |
+| Min Room Spacing | 방 사이 최소 간격(칸). 복도 꺾을 공간(문 폭 + 벽 두께)보다 작으면 알아서 늘어남 |
 | Corridor Floor Tile | 복도 바닥 타일 |
-| Wall Tile | 복도 벽 + 안 쓰는 문 막는 타일 |
+| Top / Bottom / Side Wall Tile | 위·아래·좌우 벽 타일. 복도 벽 + 안 쓰는 문 막을 때 씀 |
+| Bottom Wall Front Tile | 아래 벽이 바닥 위로 겹쳐 캐릭터 가리는 칸 타일 |
 
 추천 세팅: 1층 순환 끔 / 2·3층 순환 켬 / 3층 계단 끔
 
@@ -41,6 +42,7 @@ Project 창 우클릭 → `Create > Dungeon`
 | Floors | Floor Config를 1층부터 순서대로 |
 | Double Gamble Chance | 도박방 2개 나올 확률 (기본 0.35) |
 | Double Secret Chance | 비밀방 2개 나올 확률 (기본 0.3) |
+| Wall Style | 벽 두께 (기본 위 3 / 아래 2 / 좌우 1). 방 그릴 때도 이 규칙대로. 자세한 건 가이드 2장 |
 
 ## 3. 미리보기 (방 없어도 됨)
 
@@ -48,7 +50,7 @@ Project 창 우클릭 → `Create > Dungeon`
 2. Run Config 연결, Run Seed / Floor Index 입력 (Floor Index는 0부터 = 1층)
 3. 씬 뷰에서 확인
    - **View = Graph**: 방 연결 구조만 (색 = 방 종류, 선 = 문 연결)
-   - **View = Placement**: 실제 배치. 방 테두리, 복도(회색), 복도 벽(진회색), 막힌 문(빨강)
+   - **View = Placement**: 실제 배치. 방 테두리, 복도(연회색), 복도 벽(위 진함 · 아래 중간 · 좌우 연함, 숨는 칸 반투명), 막힌 문(빨강)
 4. 층에 방 프리팹 없으면 임시 모양 방으로 그려줌 → 방 만들기 전에도 구조 확인 가능
 
 컴포넌트 우클릭 메뉴
@@ -57,7 +59,7 @@ Project 창 우클릭 → `Create > Dungeon`
 
 ## 4. 방 프리팹 준비
 
-1. 가이드대로 방 만들기 (Grid + `Room` 컴포넌트 + Floor/Wall 타일맵 + `RoomDoor`)
+1. 가이드대로 방 만들기 (Grid + `Room` 컴포넌트 + Floor/Wall/WallFront 타일맵 + `RoomDoor`)
 2. `Room` 인스펙터에서 Type 지정 → **Bake** 클릭
 3. Floor Config의 Room Prefabs에 추가
 
@@ -70,11 +72,12 @@ Project 창 우클릭 → `Create > Dungeon`
 Dungeon (DungeonBuilder)
  ├─ Grid (Grid)
  │   ├─ CorridorFloor (Tilemap)
- │   └─ CorridorWall  (Tilemap + TilemapCollider2D, Tag·Layer = Wall)
+ │   ├─ CorridorWall      (Tilemap + TilemapCollider2D, Tag·Layer = Wall)
+ │   └─ CorridorWallFront (Tilemap, 콜라이더 없음, 캐릭터보다 위에 그림)
  └─ Rooms (빈 오브젝트, 방 생성 위치)
 ```
-`DungeonBuilder`에 Run Config, Grid, 복도 타일맵 2개, Rooms 연결.
-CorridorWall은 방 Wall 타일맵이랑 콜리전·정렬 설정 똑같이 (가이드 4장 참고).
+`DungeonBuilder`에 Run Config, Grid, 복도 타일맵 3개, Rooms 연결.
+복도 타일맵은 방 타일맵이랑 콜리전·정렬 설정 똑같이 (가이드 5장 참고).
 
 ### 테스트
 `DungeonBuilder`의 Test Run Seed / Test Floor Index 입력 → 컴포넌트 우클릭 → `Build Test Floor`

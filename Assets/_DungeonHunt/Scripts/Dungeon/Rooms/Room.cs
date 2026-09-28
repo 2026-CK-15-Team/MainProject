@@ -7,25 +7,25 @@ public class Room : MonoBehaviour
 {
     [SerializeField] private RoomTemplateData template = new RoomTemplateData();
     [SerializeField] private Tilemap floorTilemap;
+
+    [Tooltip("충돌 있는 벽")]
     [SerializeField] private Tilemap wallTilemap;
+
+    [Tooltip("아래 벽 중 캐릭터를 가리는 칸. 충돌 없음, 캐릭터보다 위에 그림. 비워두면 Wall에 칠함(충돌 생김)")]
+    [SerializeField] private Tilemap wallFrontTilemap;
 
     public RoomTemplateData Template => template;
     public Tilemap FloorTilemap => floorTilemap;
     public Tilemap WallTilemap => wallTilemap;
+    public Tilemap WallFrontTilemap => wallFrontTilemap;
 
     // 층에서의 위치랑 연결 정보. 생성기가 배치한 방에만 있음.
     public RoomNode Node { get; private set; }
 
-    // 배치 직후 호출. 막을 문 칸은 벽으로 채우고, 안 이어진 방향 장벽은 끔.
-    public void Initialize(RoomNode node, IReadOnlyList<Vector2Int> sealedCells, TileBase wallTile)
+    // 배치 직후 호출. 안 이어진 방향 장벽은 끄고, 이어진 문은 잠금 풀어둠.
+    public void Initialize(RoomNode node)
     {
         Node = node;
-
-        foreach (Vector2Int cell in sealedCells)
-        {
-            floorTilemap.SetTile((Vector3Int)cell, null);
-            wallTilemap.SetTile((Vector3Int)cell, wallTile);
-        }
 
         var connectedSides = new HashSet<RoomSide>();
         foreach (RoomNode neighbor in node.Neighbors)
@@ -44,10 +44,12 @@ public class Room : MonoBehaviour
     {
         foreach (Tilemap tilemap in GetComponentsInChildren<Tilemap>(true))
         {
-            if (tilemap.name == "Floor")
-                floorTilemap = tilemap;
-            else if (tilemap.name == "Wall")
-                wallTilemap = tilemap;
+            switch (tilemap.name)
+            {
+                case "Floor": floorTilemap = tilemap; break;
+                case "Wall": wallTilemap = tilemap; break;
+                case "WallFront": wallFrontTilemap = tilemap; break;
+            }
         }
     }
 }

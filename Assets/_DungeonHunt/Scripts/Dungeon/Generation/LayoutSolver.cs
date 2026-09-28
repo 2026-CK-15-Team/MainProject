@@ -9,17 +9,20 @@ using UnityEngine;
 // → 복도끼리, 복도랑 방이 겹치거나 붙을 일 없음.
 public static class LayoutSolver
 {
-    // 꺾이는 구간 양옆 벽 1칸씩 + 꺾이기 전후 직선 최소 1칸씩
-    private const int BendMargin = 4;
-
     // templates: 방 Id 순서대로 배정된 템플릿
-    public static FloorBlueprint Solve(DungeonLayout layout, IReadOnlyList<RoomTemplateData> templates, IReadOnlyList<int> templateIndices, int minSpacing)
+    public static FloorBlueprint Solve(DungeonLayout layout, IReadOnlyList<RoomTemplateData> templates, IReadOnlyList<int> templateIndices, int minSpacing, WallStyle style)
     {
-        int spacing = Mathf.Max(minSpacing, MaxDoorwayWidth(templates) + BendMargin);
+        // 간격 안에서 꺾일 때 필요한 공간: 복도 폭 + 꺾인 구간 양쪽 벽 + 꺾이기 전후 직선 1칸씩
+        int doorWidth = MaxDoorwayWidth(templates);
+        var spacing = new[]
+        {
+            Mathf.Max(minSpacing, doorWidth + style.Side * 2 + 2),
+            Mathf.Max(minSpacing, doorWidth + style.Top + style.Bottom + 2)
+        };
         var bands = new[]
         {
-            new Bands(layout, templates, axis: 0, spacing),
-            new Bands(layout, templates, axis: 1, spacing)
+            new Bands(layout, templates, axis: 0, spacing[0]),
+            new Bands(layout, templates, axis: 1, spacing[1])
         };
 
         var rooms = new List<PlacedRoom>(layout.Rooms.Count);
@@ -34,9 +37,9 @@ public static class LayoutSolver
 
         var blueprint = new FloorBlueprint(layout, rooms);
         foreach (RoomLink link in layout.Links)
-            blueprint.AddCorridor(CarveCorridor(link, rooms[link.A.Id], rooms[link.B.Id], bands, spacing));
+            blueprint.AddCorridor(CarveCorridor(link, rooms[link.A.Id], rooms[link.B.Id], bands, spacing, style));
 
-        SurroundWithWalls(blueprint);
+        BuildWalls(blueprint, style);
         return blueprint;
     }
 
@@ -52,7 +55,7 @@ public static class LayoutSolver
     }
 
     // 좌우/상하 연결을 같은 코드로 처리하려고 main(연결 방향), cross(수직 방향) 축으로 계산함.
-    private static Corridor CarveCorridor(RoomLink link, PlacedRoom a, PlacedRoom b, Bands[] bands, int spacing)
+    private static Corridor CarveCorridor(RoomLink link, PlacedRoom a, PlacedRoom b, Bands[] bands, int[] spacing, WallStyle style)
     {
         int main = a.Node.Cell.x != b.Node.Cell.x ? 0 : 1;
         int cross = 1 - main;
@@ -81,8 +84,13 @@ public static class LayoutSolver
         }
         else
         {
-            int gutterStart = bands[main].End(a.Node.Cell[main]);
-            int bend = gutterStart + (spacing - width) / 2;
+            // 꺾인 구간의 a 쪽 벽(low), b 쪽 벽(high)이 간격 안에 들어가게 남는 공간 가운데에 둠.
+            // 상하 연결이면 꺾인 구간이 가로라서 아래 벽이 a 쪽, 위 벽이 b 쪽.
+            int lowWall = main == 0 ? style.Side : style.Bottom;
+            int highWall = main == 0 ? style.Side : style.Top;
+            int slack = spacing[main] - (width + lowWall + highWall + 2);
+            int bend = bands[main].End(a.Node.Cell[main]) + lowWall + 1 + slack / 2;
+
             AddRect(cells, main, from, bend - 1, laneA, laneA + width - 1);
             AddRect(cells, main, bend, bend + width - 1, Mathf.Min(laneA, laneB), Mathf.Max(laneA, laneB) + width - 1);
             AddRect(cells, main, bend + width, to, laneB, laneB + width - 1);
@@ -115,22 +123,61 @@ public static class LayoutSolver
         }
     }
 
-    // 복도 바닥을 대각선까지 감싸는 벽. 방 바운딩 안쪽은 방 자체 벽 쓰니까 제외.
-    private static void SurroundWithWalls(FloorBlueprint blueprint)
+    // 복도 바닥 둘레에 방향별 두께만큼 벽 두름. 방 바운딩 안쪽은 방 자체 벽 쓰니까 제외.
+    private static void BuildWalls(FloorBlueprint blueprint, WallStyle style)
     {
-        foreach (Vector2Int cell in blueprint.CorridorFloor)
+        HashSet<Vector2Int> floor = blueprint.CorridorFloor;
+        var wallCells = new HashSet<Vector2Int>();
+
+        foreach (Vector2Int cell in floor)
         {
-            for (int dx = -1; dx <= 1; dx++)
+            for (int dx = -style.Side; dx <= style.Side; dx++)
             {
-                for (int dy = -1; dy <= 1; dy++)
+                for (int dy = -style.Bottom; dy <= style.Top; dy++)
                 {
                     Vector2Int neighbor = cell + new Vector2Int(dx, dy);
-                    if (blueprint.CorridorFloor.Contains(neighbor) || blueprint.IsInsideRoom(neighbor)) continue;
-
-                    blueprint.CorridorWalls.Add(neighbor);
+                    if (!floor.Contains(neighbor) && !blueprint.IsInsideRoom(neighbor))
+                        wallCells.Add(neighbor);
                 }
             }
         }
+
+        foreach (Vector2Int cell in wallCells)
+        {
+            WallPart part = Classify(cell, floor, style);
+            bool isFront = part == WallPart.Bottom && HasFloorInLine(floor, cell, Vector2Int.up, style.FrontRowCount);
+            blueprint.CorridorWalls.Add(new WallCell(cell, part, isFront));
+        }
+    }
+
+    // 바닥이 바로 아래 있으면 위쪽 벽, 바로 위에 있으면 아래쪽 벽, 옆에 있으면 좌우 벽.
+    // 모서리(대각선에만 바닥)는 3/4 시점처럼 위·아래 벽이 좌우 벽 끝을 덮게 위/아래 벽으로 처리.
+    private static WallPart Classify(Vector2Int cell, HashSet<Vector2Int> floor, WallStyle style)
+    {
+        if (HasFloorInLine(floor, cell, Vector2Int.down, style.Top)) return WallPart.Top;
+        if (HasFloorInLine(floor, cell, Vector2Int.up, style.Bottom)) return WallPart.Bottom;
+        if (HasFloorInLine(floor, cell, Vector2Int.left, style.Side) || HasFloorInLine(floor, cell, Vector2Int.right, style.Side))
+            return WallPart.Side;
+
+        for (int dy = 1; dy <= style.Top; dy++)
+        {
+            for (int dx = -style.Side; dx <= style.Side; dx++)
+            {
+                if (floor.Contains(cell + new Vector2Int(dx, -dy)))
+                    return WallPart.Top;
+            }
+        }
+        return WallPart.Bottom;
+    }
+
+    private static bool HasFloorInLine(HashSet<Vector2Int> floor, Vector2Int from, Vector2Int direction, int distance)
+    {
+        for (int i = 1; i <= distance; i++)
+        {
+            if (floor.Contains(from + direction * i))
+                return true;
+        }
+        return false;
     }
 
     // 격자 한 축(열 또는 행)의 칸별 시작 좌표랑 크기

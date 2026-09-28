@@ -11,4 +11,7 @@ public class RunConfig : ScriptableObject
 
     [Tooltip("런 전체 비밀방 1개, 이 확률이면 2개")]
     [Range(0f, 1f)] public float DoubleSecretChance = 0.3f;
+
+    [Tooltip("벽 두께 규칙. 방 만들 때도 이 규칙대로 그려야 함")]
+    public WallStyle WallStyle = new WallStyle();
 }

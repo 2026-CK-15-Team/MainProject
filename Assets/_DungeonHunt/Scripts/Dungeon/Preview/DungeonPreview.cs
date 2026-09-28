@@ -53,7 +53,7 @@ public class DungeonPreview : MonoBehaviour
                 FloorBlueprint generated = Generate(plans[floor]);
                 var errors = new List<string>();
                 errors.AddRange(LayoutValidator.Validate(generated.Layout));
-                errors.AddRange(LayoutValidator.ValidateBlueprint(generated));
+                errors.AddRange(LayoutValidator.ValidateBlueprint(generated, runConfig.WallStyle));
 
                 if (Describe(generated) != Describe(Generate(replayPlans[floor])))
                     errors.Add("같은 시드인데 결과 다름");
@@ -101,7 +101,7 @@ public class DungeonPreview : MonoBehaviour
             return;
         }
 
-        foreach (string error in LayoutValidator.Validate(blueprint.Layout).Concat(LayoutValidator.ValidateBlueprint(blueprint)))
+        foreach (string error in LayoutValidator.Validate(blueprint.Layout).Concat(LayoutValidator.ValidateBlueprint(blueprint, runConfig.WallStyle)))
             Debug.LogWarning(error, this);
     }
 
@@ -110,8 +110,8 @@ public class DungeonPreview : MonoBehaviour
         FloorConfig floor = runConfig.Floors[plan.FloorIndex];
         List<RoomTemplateData> templates = floor.RoomPrefabs != null && floor.RoomPrefabs.Length > 0
             ? floor.RoomPrefabs.Select(prefab => prefab.Template).ToList()
-            : CreatePlaceholderTemplates(plan.Seed);
-        return FloorGenerator.Generate(plan, templates, floor.MinRoomSpacing);
+            : CreatePlaceholderTemplates(plan.Seed, runConfig.WallStyle);
+        return FloorGenerator.Generate(plan, templates, floor.MinRoomSpacing, runConfig.WallStyle);
     }
 
     private void DrawGraph()
@@ -139,9 +139,11 @@ public class DungeonPreview : MonoBehaviour
         foreach (Vector2Int cell in blueprint.CorridorFloor)
             Gizmos.DrawCube(ToWorld(cell), Vector3.one);
 
-        Gizmos.color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
-        foreach (Vector2Int cell in blueprint.CorridorWalls)
-            Gizmos.DrawCube(ToWorld(cell), Vector3.one);
+        foreach (WallCell wall in blueprint.CorridorWalls)
+        {
+            Gizmos.color = ColorOf(wall);
+            Gizmos.DrawCube(ToWorld(wall.Cell), Vector3.one);
+        }
 
         foreach (PlacedRoom room in blueprint.Rooms)
         {
@@ -153,9 +155,21 @@ public class DungeonPreview : MonoBehaviour
             DrawLabel(center, room.Node.Type.ToString());
 
             Gizmos.color = Color.red;
-            foreach (Vector2Int cell in room.GetSealedCells())
-                Gizmos.DrawCube(ToWorld(room.Position + cell), Vector3.one * 0.8f);
+            foreach (WallCell wall in room.GetSealedCells(runConfig.WallStyle))
+                Gizmos.DrawCube(ToWorld(room.Position + wall.Cell), Vector3.one * 0.8f);
         }
+    }
+
+    // 위 벽 진하게, 아래 벽 중간, 좌우 벽 연하게. 가리는 칸은 반투명.
+    private static Color ColorOf(WallCell wall)
+    {
+        float shade = wall.Part switch
+        {
+            WallPart.Top => 0.15f,
+            WallPart.Bottom => 0.3f,
+            _ => 0.45f
+        };
+        return new Color(shade, shade, shade, wall.IsFront ? 0.4f : 0.9f);
     }
 
     private static void DrawLabel(Vector3 position, string text)
@@ -166,7 +180,8 @@ public class DungeonPreview : MonoBehaviour
     }
 
     // 방 프리팹 없을 때 쓰는 임시 모양. 전부 4면에 폭 3짜리 문 있음.
-    private static List<RoomTemplateData> CreatePlaceholderTemplates(int seed)
+    // 좌우 문은 위·아래 벽 사이, 위아래 문은 좌우 벽 사이에만 둠.
+    private static List<RoomTemplateData> CreatePlaceholderTemplates(int seed, WallStyle style)
     {
         const int doorWidth = 3;
         const int variantsPerType = 3;
@@ -177,12 +192,14 @@ public class DungeonPreview : MonoBehaviour
         {
             for (int i = 0; i < variantsPerType; i++)
             {
-                var size = new Vector2Int(rng.Next(12, 25), rng.Next(10, 21));
+                var size = new Vector2Int(rng.Next(12, 25), rng.Next(10, 21) + style.Top + style.Bottom);
                 var doorways = new List<Doorway>();
                 foreach (RoomSide side in RoomSideUtility.All)
                 {
-                    int length = side == RoomSide.Up || side == RoomSide.Down ? size.x : size.y;
-                    doorways.Add(new Doorway(side, rng.Next(1, length - doorWidth), doorWidth));
+                    bool isVertical = side == RoomSide.Up || side == RoomSide.Down;
+                    int min = isVertical ? style.Side : style.Bottom;
+                    int max = (isVertical ? size.x - style.Side : size.y - style.Top) - doorWidth;
+                    doorways.Add(new Doorway(side, rng.Next(min, Mathf.Max(min, max) + 1), doorWidth));
                 }
                 templates.Add(new RoomTemplateData(type, size, doorways));
             }
