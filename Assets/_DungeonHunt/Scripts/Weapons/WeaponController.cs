@@ -13,6 +13,8 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private Transform muzzle;
     [SerializeField] private MuzzleFlash muzzleFlash;
 
+    private float equipStartTime; // 현재 무기를 든 시점, 장착 시간 계산용
+
     private WeaponRuntime[] weaponSlots;
     private Dictionary<WeaponType, int> indexByType;
     private readonly HashSet<WeaponType> lockedTypes = new();
@@ -40,6 +42,7 @@ public class WeaponController : MonoBehaviour
 
         currentIndex = indexByType.TryGetValue(WeaponType.Rifle, out int rifleIndex) ? rifleIndex : 0;
         weaponSlots[currentIndex].OnEquipped();
+        equipStartTime = Time.time;
     }
 
     private void OnEnable()
@@ -63,9 +66,8 @@ public class WeaponController : MonoBehaviour
         if (ModalGate.AnyModalOpen) return;
         if (HitStopState.IsActive) return;
         CurrentWeapon.TryStartReload();
-        PlaytestLogger.Log("ReloadStart", CurrentWeapon.Definition.WeaponType.ToString());
     }
-    
+
     private void OnAttackPressed()
     {
         if (ModalGate.AnyModalOpen) return;
@@ -109,7 +111,7 @@ public class WeaponController : MonoBehaviour
         WeaponType currentType = definitions[currentIndex].WeaponType;
         int cyclePos = Array.IndexOf(CycleOrder, currentType);
 
-        for (int step = 1; step <= CycleOrder.Length; step++)
+        for (int step = 1; step < CycleOrder.Length; step++)
         {
             int nextPos = (cyclePos + direction * step + CycleOrder.Length) % CycleOrder.Length;
             WeaponType candidate = CycleOrder[nextPos];
@@ -119,7 +121,7 @@ public class WeaponController : MonoBehaviour
 
             currentIndex = nextIndex;
             CurrentWeapon.OnEquipped();
-            PlaytestLogger.Log("WeaponSwap", candidate.ToString());
+            LogEquipChange(currentType, candidate, "manual");
 
             if (swapTier1Active)
             {
@@ -141,8 +143,18 @@ public class WeaponController : MonoBehaviour
     {
         if (!indexByType.TryGetValue(type, out int index)) return;
 
+        WeaponType previous = definitions[currentIndex].WeaponType;
         currentIndex = index;
         CurrentWeapon.OnEquipped();
+
+        if (previous != type) LogEquipChange(previous, type, "forced");
+    }
+
+    private void LogEquipChange(WeaponType from, WeaponType to, string reason)
+    {
+        float held = Time.time - equipStartTime;
+        PlaytestLogger.Log("WeaponSwap", $"from={from},to={to},reason={reason},heldSeconds={held:F2}");
+        equipStartTime = Time.time;
     }
 
     public bool IsLocked(WeaponType type) => lockedTypes.Contains(type);
@@ -171,10 +183,10 @@ public class WeaponController : MonoBehaviour
     {
         WeaponType type = CurrentWeapon.Definition.WeaponType;
         Debug.Log($"[SwapEnhance] {type} 발사 | 강화탄={CurrentWeapon.IsMagazineEnhanced} | 최종피해={CurrentWeapon.EffectiveDamage:F1}");
-        PlaytestLogger.Log("Fire", $"weapon={type},enhanced={CurrentWeapon.IsMagazineEnhanced},ammoLeft={CurrentWeapon.Ammo - 1}");
+        PlaytestLogger.Log("Fire", $"weapon={type},enhanced={CurrentWeapon.IsMagazineEnhanced},damage={CurrentWeapon.EffectiveDamage:F1},ammoLeft={CurrentWeapon.Ammo - 1}");
 
         CurrentWeapon.ConsumeShot();
-        muzzleFlash?.Show();
+        if (muzzleFlash != null) muzzleFlash.Show();
 
         Vector3 origin = muzzle != null ? muzzle.position : transform.position;
         Vector2 direction = AimUtility.ScreenPointToWorldDirection(input.AimScreenPosition, origin);

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WeaponRuntime
 {
-    public const float KnockbackDuration = 0.12f;
+    public const float KnockbackDuration = 0.12f; // 무기 공통 넉백 이동 시간
 
     public WeaponScriptable Definition { get; }
     public IWeaponFireMode FireMode { get; }
@@ -20,7 +20,7 @@ public class WeaponRuntime
 
     private float swapReadyEndTime;
 
-    // ---- 아티팩트 배율 ----
+    // ---- 아티팩트 배율 (기본 1, 개별효과/Tier1이 여기에 가산) ----
     private float damageMultiplier = 1f;
     private float rangeMultiplier = 1f;
     private float reloadTimeMultiplier = 1f;
@@ -64,12 +64,13 @@ public class WeaponRuntime
         swapReadyEndTime = Time.time + Definition.SwapReadyDelay;
     }
 
-    public void TryStartReload()
+    public void TryStartReload(string reason = "manual")
     {
         if (isReloading) return;
         if (Ammo >= EffectiveMaxAmmo) return;
         isReloading = true;
         reloadEndTime = Time.time + EffectiveReloadTime;
+        PlaytestLogger.Log("ReloadStart", $"weapon={Definition.WeaponType},reason={reason},ammo={Ammo},duration={EffectiveReloadTime:F2}");
 
         if (IsMagazineEnhanced)
         {
@@ -91,6 +92,7 @@ public class WeaponRuntime
             Ammo = EffectiveMaxAmmo;
             isReloading = false;
             IsMagazineEnhanced = false;
+            PlaytestLogger.Log("ReloadComplete", $"weapon={Definition.WeaponType},ammo={Ammo}");
         }
     }
 
@@ -100,7 +102,7 @@ public class WeaponRuntime
         nextFireTime = Time.time + EffectiveFireInterval;
 
         if (Ammo <= 0)
-            TryStartReload();
+            TryStartReload("auto-empty");
     }
 
     public void RefundAmmo(int amount)

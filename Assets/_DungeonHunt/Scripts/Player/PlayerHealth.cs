@@ -25,6 +25,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         movement = GetComponent<PlayerMovement>();
         currentHP = MaxHP;
+        ModalGate.Reset();
+        HitStopState.Reset();
         RunStats.StartRun();
         PlaytestLogger.StartRun();
     }
@@ -59,8 +61,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void Heal(int amount)
     {
         if (IsDead) return;
+
+        int before = currentHP;
         currentHP = Mathf.Min(MaxHP, currentHP + amount);
         HPChanged?.Invoke(currentHP);
+        PlaytestLogger.Log("Heal", $"requested={amount},healed={currentHP - before},hpAfter={currentHP}");
     }
 
     private void HandleDeath()

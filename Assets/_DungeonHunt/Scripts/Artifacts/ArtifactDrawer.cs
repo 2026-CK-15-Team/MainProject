@@ -5,26 +5,67 @@ using UnityEngine;
 public static class ArtifactDrawer
 {
     private const float SetBiasTriggerChance = 0.5f;
+    private const float Combat2TargetChance = 0.75f;
+
+    private struct DrawTrace
+    {
+        public ArtifactGrade RolledGrade;
+        public ArtifactGrade UsedGrade;
+        public bool Flipped;
+        public int PoolSize;
+        public bool BiasUsed;
+    }
 
     public static ArtifactDefinition Draw(ArtifactCatalogData catalog, PlayerArtifacts currentEquipment,
-        IEnumerable<ArtifactId> extraExclusions = null)
+        IEnumerable<ArtifactId> extraExclusions = null, string source = "general",
+        string branch = "general", string info = null)
     {
         if (catalog == null || currentEquipment == null) return null;
 
+        var picked = DrawCore(catalog, currentEquipment, extraExclusions, out var trace);
+        LogDraw(source, branch, info, picked, trace);
+        return picked;
+    }
+
+    private static ArtifactDefinition DrawCore(ArtifactCatalogData catalog, PlayerArtifacts currentEquipment,
+        IEnumerable<ArtifactId> extraExclusions, out DrawTrace trace)
+    {
+        trace = default;
         var excludedIds = BuildExclusionSet(currentEquipment, extraExclusions);
 
-        ArtifactGrade grade = Random.value < 0.5f ? ArtifactGrade.Common : ArtifactGrade.Rare;
+        ArtifactGrade rolled = Random.value < 0.5f ? ArtifactGrade.Common : ArtifactGrade.Rare;
+        ArtifactGrade grade = rolled;
         List<ArtifactDefinition> pool = GetValidPool(catalog, grade, excludedIds);
+        bool flipped = false;
 
         if (pool.Count == 0)
         {
             grade = grade == ArtifactGrade.Common ? ArtifactGrade.Rare : ArtifactGrade.Common;
             pool = GetValidPool(catalog, grade, excludedIds);
+            flipped = true;
         }
+
+        trace.RolledGrade = rolled;
+        trace.UsedGrade = grade;
+        trace.Flipped = flipped;
+        trace.PoolSize = pool.Count;
 
         if (pool.Count == 0) return null;
 
-        return TrySetBiasedPick(pool, catalog, currentEquipment) ?? pool[Random.Range(0, pool.Count)];
+        var biased = TrySetBiasedPick(pool, catalog, currentEquipment);
+        trace.BiasUsed = biased != null;
+        return biased ?? pool[Random.Range(0, pool.Count)];
+    }
+
+    private static void LogDraw(string source, string branch, string info, ArtifactDefinition picked, DrawTrace t)
+    {
+        string eventName = source.StartsWith("combat2") ? "Combat2Draw" : "ArtifactDraw";
+        string infoPart = string.IsNullOrEmpty(info) ? "" : $",{info}";
+        string result = picked != null ? picked.Id.ToString() : "none";
+
+        PlaytestLogger.Log(eventName,
+            $"source={source},branch={branch}{infoPart},gradeRoll={t.RolledGrade},gradeUsed={t.UsedGrade}," +
+            $"flipped={t.Flipped},poolSize={t.PoolSize},setBias={t.BiasUsed},result={result}");
     }
 
     private static HashSet<ArtifactId> BuildExclusionSet(PlayerArtifacts currentEquipment, IEnumerable<ArtifactId> extraExclusions)
@@ -72,21 +113,37 @@ public static class ArtifactDrawer
     }
 
     public static ArtifactDefinition DrawForTreasure(ArtifactCatalogData catalog, PlayerArtifacts currentEquipment,
-        IEnumerable<ArtifactId> extraExclusions = null)
+        IEnumerable<ArtifactId> extraExclusions = null, string source = "treasure")
     {
         if (catalog == null || currentEquipment == null) return null;
 
         ArtifactDefinition result = null;
+        DrawTrace trace = default;
+        int attempts = 0;
+        bool siblingRuleMet = false;
+
         for (int attempt = 0; attempt < 20; attempt++)
         {
-            var candidate = Draw(catalog, currentEquipment, extraExclusions);
-            if (candidate == null) return null;
+            attempts++;
+            var candidate = DrawCore(catalog, currentEquipment, extraExclusions, out trace);
+            if (candidate == null)
+            {
+                result = null;
+                break;
+            }
 
             result = candidate;
-            if (LeavesValidSiblingInSet(candidate, catalog, currentEquipment)) return candidate;
+            if (LeavesValidSiblingInSet(candidate, catalog, currentEquipment))
+            {
+                siblingRuleMet = true;
+                break;
+            }
         }
 
-        Debug.LogWarning("[ArtifactDrawer] 세트고갈방지 조건을 만족하는 후보를 못 찾음, 마지막 결과 사용");
+        if (result != null && !siblingRuleMet)
+            Debug.LogWarning("[ArtifactDrawer] 세트고갈방지 조건을 만족하는 후보를 못 찾음, 마지막 결과 사용");
+
+        LogDraw(source, "general", $"attempts={attempts},siblingRuleMet={siblingRuleMet}", result, trace);
         return result;
     }
 
@@ -101,38 +158,52 @@ public static class ArtifactDrawer
     }
 
     public static ArtifactDefinition DrawTargeted(ArtifactCatalogData catalog, PlayerArtifacts currentEquipment, ArtifactSetType targetSet,
-        IEnumerable<ArtifactId> extraExclusions = null)
+        IEnumerable<ArtifactId> extraExclusions = null, string source = "combat2")
     {
         if (catalog == null || currentEquipment == null) return null;
 
         var excludedIds = BuildExclusionSet(currentEquipment, extraExclusions);
+        var targetPool = catalog.AllArtifacts.Where(a => a.SetType == targetSet && !excludedIds.Contains(a.Id)).ToList();
+        string info = $"targetSet={targetSet}";
 
-        if (Random.value < 0.75f)
+        bool targetUsable = targetPool.Count > 0 && IsIncomplete(targetSet, catalog, currentEquipment);
+        if (!targetUsable)
+            return Draw(catalog, currentEquipment, extraExclusions, source, "full-fallback", info);
+
+        if (Random.value < Combat2TargetChance)
         {
-            var targetPool = catalog.AllArtifacts.Where(a => a.SetType == targetSet && !excludedIds.Contains(a.Id)).ToList();
-            if (targetPool.Count > 0)
-            {
-                var picked = targetPool[Random.Range(0, targetPool.Count)];
-                PlaytestLogger.Log("Combat2Draw", $"branch=75,targetSet={targetSet},result={picked.Id}");
-                return picked;
-            }
+            var picked = targetPool[Random.Range(0, targetPool.Count)];
+            PlaytestLogger.Log("Combat2Draw",
+                $"source={source},branch=target-direct,{info},gradeRoll=none,poolSize={targetPool.Count},result={picked.Id}");
+            return picked;
         }
 
-        var fallback = DrawExcludingSet(catalog, excludedIds, targetSet);
-        PlaytestLogger.Log("Combat2Draw", $"branch=25,targetSet={targetSet},result={(fallback != null ? fallback.Id.ToString() : "none")}");
-        return fallback;
+        var other = DrawExcludingSet(catalog, excludedIds, targetSet, out var trace);
+        LogDraw(source, "target-exclude", info, other, trace);
+        return other;
     }
 
-    private static ArtifactDefinition DrawExcludingSet(ArtifactCatalogData catalog, HashSet<ArtifactId> excludedIds, ArtifactSetType excludeSet)
+    private static ArtifactDefinition DrawExcludingSet(ArtifactCatalogData catalog, HashSet<ArtifactId> excludedIds,
+        ArtifactSetType excludeSet, out DrawTrace trace)
     {
-        ArtifactGrade grade = Random.value < 0.5f ? ArtifactGrade.Common : ArtifactGrade.Rare;
+        trace = default;
+
+        ArtifactGrade rolled = Random.value < 0.5f ? ArtifactGrade.Common : ArtifactGrade.Rare;
+        ArtifactGrade grade = rolled;
         var pool = catalog.AllArtifacts.Where(a => a.Grade == grade && a.SetType != excludeSet && !excludedIds.Contains(a.Id)).ToList();
+        bool flipped = false;
 
         if (pool.Count == 0)
         {
             grade = grade == ArtifactGrade.Common ? ArtifactGrade.Rare : ArtifactGrade.Common;
             pool = catalog.AllArtifacts.Where(a => a.Grade == grade && a.SetType != excludeSet && !excludedIds.Contains(a.Id)).ToList();
+            flipped = true;
         }
+
+        trace.RolledGrade = rolled;
+        trace.UsedGrade = grade;
+        trace.Flipped = flipped;
+        trace.PoolSize = pool.Count;
 
         return pool.Count > 0 ? pool[Random.Range(0, pool.Count)] : null;
     }

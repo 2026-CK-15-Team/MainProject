@@ -73,7 +73,9 @@ public class Projectile : MonoBehaviour
             && other.gameObject.layer == LayerMask.NameToLayer("EnemyProjectile")
             && other.TryGetComponent<Projectile>(out var enemyProjectile))
         {
-            PlaytestLogger.Log("PistolDeflect", $"position={transform.position}");
+            PlaytestLogger.Log("PistolDeflect",
+                $"playerProjectile={GetInstanceID()},enemyProjectile={enemyProjectile.GetInstanceID()}," +
+                $"playerPos={transform.position},enemyPos={enemyProjectile.transform.position}");
             enemyProjectile.ReturnToPool();
             ReturnToPool();
             return;

@@ -27,7 +27,7 @@ public class RoomRewardSpawner : MonoBehaviour
         float roll = Random.value;
 
         if (roll < 0.20f) SpawnArtifact();
-        else if (roll < 0.75f) SpawnCurrency();
+        else if (roll < 0.75f) SpawnCurrency(); // 0.20~0.75 구간 = 55%
         else SpawnHP();
     }
 
@@ -37,13 +37,8 @@ public class RoomRewardSpawner : MonoBehaviour
 
         GameObject go = Instantiate(fieldArtifactPrefab, rewardSpawnPoint.position, Quaternion.identity);
 
-        if (guaranteedArtifact && RunProgressState.TreasureSetType.HasValue
-            && go.TryGetComponent<FieldArtifact>(out var field))
-        {
-            var artifacts = FindObjectOfType<PlayerArtifacts>();
-            var targeted = ArtifactDrawer.DrawTargeted(catalog, artifacts, RunProgressState.TreasureSetType.Value);
-            field.SetDefinition(targeted);
-        }
+        if (guaranteedArtifact && go.TryGetComponent<FieldArtifact>(out var field))
+            field.ConfigureCombat2(catalog, RunProgressState.TreasureSetType);
     }
 
     private void SpawnCurrency()

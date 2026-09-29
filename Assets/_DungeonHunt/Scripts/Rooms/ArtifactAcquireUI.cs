@@ -30,6 +30,7 @@ public class ArtifactAcquireUI : MonoBehaviour
     {
         var def = currentSource.CurrentDefinition;
         infoText.text = $"{def.DisplayName}\n{def.Grade} / {def.SetType}";
+        PlaytestLogger.Log("ArtifactShown", $"{def.Id},{def.Grade},{def.SetType},rerollCount={currentSource.RerollCount}");
 
         bool canReroll = currentSource.CanReroll;
         rerollButton.gameObject.SetActive(canReroll);
@@ -58,7 +59,7 @@ public class ArtifactAcquireUI : MonoBehaviour
     private void OnEscapePressed()
     {
         if (!IsOpen) return;
-        Close(); // 보류 처리, 유지/버리기 아님 - 상태는 FieldArtifact에 그대로 남음
+        Close();
     }
 
     private void Close()

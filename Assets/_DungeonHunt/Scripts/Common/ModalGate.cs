@@ -5,7 +5,9 @@ public static class ModalGate
     private static int openCount;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void ResetOnPlay() => openCount = 0;
+    private static void ResetOnPlay() => Reset();
+    
+    public static void Reset() => openCount = 0;
 
     public static bool AnyModalOpen => openCount > 0;
 

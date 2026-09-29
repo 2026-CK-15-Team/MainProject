@@ -12,7 +12,7 @@ public class ShopSlot : MonoBehaviour, IInteractable
     public int HealAmount = 1;
 
     [Header("Artifact 전용")]
-    public ArtifactDefinition Artifact;
+    public ArtifactDefinition Artifact; // 직접 지정하려면 채우고, 비워두면 카탈로그에서 무작위로 뽑음
     public ArtifactCatalogData Catalog;
 
     [Header("PermanentCurrencyBundle 전용")]
@@ -23,7 +23,7 @@ public class ShopSlot : MonoBehaviour, IInteractable
         if (Type == SlotType.Artifact && Artifact == null && Catalog != null)
         {
             var artifacts = FindObjectOfType<PlayerArtifacts>();
-            Artifact = ArtifactDrawer.Draw(Catalog, artifacts);
+            Artifact = ArtifactDrawer.Draw(Catalog, artifacts, null, "shop");
         }
 
         if (Type == SlotType.Artifact && Artifact != null)

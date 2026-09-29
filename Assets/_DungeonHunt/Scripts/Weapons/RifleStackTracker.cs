@@ -28,7 +28,7 @@ public class RifleStackTracker
     {
         if (IsExpired)
         {
-            //Debug.Log("[RifleStack] 타임아웃(0.6s) 경과 → 스택 리셋");
+            Debug.Log("[RifleStack] 타임아웃(0.6s) 경과 → 스택 리셋");
             ClearTarget();
         }
 
@@ -51,10 +51,10 @@ public class RifleStackTracker
 
         lastValidHitTime = Time.time;
 
-        //Debug.Log($"[RifleStack] 대상={actualTarget}, 스냅샷일치={snapshotMatches}(스냅샷스택={snapshotStack}), " +
-                  //$"적용피해={finalDamage:F1}, 갱신후스택={currentStack}");
-        //PlaytestLogger.Log("RifleStackHit",
-           // $"snapshotTarget={snapshotTarget},actualTarget={actualTarget},snapshotMatches={snapshotMatches},finalDamage={finalDamage},stackAfter={currentStack}");
+        Debug.Log($"[RifleStack] 대상={actualTarget}, 스냅샷일치={snapshotMatches}(스냅샷스택={snapshotStack}), " +
+                  $"적용피해={finalDamage:F1}, 갱신후스택={currentStack}");
+        PlaytestLogger.Log("RifleStackHit",
+            $"snapshotTarget={snapshotTarget},actualTarget={actualTarget},snapshotMatches={snapshotMatches},finalDamage={finalDamage},stackAfter={currentStack}");
 
         return finalDamage;
     }
@@ -73,7 +73,7 @@ public class RifleStackTracker
 
     private void OnActiveTargetDied(DummyEnemy enemy)
     {
-        //Debug.Log("[RifleStack] 대상 사망 → 즉시 스택 제거");
+        Debug.Log("[RifleStack] 대상 사망 → 즉시 스택 제거");
         ClearTarget();
     }
 

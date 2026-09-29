@@ -29,7 +29,10 @@ public class DummyEnemy : MonoBehaviour, IDamageable
     {
         if (currentHP <= 0) return;
 
-        currentHP -= Mathf.RoundToInt(amount);
+        int appliedDamage = Mathf.RoundToInt(amount);
+        currentHP -= appliedDamage;
+        PlaytestLogger.Log("MonsterHit",
+            $"monster={name},damage={appliedDamage},crit={isCritical},hpAfter={Mathf.Max(0, currentHP)},killed={currentHP <= 0}");
         Damaged?.Invoke();
         SpawnDamageNumber(amount, isCritical);
 

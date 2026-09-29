@@ -7,7 +7,9 @@ public static class HitStopState
     private static float endRealTime = float.NegativeInfinity;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void ResetOnPlay() => endRealTime = float.NegativeInfinity;
+    private static void ResetOnPlay() => Reset();
+
+    public static void Reset() => endRealTime = float.NegativeInfinity;
 
     public static bool IsActive => Time.unscaledTime < endRealTime;
 
@@ -15,11 +17,11 @@ public static class HitStopState
     {
         if (IsActive)
         {
-            //Debug.Log($"[HitStopState] 재발동 무시됨 (이미 진행 중, 남은시간={endRealTime - Time.unscaledTime:F3})");
+            Debug.Log($"[HitStopState] 재발동 무시됨 (이미 진행 중, 남은시간={endRealTime - Time.unscaledTime:F3})");
             return;
         }
 
         endRealTime = Time.unscaledTime + duration;
-        //Debug.Log($"[HitStopState] 발동: duration={duration}, now={Time.unscaledTime:F3}, endRealTime={endRealTime:F3}");
+        Debug.Log($"[HitStopState] 발동: duration={duration}, now={Time.unscaledTime:F3}, endRealTime={endRealTime:F3}");
     }
 }

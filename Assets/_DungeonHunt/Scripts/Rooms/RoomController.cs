@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RoomController : MonoBehaviour, IRoomEntryHandler
 {
     [SerializeField] private List<DummyEnemy> enemies = new();
     [SerializeField] private List<Door> doorsToLock = new();
+    [SerializeField] private EntrySafeZoneValidator safeZoneValidator;
 
     private List<DummyEnemy> remaining = new();
     private bool entered;
@@ -33,6 +35,9 @@ public class RoomController : MonoBehaviour, IRoomEntryHandler
         }
 
         foreach (var door in doorsToLock) door.Lock();
+
+        if (safeZoneValidator != null)
+            safeZoneValidator.Validate(enemies.Select(e => e.transform), gameObject.name);
 
         remaining = new List<DummyEnemy>(enemies);
         foreach (var enemy in enemies) enemy.gameObject.SetActive(true);
