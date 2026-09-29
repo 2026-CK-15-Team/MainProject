@@ -9,7 +9,7 @@ _DungeonHunt
     ㄴSettings
     ㄴThird party 외부에셋설치시 이안에 넣어주세요
 
-2026-9-29
+2026-09-29
 
 ## 플레이테스트 로그 확인법
 
@@ -21,7 +21,7 @@ _DungeonHunt
 - 콘솔(Console)에는 안 뜸. Debug.Log와는 별도 경로임
 
 ## 로그 목록
-관련 항목사항은 프로토타입_AC검증 에서 확인
+관련 항목 사항은 프로토타입_AC검증 에서확인
 | 로그 이름 | 클래스 위치 | 관련 항목 |
 |---|---|---|
 | ArtifactDraw | ArtifactDrawer | 7 |
@@ -58,3 +58,17 @@ _DungeonHunt
 - Combat2Draw는 최초 보상과 리롤 양쪽에서 다 남음. source 값으로 구분: combat2, combat2-reroll
 - SafeZoneCheck는 EntrySafeZoneValidator를 룸에 연결 안 하면 안 찍힘, 에러도 안 뜸
 - 콘솔에서만 보이는 것(PlaytestLogger 안 거침): [RifleStack], [SwapEnhance], [HitStopState], [Artifact]
+
+
+## Prefabs 폴더 안내
+
+### Artifacts
+Tier1 세트 아티팩트 프리팹. 씬에 배치하면 그대로 습득 가능.
+
+### Item
+- Shop Slot 기반: Artifacts, Heal_Item
+- Field Artifact 기반: Treasure
+
+### EnemyPrefabs
+정지 허수아비, 각 종 몬스터, 적용 투사체 프리팹 있음.
+인스펙터에서 능력치 수정 가능하나, 테스트용으로 건드릴 땐 프리팹 원본이 아니라 씬에 생성된 쪽에서만 수정할 것.
