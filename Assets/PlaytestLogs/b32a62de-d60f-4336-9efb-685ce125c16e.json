@@ -1,0 +1,954 @@
+{
+    "RunID": "b32a62de-d60f-4336-9efb-685ce125c16e",
+    "BuildVersion": "1.0",
+    "RNGSeed": 38489406,
+    "Result": "RunOver",
+    "RunTime": 50.837467193603519,
+    "Events": [
+        {
+            "timestamp": 0.0,
+            "type": "ArtifactDraw",
+            "data": "source=treasure,branch=general,attempts=1,siblingRuleMet=True,gradeRoll=Rare,gradeUsed=Rare,flipped=False,poolSize=4,setBias=False,result=PT_SWAP_02"
+        },
+        {
+            "timestamp": 1.9413304328918458,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=29"
+        },
+        {
+            "timestamp": 2.0220513343811037,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=28"
+        },
+        {
+            "timestamp": 2.103994846343994,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=27"
+        },
+        {
+            "timestamp": 2.1863319873809816,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=26"
+        },
+        {
+            "timestamp": 2.2599992752075197,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Barrage,damage=6,crit=False,hpAfter=24,killed=False"
+        },
+        {
+            "timestamp": 2.2680888175964357,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=25"
+        },
+        {
+            "timestamp": 2.339999198913574,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Barrage,damage=6,crit=False,hpAfter=18,killed=False"
+        },
+        {
+            "timestamp": 2.3482954502105715,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=24"
+        },
+        {
+            "timestamp": 2.419999122619629,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Barrage,damage=6,crit=False,hpAfter=12,killed=False"
+        },
+        {
+            "timestamp": 2.4311890602111818,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=23"
+        },
+        {
+            "timestamp": 2.511963129043579,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=22"
+        },
+        {
+            "timestamp": 2.5199990272521974,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Barrage,damage=6,crit=False,hpAfter=6,killed=False"
+        },
+        {
+            "timestamp": 2.592029094696045,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=21"
+        },
+        {
+            "timestamp": 2.599999189376831,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Barrage,damage=9,crit=True,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 2.599999189376831,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=1"
+        },
+        {
+            "timestamp": 2.673546075820923,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=20"
+        },
+        {
+            "timestamp": 2.7546346187591554,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=19"
+        },
+        {
+            "timestamp": 2.835928201675415,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=18"
+        },
+        {
+            "timestamp": 2.918628215789795,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=17"
+        },
+        {
+            "timestamp": 3.0000321865081789,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=16"
+        },
+        {
+            "timestamp": 3.081009864807129,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=15"
+        },
+        {
+            "timestamp": 3.1615169048309328,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=14"
+        },
+        {
+            "timestamp": 3.2430920600891115,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=13"
+        },
+        {
+            "timestamp": 3.7599985599517824,
+            "type": "RoomEntered",
+            "data": "EntryTrigger"
+        },
+        {
+            "timestamp": 3.7599985599517824,
+            "type": "SafeZoneCheck",
+            "data": "room=CombatRoom1,radius=2,minMonsterDistance=8.38,minObstacleDistance=n/a,violations=0,result=PASS"
+        },
+        {
+            "timestamp": 3.799872636795044,
+            "type": "ReloadStart",
+            "data": "weapon=Rifle,reason=manual,ammo=13,duration=1.45"
+        },
+        {
+            "timestamp": 5.202359676361084,
+            "type": "ReloadCancelled",
+            "data": "Rifle"
+        },
+        {
+            "timestamp": 5.202359676361084,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=12"
+        },
+        {
+            "timestamp": 5.286369323730469,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=11"
+        },
+        {
+            "timestamp": 5.3599982261657719,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (3),damage=6,crit=False,hpAfter=34,killed=False"
+        },
+        {
+            "timestamp": 5.366894245147705,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=10"
+        },
+        {
+            "timestamp": 5.4473958015441898,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=9"
+        },
+        {
+            "timestamp": 5.45999813079834,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (3),damage=6,crit=False,hpAfter=28,killed=False"
+        },
+        {
+            "timestamp": 5.5277605056762699,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=8"
+        },
+        {
+            "timestamp": 5.5399980545043949,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (3),damage=6,crit=False,hpAfter=22,killed=False"
+        },
+        {
+            "timestamp": 5.609911918640137,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=7"
+        },
+        {
+            "timestamp": 5.639997959136963,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (3),damage=6,crit=False,hpAfter=16,killed=False"
+        },
+        {
+            "timestamp": 5.692028999328613,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=6"
+        },
+        {
+            "timestamp": 5.719997882843018,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (3),damage=6,crit=False,hpAfter=10,killed=False"
+        },
+        {
+            "timestamp": 5.7752861976623539,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=5"
+        },
+        {
+            "timestamp": 5.819997787475586,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (3),damage=6,crit=False,hpAfter=4,killed=False"
+        },
+        {
+            "timestamp": 5.857611179351807,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=4"
+        },
+        {
+            "timestamp": 5.899997711181641,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (3),damage=6,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 5.899997711181641,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=2"
+        },
+        {
+            "timestamp": 5.941901683807373,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=3"
+        },
+        {
+            "timestamp": 5.959997653961182,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (2),damage=6,crit=False,hpAfter=34,killed=False"
+        },
+        {
+            "timestamp": 6.024290561676025,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=2"
+        },
+        {
+            "timestamp": 6.0399980545043949,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (2),damage=6,crit=False,hpAfter=28,killed=False"
+        },
+        {
+            "timestamp": 6.1047797203063969,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=1"
+        },
+        {
+            "timestamp": 6.119997978210449,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (2),damage=6,crit=False,hpAfter=22,killed=False"
+        },
+        {
+            "timestamp": 6.187742233276367,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=0"
+        },
+        {
+            "timestamp": 6.187742233276367,
+            "type": "ReloadStart",
+            "data": "weapon=Rifle,reason=auto-empty,ammo=0,duration=1.45"
+        },
+        {
+            "timestamp": 6.199997901916504,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (2),damage=6,crit=False,hpAfter=16,killed=False"
+        },
+        {
+            "timestamp": 6.279997825622559,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (2),damage=6,crit=False,hpAfter=10,killed=False"
+        },
+        {
+            "timestamp": 7.639389514923096,
+            "type": "ReloadComplete",
+            "data": "weapon=Rifle,ammo=30"
+        },
+        {
+            "timestamp": 7.639389514923096,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=29"
+        },
+        {
+            "timestamp": 7.719997406005859,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (2),damage=6,crit=False,hpAfter=4,killed=False"
+        },
+        {
+            "timestamp": 7.721173286437988,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=28"
+        },
+        {
+            "timestamp": 7.801760196685791,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=27"
+        },
+        {
+            "timestamp": 7.819997310638428,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler (2),damage=6,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 7.819997310638428,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=3"
+        },
+        {
+            "timestamp": 7.887266159057617,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=26"
+        },
+        {
+            "timestamp": 8.307716369628907,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=25"
+        },
+        {
+            "timestamp": 8.389863967895508,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=24"
+        },
+        {
+            "timestamp": 8.470130920410157,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=23"
+        },
+        {
+            "timestamp": 8.551664352416993,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=22"
+        },
+        {
+            "timestamp": 8.559996604919434,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (2),damage=6,crit=False,hpAfter=19,killed=False"
+        },
+        {
+            "timestamp": 8.632027626037598,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=21"
+        },
+        {
+            "timestamp": 8.639996528625489,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (2),damage=6,crit=False,hpAfter=13,killed=False"
+        },
+        {
+            "timestamp": 8.699996948242188,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (2),damage=6,crit=False,hpAfter=7,killed=False"
+        },
+        {
+            "timestamp": 8.714790344238282,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=20"
+        },
+        {
+            "timestamp": 8.796549797058106,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=19"
+        },
+        {
+            "timestamp": 8.839997291564942,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (3),damage=6,crit=False,hpAfter=19,killed=False"
+        },
+        {
+            "timestamp": 8.879894256591797,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=18"
+        },
+        {
+            "timestamp": 8.899996757507325,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (3),damage=6,crit=False,hpAfter=13,killed=False"
+        },
+        {
+            "timestamp": 8.961409568786621,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=17"
+        },
+        {
+            "timestamp": 8.979996681213379,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (3),damage=6,crit=False,hpAfter=7,killed=False"
+        },
+        {
+            "timestamp": 9.042421340942383,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=16"
+        },
+        {
+            "timestamp": 9.059996604919434,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (3),damage=6,crit=False,hpAfter=1,killed=False"
+        },
+        {
+            "timestamp": 9.125733375549317,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=15"
+        },
+        {
+            "timestamp": 9.199996948242188,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (2),damage=6,crit=False,hpAfter=1,killed=False"
+        },
+        {
+            "timestamp": 9.205764770507813,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=14"
+        },
+        {
+            "timestamp": 9.289607048034668,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=13"
+        },
+        {
+            "timestamp": 9.37269401550293,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=12"
+        },
+        {
+            "timestamp": 9.379996299743653,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (2),damage=6,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 9.379996299743653,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=4"
+        },
+        {
+            "timestamp": 9.457923889160157,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=11"
+        },
+        {
+            "timestamp": 9.540132522583008,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=10"
+        },
+        {
+            "timestamp": 9.620920181274414,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=9"
+        },
+        {
+            "timestamp": 9.699996948242188,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter (3),damage=6,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 9.699996948242188,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=5"
+        },
+        {
+            "timestamp": 9.699996948242188,
+            "type": "RoomCleared",
+            "data": "CombatRoom1"
+        },
+        {
+            "timestamp": 9.699996948242188,
+            "type": "ArtifactDraw",
+            "data": "source=field,branch=general,gradeRoll=Common,gradeUsed=Common,flipped=False,poolSize=3,setBias=False,result=PT_SHOTGUN_01"
+        },
+        {
+            "timestamp": 9.89732837677002,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=8"
+        },
+        {
+            "timestamp": 9.98049259185791,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=7"
+        },
+        {
+            "timestamp": 10.062453269958496,
+            "type": "Fire",
+            "data": "weapon=Rifle,enhanced=False,damage=6.0,ammoLeft=6"
+        },
+        {
+            "timestamp": 10.639996528625489,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=5,crit=False"
+        },
+        {
+            "timestamp": 11.09040355682373,
+            "type": "ReloadStart",
+            "data": "weapon=Rifle,reason=manual,ammo=6,duration=1.45"
+        },
+        {
+            "timestamp": 12.541573524475098,
+            "type": "ReloadComplete",
+            "data": "weapon=Rifle,ammo=30"
+        },
+        {
+            "timestamp": 12.793647766113282,
+            "type": "ArtifactShown",
+            "data": "PT_SHOTGUN_01,Common,Shotgun,rerollCount=0"
+        },
+        {
+            "timestamp": 12.793647766113282,
+            "type": "ArtifactEquip",
+            "data": "PT_SHOTGUN_01,Common,Shotgun"
+        },
+        {
+            "timestamp": 14.415026664733887,
+            "type": "WeaponSwap",
+            "data": "from=Rifle,to=Shotgun,reason=manual,heldSeconds=14.42"
+        },
+        {
+            "timestamp": 14.90517807006836,
+            "type": "WeaponSwap",
+            "data": "from=Shotgun,to=Pistol,reason=manual,heldSeconds=0.49"
+        },
+        {
+            "timestamp": 15.27929401397705,
+            "type": "WeaponSwap",
+            "data": "from=Pistol,to=Shotgun,reason=manual,heldSeconds=0.37"
+        },
+        {
+            "timestamp": 18.30316162109375,
+            "type": "ArtifactShown",
+            "data": "PT_SWAP_02,Rare,Swap,rerollCount=0"
+        },
+        {
+            "timestamp": 18.30316162109375,
+            "type": "ArtifactDraw",
+            "data": "source=treasure-reroll,branch=general,attempts=4,siblingRuleMet=True,gradeRoll=Common,gradeUsed=Common,flipped=False,poolSize=2,setBias=False,result=PT_RIFLE_01"
+        },
+        {
+            "timestamp": 18.30316162109375,
+            "type": "ArtifactReroll",
+            "data": "PT_RIFLE_01,rerollCount=1,cost=0"
+        },
+        {
+            "timestamp": 18.30316162109375,
+            "type": "ArtifactShown",
+            "data": "PT_RIFLE_01,Common,Rifle,rerollCount=1"
+        },
+        {
+            "timestamp": 18.30316162109375,
+            "type": "ArtifactEquip",
+            "data": "PT_RIFLE_01,Common,Rifle"
+        },
+        {
+            "timestamp": 19.959993362426759,
+            "type": "Dodge",
+            "data": "chargeLeft=1"
+        },
+        {
+            "timestamp": 21.299991607666017,
+            "type": "RoomEntered",
+            "data": "EntryTrigger"
+        },
+        {
+            "timestamp": 21.299991607666017,
+            "type": "SafeZoneCheck",
+            "data": "room=CombatRoom2,radius=2,minMonsterDistance=8.38,minObstacleDistance=6.31,violations=0,result=PASS"
+        },
+        {
+            "timestamp": 22.815322875976564,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=5"
+        },
+        {
+            "timestamp": 22.815322875976564,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 22.815322875976564,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Charger,damage=28,crit=False,hpAfter=7,killed=False"
+        },
+        {
+            "timestamp": 23.73061180114746,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=4"
+        },
+        {
+            "timestamp": 23.73061180114746,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 23.73061180114746,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler,damage=28,crit=False,hpAfter=12,killed=False"
+        },
+        {
+            "timestamp": 24.312829971313478,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=3"
+        },
+        {
+            "timestamp": 24.312829971313478,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 24.312829971313478,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Charger,damage=28,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 24.312829971313478,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=6"
+        },
+        {
+            "timestamp": 24.89737319946289,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=2"
+        },
+        {
+            "timestamp": 24.89737319946289,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 24.89737319946289,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler,damage=28,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 24.89737319946289,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=7"
+        },
+        {
+            "timestamp": 25.839990615844728,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=4,crit=False"
+        },
+        {
+            "timestamp": 26.017284393310548,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=1"
+        },
+        {
+            "timestamp": 26.017284393310548,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 26.017284393310548,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter,damage=28,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 26.017284393310548,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=8"
+        },
+        {
+            "timestamp": 26.598989486694337,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=0"
+        },
+        {
+            "timestamp": 26.598989486694337,
+            "type": "ReloadStart",
+            "data": "weapon=Shotgun,reason=auto-empty,ammo=0,duration=1.35"
+        },
+        {
+            "timestamp": 26.598989486694337,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 26.598989486694337,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter,damage=28,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 26.598989486694337,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=9"
+        },
+        {
+            "timestamp": 26.598989486694337,
+            "type": "RoomCleared",
+            "data": "CombatRoom2"
+        },
+        {
+            "timestamp": 26.598989486694337,
+            "type": "Combat2Draw",
+            "data": "source=combat2,branch=target-direct,targetSet=Rifle,gradeRoll=none,poolSize=1,result=PT_RIFLE_02"
+        },
+        {
+            "timestamp": 27.949623107910158,
+            "type": "ReloadComplete",
+            "data": "weapon=Shotgun,ammo=8"
+        },
+        {
+            "timestamp": 28.209014892578126,
+            "type": "ArtifactShown",
+            "data": "PT_RIFLE_02,Rare,Rifle,rerollCount=0"
+        },
+        {
+            "timestamp": 28.209014892578126,
+            "type": "Combat2Draw",
+            "data": "source=combat2-reroll,branch=full-fallback,targetSet=Rifle,gradeRoll=Common,gradeUsed=Common,flipped=False,poolSize=1,setBias=False,result=PT_SWAP_01"
+        },
+        {
+            "timestamp": 28.209014892578126,
+            "type": "ArtifactReroll",
+            "data": "PT_SWAP_01,rerollCount=1,cost=0"
+        },
+        {
+            "timestamp": 28.209014892578126,
+            "type": "ArtifactShown",
+            "data": "PT_SWAP_01,Common,Swap,rerollCount=1"
+        },
+        {
+            "timestamp": 28.209014892578126,
+            "type": "ArtifactEquip",
+            "data": "PT_SWAP_01,Common,Swap"
+        },
+        {
+            "timestamp": 30.039989471435548,
+            "type": "Dodge",
+            "data": "chargeLeft=1"
+        },
+        {
+            "timestamp": 33.65998840332031,
+            "type": "Dodge",
+            "data": "chargeLeft=1"
+        },
+        {
+            "timestamp": 34.83342742919922,
+            "type": "CurrencySpend",
+            "data": "amount=5,total=4"
+        },
+        {
+            "timestamp": 34.83342742919922,
+            "type": "ShopPurchase",
+            "data": "Artifact,price=5"
+        },
+        {
+            "timestamp": 34.83342742919922,
+            "type": "ArtifactEquip",
+            "data": "PT_PISTOL_01,Common,Pistol"
+        },
+        {
+            "timestamp": 41.016719818115237,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=7"
+        },
+        {
+            "timestamp": 41.016719818115237,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 42.00775146484375,
+            "type": "ReloadStart",
+            "data": "weapon=Shotgun,reason=manual,ammo=7,duration=1.15"
+        },
+        {
+            "timestamp": 43.079986572265628,
+            "type": "RoomEntered",
+            "data": "EntryTrigger"
+        },
+        {
+            "timestamp": 43.079986572265628,
+            "type": "SafeZoneCheck",
+            "data": "room=CombatRoom3,radius=2,minMonsterDistance=4.00,minObstacleDistance=5.59,violations=0,result=PASS"
+        },
+        {
+            "timestamp": 43.156009674072269,
+            "type": "ReloadComplete",
+            "data": "weapon=Shotgun,ammo=8"
+        },
+        {
+            "timestamp": 43.51998519897461,
+            "type": "Dodge",
+            "data": "chargeLeft=1"
+        },
+        {
+            "timestamp": 44.61062240600586,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=7"
+        },
+        {
+            "timestamp": 44.61062240600586,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 45.40422439575195,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=6"
+        },
+        {
+            "timestamp": 45.40422439575195,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 45.40422439575195,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Charger,damage=28,crit=False,hpAfter=7,killed=False"
+        },
+        {
+            "timestamp": 45.98423767089844,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=5"
+        },
+        {
+            "timestamp": 45.98423767089844,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 45.98423767089844,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Charger,damage=28,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 45.98423767089844,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=5"
+        },
+        {
+            "timestamp": 46.56660461425781,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=4"
+        },
+        {
+            "timestamp": 46.56660461425781,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 46.56660461425781,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler,damage=28,crit=False,hpAfter=12,killed=False"
+        },
+        {
+            "timestamp": 47.05998229980469,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=3,crit=False"
+        },
+        {
+            "timestamp": 47.528263092041019,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=3"
+        },
+        {
+            "timestamp": 47.528263092041019,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 47.528263092041019,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Brawler,damage=42,crit=True,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 47.528263092041019,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=6"
+        },
+        {
+            "timestamp": 48.25998306274414,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=2,crit=False"
+        },
+        {
+            "timestamp": 49.05458068847656,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=2"
+        },
+        {
+            "timestamp": 49.05458068847656,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 49.05458068847656,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Barrage,damage=28,crit=False,hpAfter=2,killed=False"
+        },
+        {
+            "timestamp": 49.05458068847656,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Shooter,damage=28,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 49.05458068847656,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=7"
+        },
+        {
+            "timestamp": 49.139984130859378,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=1,crit=False"
+        },
+        {
+            "timestamp": 49.671295166015628,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,damage=28.0,ammoLeft=1"
+        },
+        {
+            "timestamp": 49.671295166015628,
+            "type": "Fire",
+            "data": "weapon=Shotgun,enhanced=False,finalRange=2"
+        },
+        {
+            "timestamp": 49.671295166015628,
+            "type": "MonsterHit",
+            "data": "monster=DummyEnemy_Barrage,damage=28,crit=False,hpAfter=0,killed=True"
+        },
+        {
+            "timestamp": 49.671295166015628,
+            "type": "CurrencyGain",
+            "data": "amount=1,total=8"
+        },
+        {
+            "timestamp": 49.671295166015628,
+            "type": "RoomCleared",
+            "data": "CombatRoom3"
+        },
+        {
+            "timestamp": 49.73998260498047,
+            "type": "CurrencyGain",
+            "data": "amount=6,total=14"
+        },
+        {
+            "timestamp": 50.09998321533203,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=0,crit=False"
+        },
+        {
+            "timestamp": 50.09998321533203,
+            "type": "Death",
+            "data": "position=(0.16, 78.64, 0.00)"
+        }
+    ]
+}

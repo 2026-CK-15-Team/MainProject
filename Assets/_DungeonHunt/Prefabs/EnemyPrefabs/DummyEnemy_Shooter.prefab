@@ -339,7 +339,7 @@ MonoBehaviour:
   ProjectileSpeed: 3.5
   ProjectileMaxDistance: 6
   ProjectileDamage: 1
-  muzzle: {fileID: 0}
+  muzzle: {fileID: 5659643245459640935}
 --- !u!114 &-7101192728922034904
 MonoBehaviour:
   m_ObjectHideFlags: 0
