@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc9076864cb835d49b6e8de07d30a55f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntrySafeZoneValidator
-  center: {fileID: 4742915470990712287}
+  center: {fileID: 6250107024462053216}
   radius: 2
   obstacles:
   - {fileID: 2424770414307943190}
