@@ -21,6 +21,9 @@
   - [ ] 최종보스 → 엔딩 상자 → 엔딩 → 결과창 → 로비 (영구재화 증가)
   - [ ] 사망 / 런 포기 → 결과창
   - [ ] Debug Cheats "저장 실패 흉내" → 팝업 2단계
+  - [ ] 창 크기를 21:9, 4:3으로 바꿔 검은 띠 + HUD가 16:9 안에 남는지
+  - [ ] 복도에서 미방문 룸 입구에 문 틈(어두운 한 줄) 보이는지, 비밀방 쪽은 안 보이는지
+  - [ ] 소리 나는지 (발사/피격/처치/클리어/BGM), 설정 음량 슬라이더 반영되는지
 - [ ] 콘솔 예외 나오면 정리
 - [ ] 파일명 대소문자 확인: `UI/WeaponReloadUI.cs`, `UI/PlayerHealthUI.cs` (기존 파일, 클래스명과 대소문자만 다름. 경고 나면 파일명 수정)
 - [ ] 기존 `SampleScene`의 수동 배치 플레이어/UI가 새 시스템과 겹치는지 확인 → 정리하거나 `Game.unity`로 통일
@@ -29,7 +32,6 @@
 
 - [ ] Sorting Layer 정리 (현재 sortingOrder 숫자로만 구분: 바닥 0 / 오브젝트 10~100 / 벽 115 / 벽 앞면 120 / 가림 1000)
 - [ ] 벽 타일맵에 `CompositeCollider2D` 적용 검토 (런타임 생성 타일맵이라 `GameBootstrap.CreateTilemap`에서 추가)
-- [ ] 해상도: 16:9 고정, 필러박스/레터박스 (08 §7, 미구현)
 - [ ] 빌드 설정에 `Game.unity` 0번 확인
 - [ ] (선택) `GameBootstrap`이 만드는 오브젝트를 씬에 미리 배치해 프리팹화
 
@@ -58,38 +60,39 @@ Test_ 에셋을 **Generated 밖으로 복제**해서 수정 (생성기 재실행
   - [ ] 엔딩 룸 `EndingChest` 1개, 출구 룸 룸 오브젝트 지점
   - [ ] Bake → FloorConfig 방 목록 등록
 - [ ] 비밀 벽 표시 방식 확정 (현재 살짝 다른 색 타일)
-- [ ] 미방문 룸 "문 틈 표시" 방식 확정 → 💻 구현
+- [ ] 미방문 룸 "문 틈 표시" 그림 확정 (현재 반투명 검정 한 줄)
 
 ## 4단계 — 아트 연결 (🎨)
 
 | 대상 | 연결 위치 | 현재 |
 |---|---|---|
-| 플레이어 4방향 | `PlayerVisual` 스프라이트 필드 | 원 + 방향 삼각형 |
-| 무기 3종 | `WeaponScriptable.WeaponSprite`, `Icon` | 막대 |
+| 플레이어 4방향 | `PlayerVisual` 스프라이트 필드 | 원 (이동 통통/회피 잔상/사망 쓰러짐 모션) |
+| 무기 3종 | `WeaponScriptable.WeaponSprite`, `Icon` | 손에 든 막대 / HUD는 무기별 실루엣 |
 | 플레이어 탄 | `WeaponScriptable.ProjectilePrefab` | 작은 원 |
-| 몬스터 5종 | `MonsterDefinition` 프리팹/스프라이트 | 색 도형 (아키타입별 모양) |
+| 몬스터 5종 | `MonsterDefinition` 프리팹/스프라이트 | 색 도형 + 조준 방향 점 |
 | 보스 | `BossDefinition` 프리팹 | 큰 원 |
 | 예고 도형 | `TelegraphView` | 반투명 선/부채꼴/원 |
-| 아티팩트 | `ArtifactDefinition.Icon` | 등급 색 사각형 |
-| 상자, 상점대, 도박대, 출구 | 각 룸 컨트롤러가 만드는 오브젝트 | 사각형 + 글자 |
-| 재화/HP 보상 | `RewardPickup` | 노랑/초록 원 |
-| 이펙트 (피격, 처치, 소멸, 잠금) | `FeedbackService` | 링 확산 |
+| 아티팩트 | `ArtifactDefinition.Icon` | 필드 마름모 + 빛기둥 / 카드는 등급 색 마름모 |
+| 상자, 상점대, 도박대, 출구 | 각 룸 컨트롤러가 만드는 오브젝트 | 상자/포탈 실루엣, 상점·도박은 도형 + 글자 |
+| 재화/HP 보상 | `RewardPickup` | 동전 / 하트 |
+| 이펙트 (적중, 치명타, 처치, 소멸, 잠금 등장/소멸, 상자 개봉, 획득) | `FeedbackService` | 점 파편 + 링 확산 |
+| 가림 덮개 / 문 틈 | `FogOfWar` (`FloorContent.FogColor`) | 단색 / 반투명 검정 |
+| 기본 실루엣 전체 | `Core/PlaceholderArt` | 코드로 그린 64px 도형 |
 
 - [ ] UI 틀/아이콘 → 각 `UIView.Build()` 교체 또는 프리팹화 (`UI/Views/*`)
 - [ ] 폰트 → `GameConfig.UIFont` (지정 없으면 OS 폰트 자동 탐색)
-- [ ] 미니맵 룸 종류 아이콘
+- [ ] 미니맵 룸 종류 아이콘 (현재 글자 기호 S $ T G ? E B > *, `MinimapRenderer.RoleIcon`)
 
 ## 5단계 — 사운드 (🎨 + 💻)
 
 - [ ] 사운드 방향 확정 (00 §9.1 미정)
-- [ ] 💻 오디오 매니저 추가 → `GameEvents` 구독으로 재생, 설정 BGM/효과음 음량 연결 (현재 저장만 됨)
+- [ ] 실제 효과음/BGM 제작 → GameBootstrap 오브젝트의 `AudioService` 인스펙터 `Overrides`에 키 이름으로 연결 (`Bgm Override`는 BGM). 키 목록: shot_rifle, shot_pistol, shot_shotgun, hit, hit_crit, kill, telegraph, player_hit, player_die, dodge, just_dodge, reload, lock, clear, coin, heal, artifact, secret, boss_phase, ending, ui_click
+  - 런타임 생성 오브젝트라 인스펙터에서 지정하려면 씬에 `AudioService`를 미리 배치 (Bootstrap이 기존 것 재사용)
 
 ## 6단계 — 프로그래밍 남은 것 (💻)
 
-- [ ] 던전 생성기: 대형 전투룸(X2), 흐름 템플릿 하드 제약, 전투 환산 예산, 검증된 시드 복구 ([GameSystemPlan.md](GameSystemPlan.md) §4.1)
-- [ ] 두 번째 UI 폴백 시 도박방 생성 안 하기
-- [ ] 다음 층 배치 미리 계산
 - [ ] 아티팩트 특수 효과 / 세트 효과 구현 (2단계 결과 받고)
 - [ ] 보스 패턴 구현 (2단계 결과 받고)
 - [ ] 플레이테스트 로그 (11 프로필)
-- [ ] 첫 진입 시 층 경계~진입선 사이 가림 덮개가 잠깐 플레이어를 덮는 현상 확인
+- [ ] 비전투 룸 가림 해제 페이드(0.25초) 중 덮개가 플레이어 위에 겹치는 현상 → 거슬리면 룸 단위 덮개 분리 (03 미정 `가림 덮개의 룸 단위 페이드`)
+- [ ] 11 프로필 딸림 기능: 권총 투사체 상쇄, 스왑 강화탄 HUD 외곽선, 라이플 스택 HUD

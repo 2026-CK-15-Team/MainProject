@@ -24,11 +24,12 @@ Scripts/
  ├─ Rooms/         룸 런타임, 룸 종류별 컨트롤러, 층 감독, 가림 덮개, 비밀 벽
  ├─ Run/           06 런 흐름(RunManager), 런 계획, 영구 진행 규칙
  ├─ Save/          세이브 데이터, 저장 서비스
- ├─ CameraSystem/  02 카메라
+ ├─ CameraSystem/  02 카메라, 16:9 필러박스/레터박스
  ├─ Feedback/      09 연출 출력
+ ├─ Audio/         임시 합성 사운드 (GameEvents 구독, 설정 음량)
  ├─ UI/            08 UI 매니저, 화면/팝업 (코드로 조립)
  ├─ Editor/        자리 표시 콘텐츠 생성기, 검증기, 디버그 창
- └─ Dungeon/       (기존) 던전 생성기 — 비밀 벽 봉인, Blueprint 노출만 추가
+ └─ Dungeon/       (기존) 던전 생성기 — 비밀 벽 봉인, Blueprint 노출, 다음 층 미리 계산, 도박방 폴백만 추가
 ```
 
 ---
@@ -107,10 +108,12 @@ Boot ─ 세이브 로드(손상 → 초기화+안내) ─ 새 세이브 즉시 
 
 ### 3.2 층 (`FloorDirector`)
 
-1. `DungeonBuilder.Build(runSeed, floor)` — 기존 생성기로 방 배치, 복도 칠하기, **비밀방과 이어진 부모 입구를 벽으로 봉인**
+1. `DungeonBuilder.Build(runSeed, floor)` — 기존 생성기로 방 배치(미리 계산한 결과가 있으면 그것 사용), 복도 칠하기, **비밀방과 이어진 부모 입구를 벽으로 봉인**
 2. 방마다 `RoomRuntime` + 종류별 `RoomContent` 부착
 3. 비밀 벽(`SecretWall`) 생성, 전투룸 몬스터 구성 배정(`RunPlan.AssignCombatPresets`), 가림 덮개(`FogOfWar`)
-4. 매 프레임 플레이어 위치로 진입 판정: 바닥 경계에서 몸체 반경만큼 안쪽 = RoomEntered, 바깥 = CorridorEntered
+4. `FloorGenerated` 직후 다음 층 배치를 `Task.Run`으로 미리 계산 (순수 C# 생성기라 스레드 안전, Unity API는 메인에서만). 층 전환은 결과를 기다렸다가 오브젝트만 만듦
+5. 매 프레임 플레이어 위치로 진입 판정: 바닥 경계에서 몸체 반경만큼 안쪽 = RoomEntered, 바깥 = CorridorEntered
+6. 가림 덮개: 미방문 룸 외곽 전체 + 방문 룸과 안 이어진 복도. 방문 룸에 이어진 복도가 미방문 룸에 닿는 곳은 **문 틈**(바닥 경계 한 칸 반투명 검정)
 
 ### 3.3 전투룸 (`CombatRoomController`)
 
@@ -155,6 +158,7 @@ Cleared ─ 재방문 자유
 - 모달 그룹: 시간 정지(일시정지/조작법/설정) · 비정지(미니맵/보유 아티팩트/상점/도박/획득) · 시스템(포커스/저장 실패/안내)
 - ESC 순서 (08 §6.1): 시스템 팝업이면 무시 → 엔딩 구간 → 최상단 닫기 → 온보딩/결과/전환 중 무시 → 일시정지 토글
 - 모든 화면은 `UIView.Build()`에서 코드로 조립. 아트 들어오면 Build만 바꾸거나 프리팹으로 교체
+- 16:9: 메인 카메라 viewport를 `LetterboxCamera`가 맞추고, 각 캔버스 아래 `View16x9`(AspectRatioFitter)에 모든 화면을 둠. CanvasScaler 기준을 화면비에 따라 가로/세로로 바꿔 16:9 영역이 항상 1920x1080 단위
 
 ### 3.7 세이브
 
