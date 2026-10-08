@@ -53,6 +53,31 @@ public class PlacedRoom
 
     public void OpenDoorway(RoomSide side, int start, int width) => openings[side] = (start, width);
 
+    public bool IsOpen(RoomSide side) => openings.ContainsKey(side);
+
+    // 복도랑 이어진 문 구간(입구 칸)을 벽 두께만큼 막을 때의 칸. 비밀 벽, 가림 덮개 계산에 씀.
+    public List<WallCell> GetOpeningSealCells(RoomSide side, WallStyle style)
+    {
+        var cells = new List<WallCell>();
+        if (!openings.TryGetValue(side, out (int start, int width) opening) || !Template.HasDoorway(side)) return cells;
+        Doorway doorway = Template.GetDoorway(side);
+        int thickness = style.ThicknessOf(side);
+        WallPart part = WallStyle.PartOf(side);
+        Vector2Int inward = -side.ToOffset();
+        for (int i = 0; i < doorway.Width; i++)
+        {
+            int along = doorway.Start + i;
+            if (along < opening.start || along >= opening.start + opening.width) continue;
+            Vector2Int boundary = doorway.GetCell(Template.Size, i);
+            for (int depth = 0; depth < thickness; depth++)
+            {
+                bool isFront = side == RoomSide.Down && depth >= thickness - style.FrontRowCount;
+                cells.Add(new WallCell(boundary + inward * depth, part, isFront));
+            }
+        }
+        return cells;
+    }
+
     // 막아야 할 문 자리(방 기준 좌표). 안 쓰는 문 전체 + 복도보다 넓은 문에서 남는 칸을
     // 경계선부터 안쪽으로 그 방향 벽 두께만큼 채움.
     public List<WallCell> GetSealedCells(WallStyle style)

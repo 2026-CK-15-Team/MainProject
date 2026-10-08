@@ -25,9 +25,38 @@ public class DungeonBuilder : MonoBehaviour
     [SerializeField, Min(0)] private int testFloorIndex;
 
     private readonly List<Room> rooms = new List<Room>();
+    private readonly List<SecretLink> secretLinks = new List<SecretLink>();
 
     public IReadOnlyList<Room> Rooms => rooms;
     public Room StartRoom { get; private set; }
+    public RunConfig RunConfig => runConfig;
+    public Grid Grid => grid;
+    public FloorBlueprint Blueprint { get; private set; }
+    public FloorConfig CurrentFloor { get; private set; }
+    public IReadOnlyList<PlacedRoom> PlacedRooms => Blueprint != null ? Blueprint.Rooms : null;
+    // 부모 룸 → 비밀방 문 자리. 부모 쪽 입구는 벽으로 칠해 두고 SecretWall이 파괴를 맡음 (03-5 §4)
+    public IReadOnlyList<SecretLink> SecretLinks => secretLinks;
+
+    public class SecretLink
+    {
+        public Room Parent;
+        public Room Secret;
+        public List<WallCell> SealedCells;
+        public RoomDoor ParentDoor;
+    }
+
+    // 런타임에 코드로 만들 때 연결 (GameBootstrap)
+    public void Configure(RunConfig config, Grid targetGrid, Tilemap floorMap, Tilemap wallMap, Tilemap wallFrontMap, Transform roomParent)
+    {
+        runConfig = config;
+        grid = targetGrid;
+        corridorFloorTilemap = floorMap;
+        corridorWallTilemap = wallMap;
+        corridorWallFrontTilemap = wallFrontMap;
+        roomRoot = roomParent;
+    }
+
+    public bool IsConfigured => runConfig != null && grid != null && corridorFloorTilemap != null && corridorWallTilemap != null;
 
     public void Build(int runSeed, int floorIndex)
     {
@@ -38,6 +67,8 @@ public class DungeonBuilder : MonoBehaviour
         FloorPlan plan = RunPlanner.Plan(runConfig, runSeed)[floorIndex];
         List<RoomTemplateData> templates = floor.RoomPrefabs.Select(prefab => prefab.Template).ToList();
         FloorBlueprint blueprint = FloorGenerator.Generate(plan, templates, floor.MinRoomSpacing, style);
+        Blueprint = blueprint;
+        CurrentFloor = floor;
 
         foreach (PlacedRoom placed in blueprint.Rooms)
         {
@@ -52,9 +83,36 @@ public class DungeonBuilder : MonoBehaviour
                 StartRoom = room;
         }
 
+        SealSecretDoorways(blueprint, style, floor);
+
         Vector3Int[] floorCells = blueprint.CorridorFloor.Select(cell => (Vector3Int)cell).ToArray();
         corridorFloorTilemap.SetTiles(floorCells, Enumerable.Repeat(floor.CorridorFloorTile, floorCells.Length).ToArray());
         PaintWalls(corridorFloorTilemap, corridorWallTilemap, corridorWallFrontTilemap, blueprint.CorridorWalls, floor, floor.CorridorFloorTile);
+    }
+
+    // 비밀방과 이어진 부모 룸 입구를 벽으로 막음. 그림은 일반 벽 타일과 같음.
+    private void SealSecretDoorways(FloorBlueprint blueprint, WallStyle style, FloorConfig floor)
+    {
+        secretLinks.Clear();
+        foreach (PlacedRoom placed in blueprint.Rooms)
+        {
+            if (placed.Node.Type != RoomType.Secret || placed.Node.Neighbors.Count == 0) continue;
+            RoomNode parentNode = placed.Node.Neighbors[0];
+            PlacedRoom parentPlaced = blueprint.Rooms[parentNode.Id];
+            RoomSide side = parentNode.SideTowards(placed.Node);
+            Room parentRoom = rooms[parentNode.Id];
+            List<WallCell> cells = parentPlaced.GetOpeningSealCells(side, style);
+            PaintWalls(parentRoom.FloorTilemap, parentRoom.WallTilemap, parentRoom.WallFrontTilemap, cells, floor, frontFloorTile: null);
+
+            RoomDoor door = null;
+            foreach (RoomDoor candidate in parentRoom.GetComponentsInChildren<RoomDoor>(true))
+            {
+                if (candidate.Side != side) continue;
+                door = candidate;
+                candidate.gameObject.SetActive(false);
+            }
+            secretLinks.Add(new SecretLink { Parent = parentRoom, Secret = rooms[placed.Node.Id], SealedCells = cells, ParentDoor = door });
+        }
     }
 
     public void Clear()
@@ -69,7 +127,9 @@ public class DungeonBuilder : MonoBehaviour
                 DestroyImmediate(room.gameObject);
         }
         rooms.Clear();
+        secretLinks.Clear();
         StartRoom = null;
+        Blueprint = null;
 
         corridorFloorTilemap.ClearAllTiles();
         corridorWallTilemap.ClearAllTiles();

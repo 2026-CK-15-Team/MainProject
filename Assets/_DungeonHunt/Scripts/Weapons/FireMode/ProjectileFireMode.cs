@@ -1,13 +1,10 @@
 using UnityEngine;
 
+// 권총, 라이플: 논리 총구에서 투사체 생성 (01-2 §5.1)
 public class ProjectileFireMode : IWeaponFireMode
 {
-    public void Fire(WeaponRuntime weapon, Vector2 origin, Vector2 direction, GameObject projectilePrefab)
+    public void Fire(in AttackSnapshot snapshot, Vector2 origin, Vector2 direction, GameObject projectilePrefab)
     {
-        if (projectilePrefab == null) return;
-
-        GameObject go = Object.Instantiate(projectilePrefab, origin, Quaternion.identity);
-        if (go.TryGetComponent<Projectile>(out var projectile))
-            projectile.Launch(direction, weapon.Definition.ProjectileSpeed, weapon.Definition.Damage);
+        Projectile.Spawn(snapshot, origin, direction, projectilePrefab);
     }
 }

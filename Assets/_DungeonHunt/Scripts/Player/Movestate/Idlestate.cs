@@ -18,6 +18,7 @@ public class IdleState : IMovementState
             return;
         }
 
+        // 관성 없이 Move_DecelTime 동안 0까지 감속
         ctx.CurrentVelocity = Vector2.MoveTowards(
             ctx.CurrentVelocity, Vector2.zero, ctx.DecelSpeedPerSecond * deltaTime);
     }

@@ -14,11 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponScriptable
   WeaponType: 2
   WeaponName: TestRifle
-  MaxAmmo: 20
-  ReloadTime: 1.2
-  SwapReadyDelay: 0.2
-  FireInterval: 0.1
+  MaxAmmo: 30
+  ReloadTime: 1.45
+  SwapReadyDelay: 0.12
+  FireInterval: 0.08
   Damage: 6
-  ProjectileSpeed: 14
-  Range: 0
+  ProjectileSpeed: 22
+  Range: 7
   ConeAngle: 0
+  ProjectileHitRadius: 0.12
+  KnockbackDistance: 0.05
+  Icon: {fileID: 0}
+  WeaponSprite: {fileID: 0}
+  PlaceholderColor: {r: 0.5, g: 0.8, b: 0.5, a: 1}
+  ProjectilePrefab: {fileID: 0}
