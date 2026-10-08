@@ -19,8 +19,8 @@ public class FloorConfig : ScriptableObject
     [Tooltip("이 층에서 쓸 방 프리팹. 종류별로 최소 1개씩 있어야 함.")]
     public Room[] RoomPrefabs;
 
-    [Tooltip("방 사이 최소 간격(칸). 복도 꺾을 공간(문 폭 + 벽 두께)보다 작으면 알아서 늘어남.")]
-    [Min(0)] public int MinRoomSpacing = 6;
+    [Tooltip("방 사이 최소 간격(칸). 곧은 복도만 지나는 간격에 씀. 꺾이는 복도가 지나는 간격은 꺾을 공간(문 폭 + 벽 두께)만큼 알아서 늘어남.")]
+    [Min(1)] public int MinRoomSpacing = 3;
 
     [Header("타일")]
     public TileBase CorridorFloorTile;

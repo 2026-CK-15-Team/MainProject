@@ -29,7 +29,7 @@ Project 창 우클릭 → `Create > Dungeon`
 | Has Loop | 순환 1개 만들지 여부. 켜면 전투방 4개 이상 필요 |
 | Has Stairs | 보스방 뒤 계단방 여부. 마지막 층은 끄면 됨 |
 | Room Prefabs | 이 층에서 쓸 방 프리팹들. 나오는 방 종류마다 최소 1개 |
-| Min Room Spacing | 방 사이 최소 간격(칸). 복도 꺾을 공간(문 폭 + 벽 두께)보다 작으면 알아서 늘어남 |
+| Min Room Spacing | 방 사이 최소 간격(칸, 기본 3). 곧은 복도만 지나는 간격에 씀. 꺾이는 복도가 지나는 간격만 꺾을 공간(문 폭 + 벽 두께)만큼 늘어남 |
 | Corridor Floor Tile | 복도 바닥 타일 |
 | Top / Bottom / Side Wall Tile | 위·아래·좌우 벽 타일. 복도 벽 + 안 쓰는 문 막을 때 씀 |
 | Bottom Wall Front Tile | 아래 벽이 바닥 위로 겹쳐 캐릭터 가리는 칸 타일 |
@@ -111,7 +111,7 @@ foreach (Room room in dungeonBuilder.Rooms)  // 생성된 방 전부
 RunPlanner      런 시드 → 층별 계획 (층 시드, 도박·비밀방 배정)
 DungeonGenerator 층 계획 → 방 연결 구조 (격자 위 그래프)
 TemplateSelector 방마다 맞는 템플릿 배정
-LayoutSolver    격자 → 실제 타일 좌표, Z자 복도
+LayoutSolver    격자 → 실제 타일 좌표 (방은 칸 안에서 복도가 짧고 덜 꺾이는 자리로), Z자 복도
 FloorGenerator  위 과정 묶어주는 입구
 DungeonBuilder  결과를 씬에 생성
 LayoutValidator 규칙 검사

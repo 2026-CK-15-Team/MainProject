@@ -324,7 +324,7 @@ public static class PlaceholderContentGenerator
             floor.CombatRoomCount = combatCounts[f];
             floor.HasLoop = loops[f];
             floor.HasStairs = true; // 3층의 계단방 = RunEndTreasureRoom
-            floor.MinRoomSpacing = 6;
+            floor.MinRoomSpacing = 3;
             floor.RoomPrefabs = new[]
             {
                 rooms["Start"], rooms["Combat_A"], rooms["Combat_B"], rooms["Combat_C"], rooms["Treasure"], rooms["Shop"],

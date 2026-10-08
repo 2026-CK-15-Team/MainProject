@@ -4,7 +4,9 @@ using UnityEngine;
 // 격자 위 방 연결 구조를 실제 타일 좌표로 펼침.
 //
 // 열 폭은 그 열에서 제일 넓은 방, 행 높이는 그 행에서 제일 높은 방에 맞추고 열·행 사이에 간격 둠.
-// 방은 자기 칸 가운데에 놓임. 복도는 문에서 곧게 나와서 간격 안에서만 한 번 꺾여 상대 문으로 들어감(Z자).
+// 방은 자기 칸 안에서 이어진 이웃 쪽 끝에 붙임(한 축에 이웃이 한쪽만 있을 때). 양쪽이거나 없으면 가운데.
+// 간격은 그 간격을 지나는 복도 중 꺾이는 게 있으면 꺾을 공간만큼, 전부 곧으면 최소 간격만.
+// 복도는 문에서 곧게 나와서 간격 안에서만 한 번 꺾여 상대 문으로 들어감(Z자).
 // 좌우 연결은 열 사이 간격, 상하 연결은 행 사이 간격만 쓰고 간격 교차 구역은 비워둠
 // → 복도끼리, 복도랑 방이 겹치거나 붙을 일 없음.
 public static class LayoutSolver
@@ -14,33 +16,156 @@ public static class LayoutSolver
     {
         // 간격 안에서 꺾일 때 필요한 공간: 복도 폭 + 꺾인 구간 양쪽 벽 + 꺾이기 전후 직선 1칸씩
         int doorWidth = MaxDoorwayWidth(templates);
-        var spacing = new[]
+        var bendSpacing = new[]
         {
             Mathf.Max(minSpacing, doorWidth + style.Side * 2 + 2),
             Mathf.Max(minSpacing, doorWidth + style.Top + style.Bottom + 2)
         };
         var bands = new[]
         {
-            new Bands(layout, templates, axis: 0, spacing[0]),
-            new Bands(layout, templates, axis: 1, spacing[1])
+            new Bands(layout, templates, axis: 0),
+            new Bands(layout, templates, axis: 1)
         };
+
+        // 칸 안 위치 (칸 시작 기준). 간격과 무관하게 먼저 정함.
+        // x 위치는 좌우 복도 길이와 상하 복도 꺾임만, y 위치는 그 반대만 바꾸므로 축마다 따로 최적화
+        int[] xs = OptimizeOffsets(layout, templates, bands[0], 0, bendSpacing[1] - minSpacing);
+        int[] ys = OptimizeOffsets(layout, templates, bands[1], 1, bendSpacing[0] - minSpacing);
+        var offsets = new Vector2Int[layout.Rooms.Count];
+        for (int i = 0; i < offsets.Length; i++) offsets[i] = new Vector2Int(xs[i], ys[i]);
+
+        // 간격별로 꺾이는 복도가 있는지 보고 간격 크기 정함. 같은 열(행)끼리라 칸 시작은 상쇄돼서 위치 차이만 보면 됨
+        for (int axis = 0; axis < 2; axis++)
+            bands[axis].SetGaps(minSpacing, bendSpacing[axis], gap => NeedsBend(layout, templates, offsets, axis, gap));
 
         var rooms = new List<PlacedRoom>(layout.Rooms.Count);
         foreach (RoomNode node in layout.Rooms)
         {
-            RoomTemplateData template = templates[node.Id];
             var position = new Vector2Int(
-                bands[0].Start(node.Cell.x) + (bands[0].Size(node.Cell.x) - template.Size.x) / 2,
-                bands[1].Start(node.Cell.y) + (bands[1].Size(node.Cell.y) - template.Size.y) / 2);
-            rooms.Add(new PlacedRoom(node, templateIndices[node.Id], template, position));
+                bands[0].Start(node.Cell.x) + offsets[node.Id].x,
+                bands[1].Start(node.Cell.y) + offsets[node.Id].y);
+            rooms.Add(new PlacedRoom(node, templateIndices[node.Id], templates[node.Id], position));
         }
 
         var blueprint = new FloorBlueprint(layout, rooms);
         foreach (RoomLink link in layout.Links)
-            blueprint.AddCorridor(CarveCorridor(link, rooms[link.A.Id], rooms[link.B.Id], bands, spacing, style));
+            blueprint.AddCorridor(CarveCorridor(link, rooms[link.A.Id], rooms[link.B.Id], bands, style));
 
         BuildWalls(blueprint, style);
         return blueprint;
+    }
+
+    // 한 축의 칸 안 위치를 정함. 비용 = 이 축 방향 복도의 칸 안 길이 + 반대 축 복도가 꺾이면 bendPenalty.
+    // 시작값(이웃 쪽 끝 붙이기)에서 방 Id 순서로 후보 위치를 바꿔 보며 비용이 줄면 채택, 몇 바퀴 반복 (결정적)
+    private const int OptimizePasses = 4;
+
+    private static int[] OptimizeOffsets(DungeonLayout layout, IReadOnlyList<RoomTemplateData> templates, Bands band, int axis, int bendPenalty)
+    {
+        int count = layout.Rooms.Count;
+        var offsets = new int[count];
+        var free = new int[count];
+        foreach (RoomNode node in layout.Rooms)
+        {
+            free[node.Id] = band.Size(node.Cell[axis]) - templates[node.Id].Size[axis];
+            offsets[node.Id] = AlignedOffset(node, axis, free[node.Id]);
+        }
+
+        for (int pass = 0; pass < OptimizePasses; pass++)
+        {
+            bool changed = false;
+            foreach (RoomNode node in layout.Rooms)
+            {
+                int best = offsets[node.Id];
+                int bestCost = RoomCost(node, best, offsets, templates, band, axis, bendPenalty);
+                foreach (int candidate in Candidates(node, offsets, free, templates, axis))
+                {
+                    int cost = RoomCost(node, candidate, offsets, templates, band, axis, bendPenalty);
+                    if (cost < bestCost) { bestCost = cost; best = candidate; }
+                }
+                if (best != offsets[node.Id]) { offsets[node.Id] = best; changed = true; }
+            }
+            if (!changed) break;
+        }
+        return offsets;
+    }
+
+    // 후보: 양 끝, 가운데, 반대 축 이웃과 문 위치가 맞는 자리
+    private static IEnumerable<int> Candidates(RoomNode node, int[] offsets, int[] free, IReadOnlyList<RoomTemplateData> templates, int axis)
+    {
+        int max = free[node.Id];
+        yield return 0;
+        yield return max;
+        yield return max / 2;
+        foreach (RoomNode neighbor in node.Neighbors)
+        {
+            if (neighbor.Cell[axis] != node.Cell[axis]) continue; // 반대 축 연결만 (같은 열/행)
+            RoomSide side = node.SideTowards(neighbor);
+            int mine = templates[node.Id].GetDoorway(side).Start;
+            int theirs = offsets[neighbor.Id] + templates[neighbor.Id].GetDoorway(side.Opposite()).Start;
+            int aligned = theirs - mine;
+            if (aligned >= 0 && aligned <= max) yield return aligned;
+        }
+    }
+
+    private static int RoomCost(RoomNode node, int offset, int[] offsets, IReadOnlyList<RoomTemplateData> templates, Bands band, int axis, int bendPenalty)
+    {
+        int cost = 0;
+        int size = templates[node.Id].Size[axis];
+        foreach (RoomNode neighbor in node.Neighbors)
+        {
+            if (neighbor.Cell[1 - axis] == node.Cell[1 - axis])
+            {
+                // 이 축 방향 연결: 칸 끝까지 남는 길이가 복도 길이에 더해짐
+                cost += neighbor.Cell[axis] > node.Cell[axis] ? band.Size(node.Cell[axis]) - offset - size : offset;
+            }
+            else
+            {
+                // 반대 축 연결: 문 구간이 폭만큼 안 겹치면 꺾임
+                RoomSide side = node.SideTowards(neighbor);
+                Doorway mine = templates[node.Id].GetDoorway(side);
+                Doorway theirs = templates[neighbor.Id].GetDoorway(side.Opposite());
+                int width = Mathf.Min(mine.Width, theirs.Width);
+                ChooseLanes(offset + mine.Start, mine.Width, offsets[neighbor.Id] + theirs.Start, theirs.Width, width, out int laneA, out int laneB);
+                if (laneA != laneB) cost += bendPenalty;
+            }
+        }
+        return cost;
+    }
+
+    // 한 축에서 이어진 이웃이 한쪽에만 있으면 그쪽 칸 끝에 붙임 → 복도가 짧아짐
+    private static int AlignedOffset(RoomNode node, int axis, int free)
+    {
+        bool low = false, high = false;
+        foreach (RoomNode neighbor in node.Neighbors)
+        {
+            if (neighbor.Cell[1 - axis] != node.Cell[1 - axis]) continue;
+            if (neighbor.Cell[axis] < node.Cell[axis]) low = true;
+            else high = true;
+        }
+        if (low && !high) return 0;
+        if (high && !low) return free;
+        return free / 2;
+    }
+
+    // gap = 칸 gap과 gap+1 사이 간격. 그 간격을 지나는 복도 중 하나라도 꺾이면 true
+    private static bool NeedsBend(DungeonLayout layout, IReadOnlyList<RoomTemplateData> templates, Vector2Int[] offsets, int main, int gap)
+    {
+        int cross = 1 - main;
+        foreach (RoomLink link in layout.Links)
+        {
+            RoomNode a = link.A, b = link.B;
+            if (a.Cell[cross] != b.Cell[cross]) continue;
+            if (a.Cell[main] > b.Cell[main]) (a, b) = (b, a);
+            if (a.Cell[main] != gap) continue;
+
+            RoomSide sideA = a.SideTowards(b);
+            Doorway doorA = templates[a.Id].GetDoorway(sideA);
+            Doorway doorB = templates[b.Id].GetDoorway(sideA.Opposite());
+            int width = Mathf.Min(doorA.Width, doorB.Width);
+            ChooseLanes(offsets[a.Id][cross] + doorA.Start, doorA.Width, offsets[b.Id][cross] + doorB.Start, doorB.Width, width, out int laneA, out int laneB);
+            if (laneA != laneB) return true;
+        }
+        return false;
     }
 
     private static int MaxDoorwayWidth(IReadOnlyList<RoomTemplateData> templates)
@@ -55,7 +180,7 @@ public static class LayoutSolver
     }
 
     // 좌우/상하 연결을 같은 코드로 처리하려고 main(연결 방향), cross(수직 방향) 축으로 계산함.
-    private static Corridor CarveCorridor(RoomLink link, PlacedRoom a, PlacedRoom b, Bands[] bands, int[] spacing, WallStyle style)
+    private static Corridor CarveCorridor(RoomLink link, PlacedRoom a, PlacedRoom b, Bands[] bands, WallStyle style)
     {
         int main = a.Node.Cell.x != b.Node.Cell.x ? 0 : 1;
         int cross = 1 - main;
@@ -88,7 +213,7 @@ public static class LayoutSolver
             // 상하 연결이면 꺾인 구간이 가로라서 아래 벽이 a 쪽, 위 벽이 b 쪽.
             int lowWall = main == 0 ? style.Side : style.Bottom;
             int highWall = main == 0 ? style.Side : style.Top;
-            int slack = spacing[main] - (width + lowWall + highWall + 2);
+            int slack = bands[main].GapAfter(a.Node.Cell[main]) - (width + lowWall + highWall + 2);
             int bend = bands[main].End(a.Node.Cell[main]) + lowWall + 1 + slack / 2;
 
             AddRect(cells, main, from, bend - 1, laneA, laneA + width - 1);
@@ -180,14 +305,15 @@ public static class LayoutSolver
         return false;
     }
 
-    // 격자 한 축(열 또는 행)의 칸별 시작 좌표랑 크기
+    // 격자 한 축(열 또는 행)의 칸별 시작 좌표랑 크기, 칸 사이 간격
     private class Bands
     {
         private readonly int minCell;
         private readonly int[] starts;
         private readonly int[] sizes;
+        private readonly int[] gaps;
 
-        public Bands(DungeonLayout layout, IReadOnlyList<RoomTemplateData> templates, int axis, int spacing)
+        public Bands(DungeonLayout layout, IReadOnlyList<RoomTemplateData> templates, int axis)
         {
             minCell = int.MaxValue;
             int maxCell = int.MinValue;
@@ -203,14 +329,22 @@ public static class LayoutSolver
                 int index = room.Cell[axis] - minCell;
                 sizes[index] = Mathf.Max(sizes[index], templates[room.Id].Size[axis]);
             }
-
             starts = new int[sizes.Length];
+            gaps = new int[sizes.Length];
+        }
+
+        // needsBend(칸): 그 칸과 다음 칸 사이를 지나는 복도 중 꺾이는 게 있는지
+        public void SetGaps(int straightGap, int bendGap, System.Func<int, bool> needsBend)
+        {
+            for (int i = 0; i < sizes.Length; i++)
+                gaps[i] = needsBend(i + minCell) ? bendGap : straightGap;
             for (int i = 1; i < sizes.Length; i++)
-                starts[i] = starts[i - 1] + sizes[i - 1] + spacing;
+                starts[i] = starts[i - 1] + sizes[i - 1] + gaps[i - 1];
         }
 
         public int Start(int cell) => starts[cell - minCell];
         public int Size(int cell) => sizes[cell - minCell];
         public int End(int cell) => Start(cell) + Size(cell);
+        public int GapAfter(int cell) => gaps[cell - minCell];
     }
 }
