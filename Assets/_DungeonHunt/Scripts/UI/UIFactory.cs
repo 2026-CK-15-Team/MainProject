@@ -85,6 +85,7 @@ public static class UIFactory
         colors.fadeDuration = 0.05f;
         button.colors = colors;
         button.navigation = new Navigation { mode = Navigation.Mode.None };
+        button.onClick.AddListener(() => GameServices.Audio?.PlayUIClick());
         if (onClick != null) button.onClick.AddListener(new UnityAction(onClick));
         Text label = Label("Text", image.transform, text, fontSize, TextAnchor.MiddleCenter);
         Stretch(label.rectTransform, 6f);

@@ -141,7 +141,7 @@ public class CameraController : MonoBehaviour
         Vector2 delta = cursor - playerScreen;
         float d = delta.magnitude;
         if (d < 0.5f) return Vector2.zero;
-        float ratio = Mathf.Clamp01(d / (Screen.height * 0.5f));
+        float ratio = Mathf.Clamp01(d / (Camera.pixelHeight * 0.5f)); // 16:9 게임 뷰 기준
         return delta / d * Balance.AimOffsetDistance * ratio;
     }
 

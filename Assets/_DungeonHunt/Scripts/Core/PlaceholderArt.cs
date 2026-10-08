@@ -16,6 +16,75 @@ public static class PlaceholderArt
     public static Sprite Square => square != null ? square : square = CreateSprite(DrawSquare());
     public static Sprite Triangle => triangle != null ? triangle : triangle = CreateSprite(DrawTriangle());
 
+    // 아이콘용 실루엣 (아트 없을 때 HUD/월드 오브젝트 구분용)
+    private static Sprite lockIcon, heart, diamond, chest, portal, rifle, pistol, shotgun, coin;
+    public static Sprite Lock => lockIcon != null ? lockIcon : lockIcon = CreateSprite(DrawMask(LockShape));
+    public static Sprite Heart => heart != null ? heart : heart = CreateSprite(DrawMask(HeartShape));
+    public static Sprite Diamond => diamond != null ? diamond : diamond = CreateSprite(DrawMask((u, v) => Mathf.Abs(u - 0.5f) + Mathf.Abs(v - 0.5f) <= 0.48f));
+    public static Sprite Chest => chest != null ? chest : chest = CreateSprite(DrawMask(ChestShape));
+    public static Sprite Portal => portal != null ? portal : portal = CreateSprite(DrawMask(PortalShape));
+    public static Sprite Coin => coin != null ? coin : coin = CreateSprite(DrawMask(CoinShape));
+
+    public static Sprite WeaponIcon(WeaponType type) => type switch
+    {
+        WeaponType.Rifle => rifle != null ? rifle : rifle = CreateSprite(DrawMask(RifleShape)),
+        WeaponType.Pistol => pistol != null ? pistol : pistol = CreateSprite(DrawMask(PistolShape)),
+        _ => shotgun != null ? shotgun : shotgun = CreateSprite(DrawMask(ShotgunShape)),
+    };
+
+    private static bool Box(float u, float v, float x0, float y0, float x1, float y1) => u >= x0 && u <= x1 && v >= y0 && v <= y1;
+
+    private static bool LockShape(float u, float v)
+    {
+        if (Box(u, v, 0.18f, 0.08f, 0.82f, 0.55f)) return !(Box(u, v, 0.46f, 0.22f, 0.54f, 0.4f)); // 몸통 + 열쇠 구멍
+        float d = Vector2.Distance(new Vector2(u, v), new Vector2(0.5f, 0.55f));
+        return v >= 0.55f && d <= 0.3f && d >= 0.18f;                                                    // 고리
+    }
+
+    private static bool HeartShape(float u, float v)
+    {
+        float x = (u - 0.5f) * 2.4f, y = (v - 0.45f) * 2.4f;
+        float a = x * x + y * y - 1f;
+        return a * a * a - x * x * y * y * y <= 0f;
+    }
+
+    private static bool ChestShape(float u, float v)
+    {
+        if (!Box(u, v, 0.08f, 0.15f, 0.92f, 0.8f)) return false;
+        if (Box(u, v, 0.08f, 0.52f, 0.92f, 0.57f)) return false;            // 뚜껑 틈
+        return !Box(u, v, 0.45f, 0.4f, 0.55f, 0.52f) || v < 0.42f;           // 자물쇠 자리
+    }
+
+    private static bool PortalShape(float u, float v)
+    {
+        float d = Vector2.Distance(new Vector2(u, v), new Vector2(0.5f, 0.5f));
+        return (d <= 0.48f && d >= 0.38f) || (d <= 0.28f && d >= 0.2f) || d <= 0.08f;
+    }
+
+    private static bool CoinShape(float u, float v)
+    {
+        float d = Vector2.Distance(new Vector2(u, v), new Vector2(0.5f, 0.5f));
+        return d <= 0.48f && !(d <= 0.32f && d >= 0.24f);
+    }
+
+    private static bool RifleShape(float u, float v)
+        => Box(u, v, 0.3f, 0.5f, 0.97f, 0.58f)      // 총열
+        || Box(u, v, 0.22f, 0.42f, 0.68f, 0.64f)    // 몸체
+        || Box(u, v, 0.03f, 0.38f, 0.24f, 0.6f)     // 개머리
+        || Box(u, v, 0.4f, 0.22f, 0.48f, 0.44f)     // 손잡이
+        || Box(u, v, 0.54f, 0.2f, 0.63f, 0.44f);    // 탄창
+
+    private static bool PistolShape(float u, float v)
+        => Box(u, v, 0.15f, 0.55f, 0.85f, 0.75f)    // 슬라이드
+        || (v >= 0.15f && v <= 0.58f && u >= 0.2f + (0.58f - v) * 0.25f && u <= 0.4f + (0.58f - v) * 0.25f); // 기울어진 손잡이
+
+    private static bool ShotgunShape(float u, float v)
+        => Box(u, v, 0.28f, 0.58f, 0.97f, 0.66f)    // 위 총열
+        || Box(u, v, 0.28f, 0.48f, 0.97f, 0.55f)    // 아래 총열
+        || Box(u, v, 0.58f, 0.38f, 0.78f, 0.48f)    // 펌프
+        || Box(u, v, 0.03f, 0.36f, 0.3f, 0.64f)     // 개머리
+        || Box(u, v, 0.3f, 0.26f, 0.38f, 0.48f);    // 손잡이
+
     // 스프라이트 렌더러/라인 렌더러 공용 기본 머티리얼
     public static Material LineMaterial
     {
@@ -135,6 +204,27 @@ public static class PlaceholderArt
                 float alpha = Mathf.Clamp01(outer - d);
                 if (hollow) alpha = Mathf.Min(alpha, Mathf.Clamp01(d - inner));
                 pixels[y * Resolution + x] = new Color32(255, 255, 255, (byte)(alpha * 255));
+            }
+        }
+        texture.SetPixels32(pixels);
+        texture.Apply();
+        return texture;
+    }
+
+    // 정규화 좌표(0~1) 판정 함수로 실루엣 그리기. 2x2 슈퍼샘플로 가장자리 부드럽게
+    private static Texture2D DrawMask(System.Func<float, float, bool> inside)
+    {
+        Texture2D texture = NewTexture();
+        var pixels = new Color32[Resolution * Resolution];
+        for (int y = 0; y < Resolution; y++)
+        {
+            for (int x = 0; x < Resolution; x++)
+            {
+                int hits = 0;
+                for (int sy = 0; sy < 2; sy++)
+                    for (int sx = 0; sx < 2; sx++)
+                        if (inside((x + 0.25f + sx * 0.5f) / Resolution, (y + 0.25f + sy * 0.5f) / Resolution)) hits++;
+                pixels[y * Resolution + x] = new Color32(255, 255, 255, (byte)(hits * 255 / 4));
             }
         }
         texture.SetPixels32(pixels);

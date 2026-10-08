@@ -40,7 +40,7 @@ public static class MinimapRenderer
         RoomRole.EliteGate => "E",
         RoomRole.FinalBoss => "B",
         RoomRole.FloorExit => ">",
-        RoomRole.RunEndTreasure => "★",
+        RoomRole.RunEndTreasure => "*",
         _ => "",
     };
 
@@ -73,9 +73,8 @@ public static class MinimapRenderer
         {
             if (!room.Visited) continue;
             Color fill = room == floor.CurrentRoom ? CurrentRoom : room == hover ? Hover : VisitedRoom;
-            RoomNavGrid nav = room.Nav;
-            foreach (Vector2Int cell in nav.WalkableCells())
-                Set(pixels, room.CellBounds.position + cell, fill);
+            foreach (Vector2Int cell in room.FloorCells)
+                Set(pixels, cell, fill);
 
             // 출구 표시: 쓰는 문 자리 (파괴 전 비밀 벽 제외)
             PlacedRoom placed = floor.PlacedOf(room);
@@ -92,15 +91,7 @@ public static class MinimapRenderer
                 }
             }
 
-            // 종류 아이콘: 외접 사각형 중심 (깎인 칸이면 가까운 바닥 칸)
-            Color icon = RoleColor(room.Role);
-            if (icon.a > 0f)
-            {
-                Vector2Int center = Vector2Int.FloorToInt(room.SafeCenter());
-                for (int dx = -1; dx <= 1; dx++)
-                    for (int dy = -1; dy <= 1; dy++)
-                        Set(pixels, center + new Vector2Int(dx, dy), icon);
-            }
+            // 종류 아이콘은 그림 위 UI 글자로 (MinimapWidget, ExpandedMapView)
         }
 
         Texture.SetPixels32(pixels);
@@ -145,22 +136,56 @@ public static class MinimapRenderer
     }
 
     public static void Invalidate() => lastSignature = -1;
+
+    // 종류 아이콘 위치: 외접 사각형 중심, 깎인 칸이면 가장 가까운 바닥 칸 (08 §4.1)
+    public static Vector2 IconAnchor(RoomRuntime room)
+    {
+        Vector2 center = room.CellBounds.center;
+        Vector2Int centerCell = Vector2Int.FloorToInt(center);
+        float best = float.MaxValue;
+        Vector2 result = center;
+        foreach (Vector2Int cell in room.FloorCells)
+        {
+            if (cell == centerCell) return center;
+            float d = (cell + new Vector2(0.5f, 0.5f) - center).sqrMagnitude;
+            if (d < best) { best = d; result = cell + new Vector2(0.5f, 0.5f); }
+        }
+        return result;
+    }
+
+    public static Text CreateIcon(Transform parent, RoomRole role, int size)
+    {
+        Text label = UIFactory.Label("Icon_" + role, parent, RoleIcon(role), size, TextAnchor.MiddleCenter, RoleColor(role));
+        label.fontStyle = FontStyle.Bold;
+        var outline = label.gameObject.AddComponent<Outline>();
+        outline.effectColor = new Color(0f, 0f, 0f, 0.9f);
+        outline.effectDistance = new Vector2(1.5f, -1.5f);
+        label.raycastTarget = false;
+        return label;
+    }
 }
 
-// 상시 HUD 미니맵: 플레이어 중심, 1배 룸 하나와 출구가 들어오는 범위
+// 상시 HUD 미니맵: 플레이어 중심, 1배 룸 하나와 출구가 들어오는 범위. 방문한 룸에 종류 아이콘
 public class MinimapWidget
 {
     private RawImage image;
     private Image playerDot;
     private RectTransform root;
+    private RectTransform iconRoot;
+    private readonly Dictionary<RoomRuntime, Text> icons = new Dictionary<RoomRuntime, Text>();
+    private FloorDirector iconFloor;
+    private int iconFloorIndex = -1;
 
     public void Create(RectTransform parent)
     {
         Image frame = UIFactory.Panel("Minimap", parent, new Color(0f, 0f, 0f, 0.5f));
         UIFactory.Place(frame.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-30f, -30f), new Vector2(300f, 300f));
         root = frame.rectTransform;
+        frame.gameObject.AddComponent<RectMask2D>();
         image = UIFactory.Raw("Map", root);
         UIFactory.Stretch(image.rectTransform, 6f);
+        iconRoot = UIFactory.CreateRect("Icons", image.rectTransform);
+        UIFactory.Stretch(iconRoot);
         playerDot = UIFactory.Panel("Player", root, new Color(1f, 0.3f, 0.3f));
         UIFactory.Place(playerDot.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(10f, 10f));
     }
@@ -175,7 +200,45 @@ public class MinimapWidget
         float range = GameBalance.Current.UI.MinimapHUDViewRange;
         RectInt bounds = MinimapRenderer.Bounds;
         Vector2 p = player.Position - (Vector2)bounds.position;
-        image.uvRect = new Rect((p.x - range * 0.5f) / texture.width, (p.y - range * 0.5f) / texture.height, range / texture.width, range / texture.height);
+        Rect uv = new Rect((p.x - range * 0.5f) / texture.width, (p.y - range * 0.5f) / texture.height, range / texture.width, range / texture.height);
+        image.uvRect = uv;
+        UpdateIcons(texture, bounds, uv);
+    }
+
+    private void UpdateIcons(Texture2D texture, RectInt bounds, Rect uv)
+    {
+        FloorDirector floor = GameServices.Floor;
+        if (floor == null) return;
+        // 층이 바뀌면 이전 층 아이콘 전부 제거 (08 §5.1 이전 층은 완전히 사라짐)
+        if (floor != iconFloor || floor.FloorIndex != iconFloorIndex || (icons.Count > 0 && !System.Linq.Enumerable.Contains(floor.Rooms, First())))
+        {
+            UIFactory.Clear(iconRoot);
+            icons.Clear();
+            iconFloor = floor;
+            iconFloorIndex = floor.FloorIndex;
+        }
+        Vector2 size = image.rectTransform.rect.size;
+        foreach (RoomRuntime room in floor.Rooms)
+        {
+            if (!room.Visited || string.IsNullOrEmpty(MinimapRenderer.RoleIcon(room.Role))) continue;
+            if (!icons.TryGetValue(room, out Text icon))
+            {
+                icon = MinimapRenderer.CreateIcon(iconRoot, room.Role, 26);
+                icon.rectTransform.anchorMin = icon.rectTransform.anchorMax = Vector2.zero;
+                icon.rectTransform.sizeDelta = new Vector2(40f, 32f);
+                icons[room] = icon;
+            }
+            Vector2 anchor = MinimapRenderer.IconAnchor(room) - (Vector2)bounds.position;
+            Vector2 uvPos = new Vector2(anchor.x / texture.width, anchor.y / texture.height);
+            Vector2 local = new Vector2((uvPos.x - uv.x) / uv.width * size.x, (uvPos.y - uv.y) / uv.height * size.y);
+            icon.rectTransform.anchoredPosition = local;
+        }
+    }
+
+    private RoomRuntime First()
+    {
+        foreach (RoomRuntime room in icons.Keys) return room;
+        return null;
     }
 }
 
@@ -229,11 +292,19 @@ public class ExpandedMapView : UIView
         foreach (RoomRuntime room in GameServices.Floor.Rooms)
         {
             if (!room.Visited) continue;
-            string icon = MinimapRenderer.RoleIcon(room.Role) + RemainingItems(room);
-            if (string.IsNullOrEmpty(icon)) continue;
-            Text label = UIFactory.Label("Icon", iconRoot, icon, 22, TextAnchor.MiddleCenter, Color.black);
-            Vector2 pos = CellToLocal(room.SafeCenter() + new Vector2(0f, 1.6f), scale);
-            UIFactory.Place(label.rectTransform, new Vector2(0f, 0f), new Vector2(0.5f, 0.5f), pos, new Vector2(160f, 30f));
+            Vector2 pos = CellToLocal(MinimapRenderer.IconAnchor(room), scale);
+            if (!string.IsNullOrEmpty(MinimapRenderer.RoleIcon(room.Role)))
+            {
+                Text icon = MinimapRenderer.CreateIcon(iconRoot, room.Role, 30);
+                UIFactory.Place(icon.rectTransform, Vector2.zero, new Vector2(0.5f, 0.5f), pos, new Vector2(48f, 40f));
+            }
+            // 남은 아이템은 종류 아이콘 옆에 종류마다 하나 (개수 없음)
+            string items = RemainingItems(room);
+            if (items.Length == 0) continue;
+            Text label = UIFactory.Label("Items", iconRoot, items, 22, TextAnchor.MiddleLeft, Color.white);
+            label.gameObject.AddComponent<Outline>().effectColor = Color.black;
+            label.raycastTarget = false;
+            UIFactory.Place(label.rectTransform, Vector2.zero, new Vector2(0f, 0.5f), pos + new Vector2(22f, 0f), new Vector2(120f, 30f));
         }
     }
 
@@ -248,9 +319,9 @@ public class ExpandedMapView : UIView
             if (r.Kind == RewardKind.Currency) currency = true; else heal = true;
         }
         string s = "";
-        if (artifact) s += " ◆";
-        if (currency) s += " ●";
-        if (heal) s += " ♥";
+        if (artifact) s += "<color=#FFD24D>◆</color>";
+        if (currency) s += "<color=#FFE680>●</color>";
+        if (heal) s += "<color=#FF6070>♥</color>";
         return s;
     }
 

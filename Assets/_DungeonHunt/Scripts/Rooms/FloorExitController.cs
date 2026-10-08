@@ -5,7 +5,7 @@ public class FloorExitController : RoomContent
 {
     protected override void OnBound()
     {
-        RoomInteractable portal = RoomInteractable.Create("FloorExit", Runtime.transform, Runtime.GetPoint(RoomPointKind.RoomObject), PlaceholderArt.Ring, new Color(0.4f, 0.8f, 1f), 1.0f, "다음 층");
+        RoomInteractable portal = RoomInteractable.Create("FloorExit", Runtime.transform, Runtime.GetPoint(RoomPointKind.RoomObject), PlaceholderArt.Portal, new Color(0.4f, 0.8f, 1f), 1.0f, "다음 층");
         portal.OnInteract = _ => GameServices.Run?.ExitFloor();
     }
 }

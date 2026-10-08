@@ -28,9 +28,28 @@ public class RoomDoor : MonoBehaviour
     public void SetLocked(bool locked)
     {
         if (barrier == null) barrier = GetComponent<Collider2D>();
+        // 보이던 잠금 이펙트 기준 (초기화 때 SetLocked(false)로는 연출 안 나옴)
+        bool wasVisible = lockVisual != null && lockVisual.activeSelf;
         barrier.enabled = locked;
         EnsureVisual();
         if (lockVisual != null) lockVisual.SetActive(locked);
+
+        // 잠금 이펙트 등장/소멸 연출 (09 §3)
+        if (wasVisible == locked || !Application.isPlaying || GameServices.Feedback == null) return;
+        if (GameServices.Run != null && GameServices.Run.IsTransitioning) return; // 층 생성 중에는 연출 없음
+        Bounds bounds = VisualBounds();
+        if (locked) GameServices.Feedback.SpawnLockAppear(bounds);
+        else GameServices.Feedback.SpawnLockRelease(bounds);
+    }
+
+    private Bounds VisualBounds()
+    {
+        if (lockVisual != null && lockVisual.TryGetComponent(out SpriteRenderer renderer)) return renderer.bounds;
+        bool enabled = barrier.enabled;
+        barrier.enabled = true;
+        Bounds bounds = barrier.bounds;
+        barrier.enabled = enabled;
+        return bounds;
     }
 
     private void EnsureVisual()

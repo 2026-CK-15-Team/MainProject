@@ -24,6 +24,7 @@ public class GameBootstrap : MonoBehaviour
         GetOrAdd<RunWallet>(gameObject);
         GetOrAdd<ArtifactSystem>(gameObject);
         GetOrAdd<FeedbackService>(gameObject);
+        GetOrAdd<AudioService>(gameObject);
 
         EnsureCamera();
         DungeonBuilder builder = EnsureDungeon();
@@ -56,6 +57,7 @@ public class GameBootstrap : MonoBehaviour
         cam.backgroundColor = new Color(0.06f, 0.05f, 0.05f);
         cam.clearFlags = CameraClearFlags.SolidColor;
         if (cam.GetComponent<CameraController>() == null) cam.gameObject.AddComponent<CameraController>();
+        if (cam.GetComponent<LetterboxCamera>() == null) cam.gameObject.AddComponent<LetterboxCamera>();
     }
 
     private DungeonBuilder EnsureDungeon()

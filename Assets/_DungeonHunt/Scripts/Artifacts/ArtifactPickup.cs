@@ -82,7 +82,7 @@ public class ArtifactPickup : MonoBehaviour, IInteractable
         beam = PlaceholderArt.CreateShape("Beam", transform, PlaceholderArt.Square, new Color(gradeColor.r, gradeColor.g, gradeColor.b, 0.35f), 1f, 80);
         beam.transform.localScale = new Vector3(0.18f, 1.6f, 1f);
         beam.transform.localPosition = new Vector3(0f, 0.7f, 0f);
-        Sprite sprite = Candidate.Icon != null ? Candidate.Icon : PlaceholderArt.Square;
+        Sprite sprite = Candidate.Icon != null ? Candidate.Icon : PlaceholderArt.Diamond;
         icon = PlaceholderArt.CreateShape("Icon", transform, sprite, Candidate.Icon != null ? Color.white : gradeColor, 0.4f, 81);
         if (Candidate.Icon == null) icon.transform.localRotation = Quaternion.Euler(0, 0, 45f);
     }

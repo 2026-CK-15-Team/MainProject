@@ -107,6 +107,7 @@ public class RunManager : MonoBehaviour
     public void ApplySettings(SettingsData settings)
     {
         AudioListener.volume = Mathf.Clamp01(settings.MasterVolume / 100f);
+        GameServices.Audio?.SetVolumes(settings.BgmVolume, settings.SfxVolume);
         QualitySettings.vSyncCount = settings.VSync ? 1 : 0;
         if (GameServices.Camera != null) GameServices.Camera.ShakeStrength01 = Mathf.Clamp01(settings.ScreenShake / 100f);
     }
@@ -333,8 +334,13 @@ public class RunManager : MonoBehaviour
         float blackStart = Time.unscaledTime;
         GameServices.Artifacts.OnFloorLeft();
         FloorIndex = leaving + 1;
+        // 미리 계산이 안 끝났으면 검은 화면 유지. 1초를 넘으면 대기 표시 (03 §6.3 2~3번)
+        while (!GameServices.Floor.IsFloorReady(RunSeed, FloorIndex))
+        {
+            if (Time.unscaledTime - blackStart > GameBalance.Current.FloorEnd.WaitIndicatorDelay) UI.ShowWaitIndicator(true);
+            yield return null;
+        }
         bool ok = BuildAndPlace(FloorIndex);
-        // 검은 화면이 1초를 넘으면 대기 표시 (03 §6.3 3번)
         if (Time.unscaledTime - blackStart > GameBalance.Current.FloorEnd.WaitIndicatorDelay) UI.ShowWaitIndicator(true);
         yield return null;
         UI.ShowWaitIndicator(false);

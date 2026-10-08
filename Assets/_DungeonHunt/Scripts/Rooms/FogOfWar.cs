@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 // - 미방문 룸: 바운딩 전체 (쓰는 문 자리의 입구 칸은 덮지 않음)
 // - 복도: 방문한 룸의 쓰는 문 자리에 이어진 것만 보임. 비밀방 복도는 비밀 벽 파괴 전까지 가림
 // - 해제: 전투룸 즉시, 비전투 룸 RoomReveal_FadeDuration 페이드
+// - 문 틈 표시: 보이는 복도가 미방문 룸에 닿는 곳에 그 룸 바닥 경계 한 칸만 어둡게 (비밀방 쪽은 없음)
 public class FogOfWar : MonoBehaviour
 {
     private class FadeJob
@@ -22,6 +23,11 @@ public class FogOfWar : MonoBehaviour
     private readonly List<(RoomRuntime a, RoomRuntime b, List<Vector3Int> cells, bool secret)> corridors = new List<(RoomRuntime, RoomRuntime, List<Vector3Int>, bool)>();
     private readonly HashSet<int> revealedCorridors = new HashSet<int>();
     private readonly List<FadeJob> fades = new List<FadeJob>();
+    // (미방문 룸, 그 문으로 이어진 이웃 룸, 바닥 경계 칸)
+    private readonly List<(RoomRuntime room, RoomRuntime neighbor, List<Vector3Int> cells)> doorGaps = new List<(RoomRuntime, RoomRuntime, List<Vector3Int>)>();
+    private readonly HashSet<int> shownGaps = new HashSet<int>();
+    // 문 틈은 반투명 어둠: 진입선 직전까지 플레이어가 덮개 밑으로 사라지지 않음
+    private const float DoorGapAlpha = 0.6f;
 
     public void Build(Grid grid, DungeonBuilder builder, IReadOnlyList<RoomRuntime> rooms, Color color, WallStyle style)
     {
@@ -77,6 +83,31 @@ public class FogOfWar : MonoBehaviour
             Paint(cells, 1f);
         }
 
+        // 문 틈: 이웃 룸 쪽 문 자리의 입구 칸에 맞닿은 바닥 칸 (비밀방과 그 부모 쪽 문 자리는 제외)
+        foreach (RoomRuntime room in rooms)
+        {
+            if (room.Role == RoomRole.Secret) continue;
+            PlacedRoom placed = blueprint.Rooms[room.Node.Id];
+            var floorCells = new HashSet<Vector2Int>(room.FloorCells);
+            foreach (RoomNode neighborNode in room.Node.Neighbors)
+            {
+                RoomRuntime neighbor = roomByNode[neighborNode.Id];
+                if (neighbor.Role == RoomRole.Secret) continue;
+                RoomSide side = room.Node.SideTowards(neighborNode);
+                var gap = new List<Vector3Int>();
+                foreach (WallCell wall in placed.GetOpeningSealCells(side, style))
+                {
+                    Vector2Int e = placed.Position + wall.Cell;
+                    foreach (Vector2Int d in Neighbors4)
+                    {
+                        Vector2Int c = e + d;
+                        if (floorCells.Contains(c) && !gap.Contains((Vector3Int)c)) gap.Add((Vector3Int)c);
+                    }
+                }
+                if (gap.Count > 0) doorGaps.Add((room, neighbor, gap));
+            }
+        }
+
         // 복도 덮개: 복도 바닥 + 둘레 벽
         var wallCells = new List<Vector2Int>();
         foreach (WallCell wall in blueprint.CorridorWalls) wallCells.Add(wall.Cell);
@@ -97,6 +128,8 @@ public class FogOfWar : MonoBehaviour
         }
     }
 
+    private static readonly Vector2Int[] Neighbors4 = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
     private static bool NearAny(Vector2Int cell, HashSet<Vector2Int> set, int range)
     {
         for (int dx = -range; dx <= range; dx++)
@@ -112,6 +145,8 @@ public class FogOfWar : MonoBehaviour
         corridors.Clear();
         revealedCorridors.Clear();
         fades.Clear();
+        doorGaps.Clear();
+        shownGaps.Clear();
     }
 
     public void RevealRoom(RoomRuntime room, bool instant)
@@ -135,6 +170,16 @@ public class FogOfWar : MonoBehaviour
             revealedCorridors.Add(i);
             Paint(c.cells, 0f);
         }
+
+        // 문 틈: 이웃(방문)의 쓰는 문 자리 복도가 보이면 미방문 룸 바닥 경계 한 칸을 어둡게
+        for (int i = 0; i < doorGaps.Count; i++)
+        {
+            if (shownGaps.Contains(i)) continue;
+            var g = doorGaps[i];
+            if (g.room.Visited || !g.neighbor.Visited) continue;
+            shownGaps.Add(i);
+            PaintColor(g.cells, new Color(0f, 0f, 0f, DoorGapAlpha));
+        }
     }
 
     private readonly HashSet<RoomRuntime> openedSecrets = new HashSet<RoomRuntime>();
@@ -147,6 +192,17 @@ public class FogOfWar : MonoBehaviour
 
     private bool IsSecretOpen(RoomRuntime a, RoomRuntime b)
         => openedSecrets.Contains(a.Role == RoomRole.Secret ? a : b);
+
+    private void PaintColor(List<Vector3Int> cells, Color color)
+    {
+        if (fogMap == null) return;
+        foreach (Vector3Int cell in cells)
+        {
+            fogMap.SetTile(cell, fogTile);
+            fogMap.SetTileFlags(cell, TileFlags.None);
+            fogMap.SetColor(cell, color);
+        }
+    }
 
     private void Paint(List<Vector3Int> cells, float alpha)
     {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -58,15 +59,66 @@ public class DungeonBuilder : MonoBehaviour
 
     public bool IsConfigured => runConfig != null && grid != null && corridorFloorTilemap != null && corridorWallTilemap != null;
 
+    // 다음 층 배치 미리 계산 (03 §6.2: 현재 층 FloorGenerated 뒤). 배치 계산은 순수 C#이라 백그라운드 스레드에서 돌림.
+    private Task<FloorBlueprint> pending;
+    private int pendingSeed;
+    private int pendingFloor = -1;
+
+    // 두 번째 UI 제작 폴백이면 도박방 생성 안 함 (03-4 §2)
+    private static bool ExcludeGamble => Application.isPlaying && GameBalance.Current.SecretRoom.SecondUIFallback;
+
+    public void Precompute(int runSeed, int floorIndex)
+    {
+        if (runConfig == null || runConfig.Floors == null || floorIndex < 0 || floorIndex >= runConfig.Floors.Length) return;
+        FloorConfig floor = runConfig.Floors[floorIndex];
+        WallStyle style = runConfig.WallStyle;
+        FloorPlan plan = RunPlanner.Plan(runConfig, runSeed, ExcludeGamble)[floorIndex];
+        List<RoomTemplateData> templates = floor.RoomPrefabs.Select(prefab => prefab.Template).ToList();
+        int spacing = floor.MinRoomSpacing;
+        pendingSeed = runSeed;
+        pendingFloor = floorIndex;
+        pending = Task.Run(() => FloorGenerator.Generate(plan, templates, spacing, style));
+    }
+
+    // 미리 계산 중인 층이면 끝났는지, 아니면 바로 생성 가능(true)
+    public bool IsPrecomputeReady(int runSeed, int floorIndex)
+        => pending == null || pendingSeed != runSeed || pendingFloor != floorIndex || pending.IsCompleted;
+
+    public void CancelPrecompute()
+    {
+        pending = null;
+        pendingFloor = -1;
+    }
+
+    private FloorBlueprint TakePrecomputed(int runSeed, int floorIndex)
+    {
+        if (pending == null || pendingSeed != runSeed || pendingFloor != floorIndex) return null;
+        Task<FloorBlueprint> task = pending;
+        CancelPrecompute();
+        try
+        {
+            return task.Result;
+        }
+        catch (System.AggregateException e)
+        {
+            Debug.LogWarning($"다음 층 미리 계산 실패 → 다시 계산: {e.InnerException?.Message}");
+            return null;
+        }
+    }
+
     public void Build(int runSeed, int floorIndex)
     {
         Clear();
 
         FloorConfig floor = runConfig.Floors[floorIndex];
         WallStyle style = runConfig.WallStyle;
-        FloorPlan plan = RunPlanner.Plan(runConfig, runSeed)[floorIndex];
-        List<RoomTemplateData> templates = floor.RoomPrefabs.Select(prefab => prefab.Template).ToList();
-        FloorBlueprint blueprint = FloorGenerator.Generate(plan, templates, floor.MinRoomSpacing, style);
+        FloorBlueprint blueprint = TakePrecomputed(runSeed, floorIndex);
+        if (blueprint == null)
+        {
+            FloorPlan plan = RunPlanner.Plan(runConfig, runSeed, ExcludeGamble)[floorIndex];
+            List<RoomTemplateData> templates = floor.RoomPrefabs.Select(prefab => prefab.Template).ToList();
+            blueprint = FloorGenerator.Generate(plan, templates, floor.MinRoomSpacing, style);
+        }
         Blueprint = blueprint;
         CurrentFloor = floor;
 

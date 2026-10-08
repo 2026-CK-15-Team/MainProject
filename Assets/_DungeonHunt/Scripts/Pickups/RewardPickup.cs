@@ -34,7 +34,7 @@ public class RewardPickup : MonoBehaviour
         pickup.enableAt = GameClock.CombatTime + GameBalance.Current.CombatRoom.RewardPickupEnableDelay;
         Color color = kind == RewardKind.Currency ? new Color(1f, 0.85f, 0.2f) : new Color(1f, 0.35f, 0.45f);
         float size = kind == RewardKind.Heal && amount >= 2 ? 0.45f : 0.32f; // 소량/대량 구분
-        PlaceholderArt.CreateShape("Visual", go.transform, kind == RewardKind.Currency ? PlaceholderArt.Circle : PlaceholderArt.Square, color, size, 82);
+        PlaceholderArt.CreateShape("Visual", go.transform, kind == RewardKind.Currency ? PlaceholderArt.Coin : PlaceholderArt.Heart, color, size, 82);
         GameServices.Feedback?.SpawnRewardBurst(position, color);
         return pickup;
     }

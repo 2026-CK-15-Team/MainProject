@@ -9,7 +9,7 @@ public class RunEndTreasureController : RoomContent
 
     protected override void OnBound()
     {
-        RoomInteractable normal = RoomInteractable.Create("NormalChest", Runtime.transform, Runtime.GetPoint(RoomPointKind.RoomObject, RoomObjectRole.NormalChest), PlaceholderArt.Square, new Color(0.65f, 0.45f, 0.2f), 0.7f, "보물상자");
+        RoomInteractable normal = RoomInteractable.Create("NormalChest", Runtime.transform, Runtime.GetPoint(RoomPointKind.RoomObject, RoomObjectRole.NormalChest), PlaceholderArt.Chest, new Color(0.65f, 0.45f, 0.2f), 0.7f, "보물상자");
         normal.CanInteractCheck = () => !normalOpened;
         normal.OnInteract = _ =>
         {
@@ -18,7 +18,11 @@ public class RunEndTreasureController : RoomContent
             GameServices.UI?.ShowCenterToast("상자가 비어 있다 (내용 미정)", 1.2f);
         };
 
-        RoomInteractable ending = RoomInteractable.Create("EndingChest", Runtime.transform, Runtime.GetPoint(RoomPointKind.RoomObject, RoomObjectRole.EndingChest), PlaceholderArt.Square, new Color(0.95f, 0.85f, 0.3f), 1.0f, "엔딩 상자");
-        ending.OnInteract = _ => GameServices.Run?.TriggerEnding();
+        RoomInteractable ending = RoomInteractable.Create("EndingChest", Runtime.transform, Runtime.GetPoint(RoomPointKind.RoomObject, RoomObjectRole.EndingChest), PlaceholderArt.Chest, new Color(0.95f, 0.85f, 0.3f), 1.0f, "엔딩 상자");
+        ending.OnInteract = _ =>
+        {
+            GameServices.Feedback?.SpawnChestOpen(ending.transform.position);
+            GameServices.Run?.TriggerEnding();
+        };
     }
 }

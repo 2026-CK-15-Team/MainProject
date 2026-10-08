@@ -54,6 +54,10 @@ public class Monster : MonoBehaviour, ICombatTarget
     private SpriteRenderer bodyRenderer;
     private Color baseColor;
     private float flashUntil;
+    private SpriteRenderer facing;
+    private Vector3 bodyBaseScale = Vector3.one;
+    private Vector2 lastVisualPosition;
+    private float walkPhase;
     private float contactGraceUntil;
     private float recoveryUntil;
 
@@ -105,6 +109,11 @@ public class Monster : MonoBehaviour, ICombatTarget
                 PlaceholderArt.CreateShape("Mark", transform, PlaceholderArt.Triangle, new Color(0, 0, 0, 0.4f), def.BodyRadius, 91);
         }
         baseColor = bodyRenderer.color;
+        bodyBaseScale = bodyRenderer.transform.localScale;
+        lastVisualPosition = transform.position;
+        // 조준 방향 표시 (원거리형 스트레이프 자세: 몸은 플레이어를 보고 옆으로 이동, 09 §7)
+        if (def.Sprite == null)
+            facing = PlaceholderArt.CreateShape("Facing", transform, PlaceholderArt.Circle, new Color(1f, 1f, 1f, 0.85f), def.BodyRadius * 0.45f, 92);
         CreateHPBar();
 
         // 후속 웨이브는 생성 직후 접촉 피해 유예 (03-1 §8.3 7번)
@@ -418,6 +427,27 @@ public class Monster : MonoBehaviour, ICombatTarget
     {
         if (bodyRenderer != null)
             bodyRenderer.color = Time.unscaledTime < flashUntil ? Color.white : baseColor;
+
+        // 이동 중 통통 튐, 멈추면(예고, 연발 정지 자세) 정지. 히트스톱 중에는 전투 시간 기준이라 멈춤
+        Vector2 position = transform.position;
+        float dt = GameClock.CombatDelta;
+        bool moved = dt > 0f && (position - lastVisualPosition).sqrMagnitude > 0.000004f;
+        lastVisualPosition = position;
+        if (bodyRenderer != null && bodyRenderer.transform != transform)
+        {
+            if (moved) walkPhase += dt * 12f;
+            float bob = moved ? Mathf.Abs(Mathf.Sin(walkPhase)) : 0f;
+            bodyRenderer.transform.localScale = Vector3.Scale(bodyBaseScale, new Vector3(1f - bob * 0.06f, 1f + bob * 0.08f, 1f));
+        }
+
+        if (facing != null)
+        {
+            PlayerController player = GameServices.Player;
+            bool locked = State == MonsterState.DirectionLocked || State == MonsterState.AttackExecute;
+            Vector2 dir = locked ? LockedDirection : player != null ? (Vector2)player.transform.position - position : Vector2.right;
+            if (dir.sqrMagnitude > 0.0001f) facing.transform.localPosition = dir.normalized * Definition.BodyRadius * 0.6f;
+            facing.enabled = !IsDead;
+        }
 
         if (hpBarRoot != null)
         {

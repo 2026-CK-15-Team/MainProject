@@ -76,10 +76,12 @@ public class HudView : UIView
             w.SwapFill.type = Image.Type.Filled;
             w.SwapFill.fillMethod = Image.FillMethod.Radial360;
             w.SwapFill.fillClockwise = true;
-            w.Lock = UIFactory.Panel("Lock", w.Background.transform, new Color(0.1f, 0.1f, 0.1f, 0.8f));
-            UIFactory.Stretch(w.Lock.rectTransform, 30f);
-            Text lockText = UIFactory.Label("LockText", w.Lock.transform, "잠김", 22, TextAnchor.MiddleCenter);
-            UIFactory.Stretch(lockText.rectTransform);
+            w.Icon.preserveAspect = true;
+            // 잠긴 무기: 흑백 + 자물쇠 아이콘, 안내 문구 없음 (08 §4)
+            w.Lock = UIFactory.Panel("Lock", w.Background.transform, new Color(0.95f, 0.95f, 0.95f, 0.95f));
+            w.Lock.sprite = PlaceholderArt.Lock;
+            w.Lock.preserveAspect = true;
+            UIFactory.Place(w.Lock.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-6f, -6f), new Vector2(44f, 44f));
             w.Label = UIFactory.Label("Name", w.Background.transform, "", 20, TextAnchor.UpperCenter);
             UIFactory.Place(w.Label.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 0f), new Vector2(0f, 4f), new Vector2(110f, 28f));
             weaponWidgets[i] = w;
@@ -181,9 +183,10 @@ public class HudView : UIView
             bool current = i == weapons.CurrentIndex;
             widget.Background.color = current ? new Color(0.35f, 0.35f, 0.45f, 1f) : new Color(0.12f, 0.12f, 0.15f, 0.85f);
             widget.Background.rectTransform.localScale = Vector3.one * (current ? 1.1f : 0.9f);
-            widget.Icon.sprite = w.Definition.Icon != null ? w.Definition.Icon : PlaceholderArt.Square;
+            widget.Icon.sprite = w.Definition.Icon != null ? w.Definition.Icon : PlaceholderArt.WeaponIcon(w.Definition.WeaponType);
             Color iconColor = w.Definition.Icon != null ? Color.white : w.Definition.PlaceholderColor;
-            widget.Icon.color = w.IsLocked ? new Color(0.3f, 0.3f, 0.3f) : iconColor; // 잠긴 무기 흑백
+            if (w.IsLocked) { float g = iconColor.grayscale * 0.6f; iconColor = new Color(g, g, g, iconColor.a); } // 잠긴 무기 흑백
+            widget.Icon.color = iconColor;
             widget.ReloadFill.fillAmount = w.IsReloading ? 1f - w.ReloadProgress01 : 0f;   // 수직으로 차오르는 음영
             widget.SwapFill.fillAmount = current && w.IsSwapDelayed ? 1f - w.SwapDelayProgress01 : 0f; // 시계방향 음영
             widget.Lock.gameObject.SetActive(w.IsLocked);

@@ -13,6 +13,10 @@ public class PlayerVisual : MonoBehaviour
     [SerializeField] private Color hitTint = new Color(1f, 0.3f, 0.3f);
 
     private SpriteRenderer outline;
+    private float ghostTimer;
+    private float walkPhase;
+    private bool dead;
+    private float deadAt;
     private float hitTintUntil;
     private float outlineUntil;
     private PlayerController player;
@@ -47,12 +51,16 @@ public class PlayerVisual : MonoBehaviour
     {
         GameEvents.PlayerHit += OnPlayerHit;
         GameEvents.JustDodgeTriggered += OnJustDodge;
+        GameEvents.PlayerDied += OnPlayerDied;
+        GameEvents.RunStarted += OnRunStarted;
     }
 
     private void OnDisable()
     {
         GameEvents.PlayerHit -= OnPlayerHit;
         GameEvents.JustDodgeTriggered -= OnJustDodge;
+        GameEvents.PlayerDied -= OnPlayerDied;
+        GameEvents.RunStarted -= OnRunStarted;
     }
 
     // 무기 모양 바꾸기 (무기 전환 시 WeaponController가 호출)
@@ -94,6 +102,73 @@ public class PlayerVisual : MonoBehaviour
             bodyRenderer.sprite = bodySprites[quadrant];
 
         UpdateTintAndBlink();
+        UpdateMotion();
+    }
+
+    // 기본 도형용 모션: 이동 중 통통 튐 / 회피 잔상 / 사망 시 쓰러짐 (09 §3 플레이어 대기, 이동, 회피, 사망)
+    private void UpdateMotion()
+    {
+        Transform body = bodyRenderer.transform;
+        // 몸통이 루트 자신이면(아트 프리팹) 크기/회전 모션 생략. 잔상만
+        if (body == transform) body = null;
+        if (dead && body != null)
+        {
+            float t = Mathf.Clamp01((Time.unscaledTime - deadAt) / 0.4f);
+            body.localScale = new Vector3(1f + t * 0.3f, 1f - t * 0.6f, 1f) * BaseBodyScale;
+            body.localRotation = Quaternion.Euler(0f, 0f, t * 80f);
+            Color c = bodyRenderer.color;
+            bodyRenderer.color = Color.Lerp(c, new Color(0.35f, 0.35f, 0.38f, 1f), t);
+            if (weaponRenderer != null) weaponRenderer.enabled = false;
+            return;
+        }
+
+        float dt = GameClock.CombatDelta;
+        bool moving = player.Input != null && player.Input.MoveInput.sqrMagnitude > 0.01f;
+        if (player.Movement.IsDodging)
+        {
+            if (body != null) body.localScale = new Vector3(1.15f, 0.85f, 1f) * BaseBodyScale;
+            ghostTimer -= dt;
+            if (ghostTimer <= 0f)
+            {
+                ghostTimer = 0.03f;
+                Color ghost = bodyRenderer.color;
+                ghost.a = 0.35f;
+                GameServices.Feedback?.SpawnGhost(bodyRenderer.sprite, transform.position, bodyRenderer.bounds.size.x, ghost);
+            }
+        }
+        else if (moving)
+        {
+            walkPhase += dt * 14f;
+            float bob = Mathf.Abs(Mathf.Sin(walkPhase));
+            if (body != null) body.localScale = new Vector3(1f - bob * 0.06f, 1f + bob * 0.08f, 1f) * BaseBodyScale;
+        }
+        else
+        {
+            walkPhase = 0f;
+            // 대기: 아주 느린 숨쉬기
+            float breathe = Mathf.Sin(Time.unscaledTime * 2.5f) * 0.02f;
+            if (body != null) body.localScale = new Vector3(1f, 1f + breathe, 1f) * BaseBodyScale;
+        }
+    }
+
+    private float baseBodyScale = -1f;
+    private float BaseBodyScale => baseBodyScale > 0f ? baseBodyScale : baseBodyScale = bodyRenderer.transform.localScale.x;
+
+    private void OnPlayerDied()
+    {
+        dead = true;
+        deadAt = Time.unscaledTime;
+    }
+
+    private void OnRunStarted()
+    {
+        dead = false;
+        if (bodyRenderer != null && bodyRenderer.transform != transform)
+        {
+            bodyRenderer.transform.localRotation = Quaternion.identity;
+            bodyRenderer.transform.localScale = Vector3.one * BaseBodyScale;
+        }
+        if (weaponRenderer != null) weaponRenderer.enabled = true;
     }
 
     private void UpdateTintAndBlink()

@@ -37,6 +37,24 @@ public class RoomRuntime : MonoBehaviour
     private RoomNavGrid nav;
     public RoomNavGrid Nav => nav ??= new RoomNavGrid(Room);
 
+    // 실제 바닥 모양 (바닥 타일 있고 벽 타일 없는 칸), 층 칸 좌표. 미니맵 모양과 문 틈 표시에 씀 (08 §4.1)
+    private List<Vector2Int> floorCells;
+    public IReadOnlyList<Vector2Int> FloorCells => floorCells ??= ComputeFloorCells();
+
+    private List<Vector2Int> ComputeFloorCells()
+    {
+        var cells = new List<Vector2Int>();
+        UnityEngine.Tilemaps.Tilemap floor = Room.FloorTilemap, wall = Room.WallTilemap;
+        for (int x = 0; x < CellBounds.width; x++)
+            for (int y = 0; y < CellBounds.height; y++)
+            {
+                var local = new Vector3Int(x, y, 0);
+                if (floor != null && floor.HasTile(local) && (wall == null || !wall.HasTile(local)))
+                    cells.Add(CellBounds.position + new Vector2Int(x, y));
+            }
+        return cells;
+    }
+
     public bool IsCombatRoom => Role == RoomRole.Combat || Role == RoomRole.EliteGate || Role == RoomRole.FinalBoss;
     // 잠긴 전투룸/보스룸이면 확대 미니맵, 보유 아티팩트 UI, 순간이동 차단 (08 §5.1, §5.2)
     public bool IsLocked => Content != null && Content.IsLocked;

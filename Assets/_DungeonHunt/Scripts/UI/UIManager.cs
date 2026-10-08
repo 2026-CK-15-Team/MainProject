@@ -106,7 +106,28 @@ public class UIManager : MonoBehaviour
         scaler.matchWidthOrHeight = 0.5f;
         canvasGo.AddComponent<GraphicRaycaster>();
         if (canvas == null) canvas = c;
-        return (RectTransform)canvasGo.transform;
+        scalers.Add(scaler);
+
+        // HUD와 화면은 16:9 게임 뷰 안에 둠. 검은 띠로 밀려나지 않음 (08 §7 AspectRatio_OutsideHandling)
+        RectTransform view = UIFactory.CreateRect("View16x9", canvasGo.transform);
+        UIFactory.Stretch(view);
+        var fitter = view.gameObject.AddComponent<AspectRatioFitter>();
+        fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+        fitter.aspectRatio = LetterboxCamera.TargetAspect;
+        return view;
+    }
+
+    // 16:9 영역이 항상 기준 해상도(1920x1080) 단위가 되게: 넓은 화면은 세로, 좁은 화면은 가로 기준
+    private readonly List<CanvasScaler> scalers = new List<CanvasScaler>();
+    private int scalerWidth = -1, scalerHeight = -1;
+
+    private void UpdateScalers()
+    {
+        if (Screen.width == scalerWidth && Screen.height == scalerHeight) return;
+        scalerWidth = Screen.width;
+        scalerHeight = Screen.height;
+        float match = (float)scalerWidth / Mathf.Max(1, scalerHeight) > LetterboxCamera.TargetAspect ? 1f : 0f;
+        foreach (CanvasScaler scaler in scalers) scaler.matchWidthOrHeight = match;
     }
 
     private T Add<T>(T view, string name, RectTransform parent) where T : UIView
@@ -120,6 +141,7 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
+        UpdateScalers();
         foreach (UIView view in views)
             if (view.IsOpen) view.Tick();
 

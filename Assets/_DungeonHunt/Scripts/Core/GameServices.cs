@@ -12,6 +12,7 @@ public static class GameServices
     public static UIManager UI;
     public static SaveService Save;
     public static FeedbackService Feedback;
+    public static AudioService Audio;
 
     public static GameBalance Balance => Config != null ? Config.Balance : null;
 }

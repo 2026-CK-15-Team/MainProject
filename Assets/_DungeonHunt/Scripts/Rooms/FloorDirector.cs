@@ -97,8 +97,13 @@ public class FloorDirector : MonoBehaviour
         inCorridor = false;
 
         GameEvents.Raise(GameEvents.FloorGenerated, floorIndex);
+        // 다음 층 배치를 미리 계산 (03 §6.2). 층 전환 검은 화면에서는 오브젝트만 만듦
+        if (!lastFloor) builder.Precompute(runSeed, floorIndex + 1);
         return true;
     }
+
+    // 층 전환 직전: 다음 층 미리 계산이 끝났는지 (03 §6.3 2번 "끝날 때까지 기다린다")
+    public bool IsFloorReady(int runSeed, int floorIndex) => builder == null || builder.IsPrecomputeReady(runSeed, floorIndex);
 
     public static RoomRole MapRole(RoomType type, bool lastFloor) => type switch
     {

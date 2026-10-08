@@ -16,6 +16,7 @@ public class FeedbackService : MonoBehaviour
         public LineRenderer Line;
         public Color BaseColor;
         public bool Grow;
+        public float GrowRate = 4f;
     }
 
     private readonly List<TimedEffect> effects = new List<TimedEffect>();
@@ -29,12 +30,14 @@ public class FeedbackService : MonoBehaviour
     {
         GameEvents.JustDodgeTriggered += OnJustDodge;
         GameEvents.SetTierChanged += OnSetTierChanged;
+        GameEvents.ArtifactAcquired += OnArtifactAcquired;
     }
 
     private void OnDisable()
     {
         GameEvents.JustDodgeTriggered -= OnJustDodge;
         GameEvents.SetTierChanged -= OnSetTierChanged;
+        GameEvents.ArtifactAcquired -= OnArtifactAcquired;
     }
 
     // ---------- 명중, 피격, 처치 ----------
@@ -42,6 +45,7 @@ public class FeedbackService : MonoBehaviour
     public void OnMonsterHit(DamageInfo info, Vector2 position)
     {
         ShowDamageNumber(info, position);
+        SpawnHitSpark(info.HitPoint != Vector2.zero ? info.HitPoint : position, info.IsCritical);
         if (info.Source != DamageSource.Player) return;
         FeedbackBalance b = GameBalance.Current.Feedback;
         Vector2 shake = info.Weapon switch
@@ -85,6 +89,22 @@ public class FeedbackService : MonoBehaviour
         var effect = new TimedEffect { Go = text.gameObject, Text = text, Duration = 0.6f, EndTime = Time.unscaledTime + 0.6f, Velocity = new Vector3(0f, 0.8f, 0f), BaseColor = color };
         effects.Add(effect);
         if (info.AttackExecutionId >= 0) damageNumbers[key] = effect;
+    }
+
+    // 적중 이펙트. 치명타는 숫자 색/크기와 이 이펙트만 강화 (09 §5 4번, 흔들림/히트스톱은 그대로)
+    public void SpawnHitSpark(Vector2 position, bool critical)
+    {
+        if (critical)
+        {
+            SpriteRenderer ring = PlaceholderArt.CreateShape("CritRing", null, PlaceholderArt.Ring, new Color(1f, 0.8f, 0.2f, 0.95f), 0.35f, 235);
+            ring.transform.position = position;
+            effects.Add(new TimedEffect { Go = ring.gameObject, Sprite = ring, Duration = 0.18f, EndTime = Time.unscaledTime + 0.18f, BaseColor = ring.color, Grow = true, GrowRate = 8f });
+            Burst(position, new Color(1f, 0.85f, 0.3f), 6, 0.1f, 3f);
+        }
+        else
+        {
+            Burst(position, new Color(1f, 1f, 0.9f), 3, 0.07f, 1.8f);
+        }
     }
 
     // ---------- 무기 ----------
@@ -162,6 +182,57 @@ public class FeedbackService : MonoBehaviour
         return mark.gameObject;
     }
 
+    // 문 잠금 이펙트 등장/소멸 (09 §3 룸과 보상)
+    public void SpawnLockAppear(Bounds bounds)
+    {
+        SpriteRenderer flash = PlaceholderArt.CreateShape("LockAppear", null, PlaceholderArt.Square, new Color(1f, 0.85f, 0.85f, 0.9f), 1f, 155);
+        flash.transform.position = bounds.center;
+        flash.transform.localScale = new Vector3(bounds.size.x, bounds.size.y, 1f);
+        effects.Add(new TimedEffect { Go = flash.gameObject, Sprite = flash, Duration = 0.2f, EndTime = Time.unscaledTime + 0.2f, BaseColor = flash.color });
+    }
+
+    public void SpawnLockRelease(Bounds bounds)
+    {
+        SpriteRenderer fade = PlaceholderArt.CreateShape("LockRelease", null, PlaceholderArt.Square, RoomDoor.LockColor, 1f, 150);
+        fade.transform.position = bounds.center;
+        fade.transform.localScale = new Vector3(bounds.size.x, bounds.size.y, 1f);
+        effects.Add(new TimedEffect { Go = fade.gameObject, Sprite = fade, Duration = 0.3f, EndTime = Time.unscaledTime + 0.3f, BaseColor = fade.color, Grow = true, GrowRate = 1.5f });
+        Burst(bounds.center, RoomDoor.LockColor, 5, 0.12f, 1.5f);
+    }
+
+    // 회피 잔상
+    public void SpawnGhost(Sprite sprite, Vector2 position, float diameter, Color color)
+    {
+        SpriteRenderer ghost = PlaceholderArt.CreateShape("Ghost", null, sprite, color, diameter, 98);
+        ghost.transform.position = position;
+        effects.Add(new TimedEffect { Go = ghost.gameObject, Sprite = ghost, Duration = 0.18f, EndTime = Time.unscaledTime + 0.18f, BaseColor = color });
+    }
+
+    // 엔딩 상자 개봉 (09 §7, EndingTriggered 순간)
+    public void SpawnChestOpen(Vector2 position)
+    {
+        SpriteRenderer beam = PlaceholderArt.CreateShape("ChestBeam", null, PlaceholderArt.Square, new Color(1f, 0.95f, 0.6f, 0.8f), 1f, 236);
+        beam.transform.position = position + new Vector2(0f, 1.5f);
+        beam.transform.localScale = new Vector3(0.6f, 3f, 1f);
+        effects.Add(new TimedEffect { Go = beam.gameObject, Sprite = beam, Duration = 0.6f, EndTime = Time.unscaledTime + 0.6f, BaseColor = beam.color });
+        SpriteRenderer ring = PlaceholderArt.CreateShape("ChestRing", null, PlaceholderArt.Ring, new Color(1f, 0.9f, 0.4f, 1f), 0.8f, 237);
+        ring.transform.position = position;
+        effects.Add(new TimedEffect { Go = ring.gameObject, Sprite = ring, Duration = 0.5f, EndTime = Time.unscaledTime + 0.5f, BaseColor = ring.color, Grow = true, GrowRate = 5f });
+        Burst(position, new Color(1f, 0.85f, 0.3f), 14, 0.16f, 3.5f);
+    }
+
+    // 아티팩트 획득: 플레이어 위치에 등급 색 파동
+    private void OnArtifactAcquired(ArtifactDefinition def)
+    {
+        PlayerController player = GameServices.Player;
+        if (player == null || def == null) return;
+        Color color = ArtifactGradeUtility.Color(def.Grade);
+        SpriteRenderer ring = PlaceholderArt.CreateShape("Acquire", null, PlaceholderArt.Ring, color, 0.5f, 238);
+        ring.transform.position = player.Position;
+        effects.Add(new TimedEffect { Go = ring.gameObject, Sprite = ring, Duration = 0.35f, EndTime = Time.unscaledTime + 0.35f, BaseColor = color, Grow = true, GrowRate = 6f });
+        Burst(player.Position, color, 8, 0.12f, 2.2f);
+    }
+
     private void OnJustDodge()
     {
         PlayerController player = GameServices.Player;
@@ -174,8 +245,14 @@ public class FeedbackService : MonoBehaviour
     // 세트 활성 안내: UI가 닫힌 뒤 화면 중앙 (09 §7)
     private void OnSetTierChanged(ArtifactSetDefinition set, SetTier tier)
     {
-        if (tier == SetTier.Inactive) return;
-        GameServices.UI?.QueueSetToast($"{set.DisplayName}  {(tier == SetTier.Tier2 ? "Tier2" : "Tier1")}", GameBalance.Current.Feedback.SetActivationToastDuration);
+        float duration = GameBalance.Current.Feedback.SetActivationToastDuration;
+        if (tier == SetTier.Inactive)
+        {
+            // 세트 해제도 같은 자리에 회색으로 (09 §3 시스템: 세트 활성과 해제)
+            GameServices.UI?.QueueSetToast($"<color=#9A9AA5>{set.DisplayName}  해제</color>", duration);
+            return;
+        }
+        GameServices.UI?.QueueSetToast($"{set.DisplayName}  {(tier == SetTier.Tier2 ? "Tier2" : "Tier1")}", duration);
     }
 
     private void Burst(Vector2 position, Color color, int count, float size, float speed)
@@ -215,7 +292,7 @@ public class FeedbackService : MonoBehaviour
             if (e.Sprite != null)
             {
                 e.Sprite.color = c;
-                if (e.Grow) e.Go.transform.localScale *= 1f + dt * 4f;
+                if (e.Grow) e.Go.transform.localScale *= 1f + dt * e.GrowRate;
             }
             if (e.Text != null) e.Text.color = c;
             if (e.Line != null) { e.Line.startColor = c; e.Line.endColor = c; }

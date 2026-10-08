@@ -188,8 +188,8 @@ public class SettingsView : UIView
         Title(panel, "설정");
         float y = -120f;
         master = Row(panel, "전체 음량", ref y, v => { preview.MasterVolume = v; ApplyPreview(); });
-        bgm = Row(panel, "BGM 음량", ref y, v => { preview.BgmVolume = v; });
-        sfx = Row(panel, "효과음 음량", ref y, v => { preview.SfxVolume = v; });
+        bgm = Row(panel, "BGM 음량", ref y, v => { preview.BgmVolume = v; ApplyPreview(); });
+        sfx = Row(panel, "효과음 음량", ref y, v => { preview.SfxVolume = v; ApplyPreview(); });
         shake = Row(panel, "화면 흔들림", ref y, v => { preview.ScreenShake = v; ApplyPreview(); });
 
         vsyncText = CycleRow(panel, "수직동기화", ref y, () => { preview.VSync = !preview.VSync; ApplyPreview(); RefreshTexts(); });
