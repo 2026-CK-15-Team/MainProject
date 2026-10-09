@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 // 게임 전체 설정 루트. 씬의 GameBootstrap이 참조함.
 [CreateAssetMenu(fileName = "GameConfig", menuName = "DungeonHunt/Game Config")]
@@ -18,6 +19,8 @@ public class GameConfig : ScriptableObject
     public Font UIFont;
     [Tooltip("플레이어 프리팹. 비우면 씬의 PlayerController 또는 기본 도형 플레이어")]
     public GameObject PlayerPrefab;
+    [Tooltip("포스트프로세싱 Volume 프로필 (Bloom, Vignette, Chromatic Aberration, 포그/프린징/렌즈 플레어). 씬에 Volume이 없으면 이걸로 전역 Volume을 만듦")]
+    public VolumeProfile PostProcessProfile;
 
     public FloorContent GetFloor(int index)
     {

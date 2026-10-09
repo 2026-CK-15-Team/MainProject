@@ -50,6 +50,7 @@ public static class PlaceholderContentGenerator
         config.Floors = floors;
         config.Artifacts = catalog;
         config.Weapons = weapons;
+        if (config.PostProcessProfile == null) config.PostProcessProfile = PostProcessSetup.Setup();
         EditorUtility.SetDirty(config);
         AssetDatabase.SaveAssets();
 
@@ -551,6 +552,15 @@ public static class PlaceholderContentGenerator
         cameraGo.AddComponent<AudioListener>();
         cameraGo.transform.position = new Vector3(0f, 0f, -10f);
         cameraGo.AddComponent<CameraController>();
+
+        // 전역 포스트프로세싱 Volume (프로필: Settings/PostProcess/GamePostProcessProfile)
+        if (config.PostProcessProfile != null)
+        {
+            var volumeGo = new GameObject("Global Volume");
+            var volume = volumeGo.AddComponent<UnityEngine.Rendering.Volume>();
+            volume.isGlobal = true;
+            volume.sharedProfile = config.PostProcessProfile;
+        }
 
         var game = new GameObject("Game");
         GameBootstrap bootstrap = game.AddComponent<GameBootstrap>();

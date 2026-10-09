@@ -10,7 +10,9 @@
 - [ ] Unity 6000.3에서 열고 **컴파일 오류 0개** 확인 (2021.3 참조 DLL로만 컴파일 검증함)
 - [ ] Project Settings > Tags and Layers: Layer **`Wall`**, Tag **`Wall`** 있는지 확인 (없으면 추가)
 - [ ] Project Settings > Player > Active Input Handling = **Input System Package (New)** 또는 Both
-- [ ] **DungeonHunt > Setup > Generate Placeholder Content** 실행
+- [ ] Project Settings > Quality: 모든 단계의 Render Pipeline Asset이 `Settings/UniversalRP`인지 (폴더 이동 때 끊긴 GUID를 되돌려 둠. 비어 있으면 지정)
+- [ ] **DungeonHunt > Setup > Generate Placeholder Content** 실행 (포스트프로세싱 설정도 같이 함)
+- [ ] `Settings/Renderer2D`에 Full Screen Pass Renderer Feature(DungeonLensEffects)가 들어갔는지. 없으면 **DungeonHunt > Setup > Setup Post Processing**
 - [ ] **DungeonHunt > Validate > All Content** → 오류 0개
 - [ ] `Scenes/Game.unity` Play → 아래 흐름 한 번씩 확인
   - [ ] 첫 화면 → 로비 → 탐사 시작
@@ -24,6 +26,8 @@
   - [ ] 창 크기를 21:9, 4:3으로 바꿔 검은 띠 + HUD가 16:9 안에 남는지
   - [ ] 복도에서 미방문 룸 입구에 문 틈(어두운 한 줄) 보이는지, 비밀방 쪽은 안 보이는지
   - [ ] 소리 나는지 (발사/피격/처치/클리어/BGM), 설정 음량 슬라이더 반영되는지
+  - [ ] 포스트프로세싱: 블룸, 비네팅, 색수차, 포그, 프린징, 렌즈 플레어 각각 세기 올려서 보이는지 (`GamePostProcessProfile`)
+  - [ ] 셰이더 `DungeonHunt/LensEffects` 컴파일 경고/오류 없는지 (Unity에서만 확인 가능)
 - [ ] 콘솔 예외 나오면 정리
 - [ ] 파일명 대소문자 확인: `UI/WeaponReloadUI.cs`, `UI/PlayerHealthUI.cs` (기존 파일, 클래스명과 대소문자만 다름. 경고 나면 파일명 수정)
 - [ ] 기존 `SampleScene`의 수동 배치 플레이어/UI가 새 시스템과 겹치는지 확인 → 정리하거나 `Game.unity`로 통일
@@ -82,6 +86,8 @@ Test_ 에셋을 **Generated 밖으로 복제**해서 수정 (생성기 재실행
 - [ ] UI 틀/아이콘 → 각 `UIView.Build()` 교체 또는 프리팹화 (`UI/Views/*`)
 - [ ] 폰트 → `GameConfig.UIFont` (지정 없으면 OS 폰트 자동 탐색)
 - [ ] 미니맵 룸 종류 아이콘 (현재 글자 기호 S $ T G ? E B > *, `MinimapRenderer.RoleIcon`)
+
+- [ ] 🎨 포스트프로세싱 톤 확정 → `GamePostProcessProfile` 수치 (층마다 다르게 하려면 층별 프로필 + 💻 층 전환 때 교체)
 
 ## 5단계 — 사운드 (🎨 + 💻)
 

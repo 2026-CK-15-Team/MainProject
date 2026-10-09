@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
 
 // 게임 씬 진입점. 빠진 매니저와 오브젝트를 만들어 연결함.
@@ -27,6 +29,7 @@ public class GameBootstrap : MonoBehaviour
         GetOrAdd<AudioService>(gameObject);
 
         EnsureCamera();
+        EnsurePostProcessVolume();
         DungeonBuilder builder = EnsureDungeon();
         FloorDirector floor = GetOrAdd<FloorDirector>(gameObject);
         floor.SetBuilder(builder);
@@ -58,6 +61,20 @@ public class GameBootstrap : MonoBehaviour
         cam.clearFlags = CameraClearFlags.SolidColor;
         if (cam.GetComponent<CameraController>() == null) cam.gameObject.AddComponent<CameraController>();
         if (cam.GetComponent<LetterboxCamera>() == null) cam.gameObject.AddComponent<LetterboxCamera>();
+        // 포스트프로세싱: 카메라 후처리 켜기 + 풀스크린 효과 값 전달
+        UniversalAdditionalCameraData cameraData = cam.GetUniversalAdditionalCameraData();
+        if (cameraData != null) cameraData.renderPostProcessing = true;
+        if (cam.GetComponent<PostEffectsDriver>() == null) cam.gameObject.AddComponent<PostEffectsDriver>();
+    }
+
+    // 씬에 Volume이 없으면 GameConfig 프로필로 전역 Volume 생성. 프로필을 공유 참조하므로 Play 중 조정이 에셋에 남음
+    private void EnsurePostProcessVolume()
+    {
+        if (FindFirstObjectByType<Volume>() != null || config == null || config.PostProcessProfile == null) return;
+        var go = new GameObject("PostProcessVolume");
+        Volume volume = go.AddComponent<Volume>();
+        volume.isGlobal = true;
+        volume.sharedProfile = config.PostProcessProfile;
     }
 
     private DungeonBuilder EnsureDungeon()

@@ -78,6 +78,27 @@
 
 ---
 
+### 4.1 포스트프로세싱 (화면 효과)
+
+프로필 하나에 전부 있음: **`Settings/PostProcess/GamePostProcessProfile.asset`** (인스펙터에서 조정, Play 중 바꿔도 바로 반영되고 에셋에 저장됨)
+
+| 효과 | 컴포넌트 | 주요 수치 |
+|---|---|---|
+| 블룸 | URP `Bloom` | Threshold, Intensity, Scatter, Tint |
+| 비네팅 | URP `Vignette` | Color, Intensity, Smoothness, Center |
+| 색수차 | URP `Chromatic Aberration` | Intensity |
+| 포그 | `DungeonHunt/Lens Effects` | 세기, 색, 크기(월드 칸), 흐름 속도, 대비, 가장자리 쏠림 |
+| 프린징 | `DungeonHunt/Lens Effects` | 세기, 색, 폭(px), 문턱, 가장자리 쏠림 |
+| 렌즈 플레어 | `DungeonHunt/Lens Effects` | 세기, 문턱, 색, 고스트 수/간격/색 번짐, 헤일로 세기/반지름, 가로 스트릭 세기/길이 |
+
+- 효과 끄기: 세기 0 (계산도 건너뜀) 또는 컴포넌트 체크 해제
+- 처음 설정 / 렌더러 기능이 빠졌을 때: **DungeonHunt > Setup > Setup Post Processing** (콘텐츠 생성기도 자동 호출)
+- 구조: Bloom·Vignette·색수차는 URP 기본 후처리. 포그·프린징·렌즈 플레어는 풀스크린 셰이더 `Shaders/DungeonLensEffects.shader` 한 장을 URP 2D 렌더러의 **Full Screen Pass Renderer Feature**(After Rendering Post Processing)로 그림
+- 구역별로 다르게 하려면 Local Volume(박스 콜라이더)을 두고 다른 프로필 지정 → 들어가면 블렌딩됨
+- UI(HUD, 메뉴)에는 효과가 안 들어감
+
+---
+
 ## 5. 콘텐츠 만들기
 
 ### 5.1 방 프리팹
@@ -157,3 +178,5 @@
 | 층 전환 검은 화면이 김 | 다음 층 미리 계산이 안 끝남. 1초 넘으면 우하단 대기 표시. 콘솔에 "미리 계산 실패" 있으면 그 자리에서 다시 계산함 |
 | 글자가 안 보임 | OS 폰트 못 찾음 → `GameConfig.UIFont`에 폰트 지정 |
 | 일시정지 안 풀림 | 포커스 이탈 정지. 게임 창 클릭 |
+| 블룸/비네팅이 안 보임 | URP가 꺼져 있음 → Project Settings > Quality의 Render Pipeline Asset이 `UniversalRP`인지 확인. 카메라 Post Processing 체크(런타임에 자동으로 켬) |
+| 포그/프린징/플레어만 안 보임 | Renderer2D에 Full Screen Pass(DungeonLensEffects)가 없음 → Setup Post Processing 다시 실행 |
