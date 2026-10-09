@@ -52,6 +52,8 @@ public enum WeaponStat
 }
 
 // 고정값 / 비율 수정값 / 상태별 배율 (01-4 §5)
+// 합성은 PlayerStats.Compose: (기본 + Flat 합) x (1 + Percent 합) x Multiplier 곱.
+// Percent끼리는 더하고 Multiplier끼리는 곱함 → +10% 두 개 = +20%, 0.5배 두 개 = 0.25배.
 public enum ModifierKind
 {
     Flat,
@@ -62,7 +64,9 @@ public enum ModifierKind
 [Serializable]
 public struct StatModifier
 {
+    [Tooltip("대상 스탯. 무기 스탯은 무기별 ID 또는 전체 무기(All) ID")]
     public StatId Stat;
+    [Tooltip("Flat: 기본값에 더함 / Percent: 비율끼리 합산 / Multiplier: 배율끼리 곱함")]
     public ModifierKind Kind;
     [Tooltip("Flat: 더할 값 / Percent: 0.1 = +10% / Multiplier: 0.75 = 0.75배")]
     public float Value;

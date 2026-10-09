@@ -13,6 +13,7 @@ public static class LayoutValidator
 
         ValidateRoomCounts(layout, errors);
 
+        // 문 수 규칙: 전투방은 1개 이상, 보스방은 입구 + (계단 있으면) 계단 쪽 1개, 나머지는 막다른 방이라 1개
         foreach (RoomNode room in layout.Rooms)
         {
             bool validDoorCount = room.Type switch
