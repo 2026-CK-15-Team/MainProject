@@ -35,6 +35,7 @@ public class FinalBoss : MonoBehaviour, ICombatTarget
     private int patternIndex;
     private BossPatternData telegraphing;
     private float telegraphEndsAt;
+    private Vector2 telegraphAim;
     private float spiralAngle;
     private TelegraphView telegraph;
 
@@ -81,6 +82,7 @@ public class FinalBoss : MonoBehaviour, ICombatTarget
         if (State != BossState.Idle) return;
         State = BossState.Phase1;
         CombatTargets.Register(this);
+        // 전투 시작 직후 첫 패턴까지 여유 (더미 값, 기획 미정)
         nextPatternAt = GameClock.CombatTime + 1.5f;
         GameEvents.Raise(GameEvents.BossEncounterStarted);
     }
@@ -97,6 +99,7 @@ public class FinalBoss : MonoBehaviour, ICombatTarget
             Defeat();
             return;
         }
+        // 페이즈 전환: 2페이즈 목록 처음부터. 이미 예고 중인 1페이즈 패턴은 그대로 발사됨
         if (State == BossState.Phase1 && CurrentHP <= MaxHP * GameBalance.Current.Boss.PhaseTransitionThreshold)
         {
             State = BossState.Phase2;
@@ -154,6 +157,8 @@ public class FinalBoss : MonoBehaviour, ICombatTarget
         return list;
     }
 
+    // 패턴 1회 = 예고(TelegraphDuration) → 발사. 다음 패턴은 이번 예고 시작 + Interval 이후에 시작.
+    // 목록을 순서대로 돌고, 한 번에 패턴 하나만 진행함.
     private void TickPatterns()
     {
         float now = GameClock.CombatTime;
@@ -181,7 +186,8 @@ public class FinalBoss : MonoBehaviour, ICombatTarget
     private void ShowTelegraph(BossPatternData pattern)
     {
         var segments = new List<(Vector2, Vector2)>();
-        Vector2 aim = AimDir();
+        telegraphAim = AimDir();
+        Vector2 aim = telegraphAim;
         int count = Mathf.Clamp(pattern.ProjectileCount, 1, 24);
         for (int i = 0; i < count; i++)
         {
@@ -191,15 +197,17 @@ public class FinalBoss : MonoBehaviour, ICombatTarget
         telegraph.ShowSegments(segments, new Color(1f, 0.3f, 0.4f, 0.6f), 0.06f);
     }
 
+    // 예고 시작 때 정한 조준 방향으로 발사 → 예고선과 실제 탄 방향이 같음
     private void Execute(BossPatternData pattern)
     {
-        Vector2 aim = AimDir();
+        Vector2 aim = telegraphAim;
         int count = Mathf.Max(1, pattern.ProjectileCount);
         for (int i = 0; i < count; i++)
         {
             Vector2 dir = DirectionFor(pattern, i, count, aim);
             EnemyProjectile.Spawn(this, Position + dir * HitRadius, dir, pattern.Projectile, new Color(1f, 0.3f, 0.5f));
         }
+        // 회전 방사: 다음 발사는 탄 사이 각도의 절반만큼 돌려서 이전 탄 사이로 나가게 함
         if (pattern.Kind == BossPatternKind.Spiral) spiralAngle += 360f / count * 0.5f;
     }
 
