@@ -9,7 +9,8 @@ using UnityEngine.InputSystem;
 [DefaultExecutionOrder(-300)]
 public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
 {
-    public Vector2 MoveInput { get; private set; }
+    // 차단 중이면 0. 비정지 모달(아티팩트 획득, 상점 등)은 시간이 흐르므로 여기서 막아야 캐릭터가 안 걸어감
+    public Vector2 MoveInput => Blocked ? Vector2.zero : rawMoveInput;
     public Vector2 AimScreenPosition { get; private set; }
 
     // 공격 유지 입력 (차단과 재입력 대기 반영)
@@ -22,6 +23,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
     public event Action ReloadPressed;
 
     private PlayerControls controls;
+    private Vector2 rawMoveInput;
     private bool attackHeldRaw;
     private bool attackLatch;
 
@@ -48,7 +50,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
     private void OnDisable() => controls.Disable();
     private void OnDestroy() => controls.Dispose();
 
-    public void OnMove(InputAction.CallbackContext context) => MoveInput = context.ReadValue<Vector2>();
+    public void OnMove(InputAction.CallbackContext context) => rawMoveInput = context.ReadValue<Vector2>();
 
     public void OnAimPosition(InputAction.CallbackContext context) => AimScreenPosition = context.ReadValue<Vector2>();
 
