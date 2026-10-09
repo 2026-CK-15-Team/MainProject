@@ -71,11 +71,13 @@ public class RoomRuntime : MonoBehaviour
         Vector2Int size = room.Template.Size;
         Vector2Int origin = Vector2Int.RoundToInt(room.transform.position);
         CellBounds = new RectInt(origin, size);
+        // 아래 벽 앞면 줄은 걸어 다니는 바닥이라 룸 안으로 봄. 빼면 그 줄에 들어설 때 복도 판정이 나서 카메라 경계가 풀림
+        int solidBottom = style.Bottom - style.FrontRowCount;
         InteriorRect = new Rect(
             origin.x + style.Side,
-            origin.y + style.Bottom,
+            origin.y + solidBottom,
             Mathf.Max(1, size.x - style.Side * 2),
-            Mathf.Max(1, size.y - style.Bottom - style.Top));
+            Mathf.Max(1, size.y - solidBottom - style.Top));
 
         MonsterRoot = new GameObject("Monsters").transform;
         MonsterRoot.SetParent(transform, false);

@@ -169,7 +169,9 @@ public static class PlaceholderContentGenerator
             for (int x = W - S; x < W; x++) Carve(floor, wall, front, new Vector3Int(x, doorY + i, 0), tiles);
         }
         CreateDoor(root.transform, RoomSide.Up, new Vector2(doorX + DoorWidth * 0.5f, H - T * 0.5f), new Vector2(DoorWidth, T));
-        CreateDoor(root.transform, RoomSide.Down, new Vector2(doorX + DoorWidth * 0.5f, B * 0.5f), new Vector2(DoorWidth, B));
+        // 아래 문 장벽은 충돌하는 바깥 줄만. 앞면 줄까지 덮으면 잠글 때 옆 벽보다 한 칸 튀어나옴
+        int solidB = B - Style.FrontRowCount;
+        CreateDoor(root.transform, RoomSide.Down, new Vector2(doorX + DoorWidth * 0.5f, solidB * 0.5f), new Vector2(DoorWidth, solidB));
         CreateDoor(root.transform, RoomSide.Left, new Vector2(S * 0.5f, doorY + DoorWidth * 0.5f), new Vector2(S, DoorWidth));
         CreateDoor(root.transform, RoomSide.Right, new Vector2(W - S * 0.5f, doorY + DoorWidth * 0.5f), new Vector2(S, DoorWidth));
 
