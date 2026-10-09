@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae20c019571c45068c036399fda4eeee, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: Assembly-CSharp::GameConfig
+  Run: {fileID: 11400000, guid: 487d58dd541bd5447a52e7ffb593644d, type: 2}
+  Balance: {fileID: 11400000, guid: c4d7bc78d6acc8942ab48cd89f03b68e, type: 2}
+  Floors:
+  - {fileID: 11400000, guid: a93b3545dafd2af4a83a55526542177c, type: 2}
+  - {fileID: 11400000, guid: 2d9e0112c2093014ab90b4bea147c9be, type: 2}
+  - {fileID: 11400000, guid: 81e44ffe7d0e0e24596ee12bdb48d8e7, type: 2}
+  Artifacts: {fileID: 11400000, guid: 7161bd3879fe44a4e882acc5cfedd69a, type: 2}
+  Weapons:
+  - {fileID: 11400000, guid: 67dd035a4d498c74dbf3326260d76e3c, type: 2}
+  - {fileID: 11400000, guid: 38150873901ef5940bf9ba547b3fca6f, type: 2}
+  - {fileID: 11400000, guid: 594227f2e0f2f4c4cb9f52504b6788e3, type: 2}
+  UIFont: {fileID: 0}
+  PlayerPrefab: {fileID: 0}
+  PostProcessProfile: {fileID: 11400000, guid: 3c48760ca43a8484681972889f4740e2, type: 2}

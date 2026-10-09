@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21b6b0958a3f4b90821dde5a737cb11c, type: 3}
+  m_Name: Test_Charger
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterDefinition
+  Archetype: 0
+  DisplayName: "\uB3CC\uC9C4\uD615"
+  Prefab: {fileID: 0}
+  Sprite: {fileID: 0}
+  PlaceholderColor: {r: 0.85, g: 0.35, b: 0.25, a: 1}
+  HPByFloor: 1e0000002a00000038000000
+  MoveSpeed: 1.4
+  BodyRadius: 0.35
+  ContactDamage: 1
+  SeparationSpeed: 0.6
+  RepathInterval: 0.25
+  AttackInterval: 2.4
+  TelegraphDuration: 0.65
+  AimLockLeadTime: 0.25
+  KeepDistanceBand: {x: 0.55, y: 0.8}
+  AttackMaxDistance: 1
+  ChargerTriggerDistance: 3
+  DashSpeed: 6
+  DashDistance: 3
+  PostDashRecovery: 0.8
+  DashDamage: 1
+  BrawlerAttackRange: 1
+  BrawlerAttackArc: 120
+  BrawlerAttackDamage: 1
+  BurstGap: 0.15
+  BurstLeadRatio: 0.5
+  SingleProjectile:
+    Speed: 5
+    Radius: 0.1
+    MaxDistance: 6
+    Damage: 1
+  BurstProjectile:
+    Speed: 3.5
+    Radius: 0.1
+    MaxDistance: 6
+    Damage: 1
+  BarrageProjectileCount: 8
+  BarrageProjectile:
+    Speed: 2.6
+    Radius: 0.08
+    MaxDistance: 5.5
+    Damage: 1
+  SniperHitscanWidth: 0.36
+  SniperDamage: 2
+  StrafeFlipInterval: {x: 1, y: 2}
+  StrafeSightProbeDistance: 0.5

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee6d46bce4e44609a97e8412fd38aba, type: 3}
+  m_Name: Test_Rifle_4
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactDefinition
+  Id: Test_Rifle_4
+  DisplayName: "\uB77C\uC774\uD50C \uB354\uBBF8 4"
+  Grade: 2
+  Set: {fileID: 11400000, guid: a801443a12ec82b4f8c29c42a95fada6, type: 2}
+  UnlockSource: 2
+  Modifiers:
+  - Stat: 24
+    Kind: 1
+    Value: 0.2
+  Description: "\uD14C\uC2A4\uD2B8\uC6A9 \uB354\uBBF8 \uD6A8\uACFC"
+  Icon: {fileID: 0}
+  CodexOrder: 3
+  IsTestPlaceholder: 1

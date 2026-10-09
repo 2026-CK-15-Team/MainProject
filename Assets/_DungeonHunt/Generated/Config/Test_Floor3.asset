@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9464bd40382c69499dd72295e3d47d7, type: 3}
+  m_Name: Test_Floor3
+  m_EditorClassIdentifier: Assembly-CSharp::FloorConfig
+  CombatRoomCount: 8
+  HasLoop: 1
+  HasStairs: 1
+  RoomPrefabs:
+  - {fileID: 2387220226936558324, guid: 6bc9a45ce49a7f547862db19e1d3a3a5, type: 3}
+  - {fileID: 4809851868279905307, guid: 64a7c5c8a0cab2f4c8e19f035dc5f5a9, type: 3}
+  - {fileID: 9062351249829015231, guid: a6f201125944eae4ba8049c6cad0fa78, type: 3}
+  - {fileID: 2410177046367965217, guid: b1a022ca3733f674881596791bd0b75c, type: 3}
+  - {fileID: 7843104427671819762, guid: 1bcfffb826ed3b8419c639e3256847d9, type: 3}
+  - {fileID: 4410815770788138709, guid: 66bf641e5932c3b42b3f0c04a404d651, type: 3}
+  - {fileID: 3462954409873336890, guid: 8e5284bbaaf33a84fae32f34776f2128, type: 3}
+  - {fileID: 1049299124296453867, guid: ac5ad9a0683746a438c7833489211501, type: 3}
+  - {fileID: 6307963553918765116, guid: a33cff4159a2f8b41869ccff35128a7a, type: 3}
+  - {fileID: 6821671517808096482, guid: 34c47e545ac5a8c46bac0de0229b8c3b, type: 3}
+  MinRoomSpacing: 3
+  CorridorFloorTile: {fileID: 11400000, guid: 5669b714c6e226d45a221cd7a523cf0c, type: 2}
+  TopWallTile: {fileID: 11400000, guid: 5a751c49097ca244eb7c70164a2da0c4, type: 2}
+  BottomWallTile: {fileID: 11400000, guid: 04ea7012d8c170849addf6c542adf453, type: 2}
+  BottomWallFrontTile: {fileID: 11400000, guid: e0100edf28215f240bdeca20ca0f6108, type: 2}
+  SideWallTile: {fileID: 11400000, guid: 132878d07be5ed04494b05a45592a9ee, type: 2}

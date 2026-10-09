@@ -1,0 +1,189 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9110185372919432858
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
+  m_Name: Bloom
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.Bloom
+  active: 1
+  skipIterations:
+    m_OverrideState: 0
+    m_Value: 1
+  threshold:
+    m_OverrideState: 1
+    m_Value: 0.8
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.6
+  scatter:
+    m_OverrideState: 1
+    m_Value: 0.65
+  clamp:
+    m_OverrideState: 0
+    m_Value: 65472
+  tint:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  highQualityFiltering:
+    m_OverrideState: 0
+    m_Value: 0
+  filter:
+    m_OverrideState: 0
+    m_Value: 0
+  downscale:
+    m_OverrideState: 0
+    m_Value: 0
+  maxIterations:
+    m_OverrideState: 0
+    m_Value: 6
+  dirtTexture:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
+    dimension: 1
+  dirtIntensity:
+    m_OverrideState: 0
+    m_Value: 0
+--- !u!114 &-576156906035778770
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cff7958095bf45a1881fe40595c65618, type: 3}
+  m_Name: DungeonLensEffects
+  m_EditorClassIdentifier: Assembly-CSharp::DungeonLensEffects
+  active: 1
+  fogIntensity:
+    m_OverrideState: 1
+    m_Value: 0.25
+  fogColor:
+    m_OverrideState: 1
+    m_Value: {r: 0.55, g: 0.5, b: 0.45, a: 1}
+  fogScale:
+    m_OverrideState: 1
+    m_Value: 6
+  fogSpeed:
+    m_OverrideState: 1
+    m_Value: {x: 0.25, y: 0.08}
+  fogContrast:
+    m_OverrideState: 0
+    m_Value: 1.4
+  fogEdgeBias:
+    m_OverrideState: 1
+    m_Value: 0.6
+  fringeIntensity:
+    m_OverrideState: 1
+    m_Value: 0.35
+  fringeColor:
+    m_OverrideState: 0
+    m_Value: {r: 0.65, g: 0.25, b: 1, a: 1}
+  fringeWidth:
+    m_OverrideState: 0
+    m_Value: 2
+  fringeThreshold:
+    m_OverrideState: 0
+    m_Value: 0.15
+  fringeRadial:
+    m_OverrideState: 0
+    m_Value: 0.7
+  flareIntensity:
+    m_OverrideState: 1
+    m_Value: 0.24
+  flareThreshold:
+    m_OverrideState: 0
+    m_Value: 0.85
+  flareTint:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 0.85, b: 0.7, a: 1}
+  flareGhostCount:
+    m_OverrideState: 0
+    m_Value: 3
+  flareGhostSpacing:
+    m_OverrideState: 0
+    m_Value: 0.35
+  flareChromatic:
+    m_OverrideState: 0
+    m_Value: 0.006
+  flareHaloIntensity:
+    m_OverrideState: 0
+    m_Value: 0.5
+  flareHaloRadius:
+    m_OverrideState: 0
+    m_Value: 0.45
+  flareStreakIntensity:
+    m_OverrideState: 0
+    m_Value: 0.4
+  flareStreakLength:
+    m_OverrideState: 0
+    m_Value: 0.12
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+  m_Name: GamePostProcessProfile
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.VolumeProfile
+  components:
+  - {fileID: -9110185372919432858}
+  - {fileID: 5278458954915758014}
+  - {fileID: 8055683936970542261}
+  - {fileID: -576156906035778770}
+--- !u!114 &5278458954915758014
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 899c54efeace73346a0a16faa3afe726, type: 3}
+  m_Name: Vignette
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.Vignette
+  active: 1
+  color:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  center:
+    m_OverrideState: 0
+    m_Value: {x: 0.5, y: 0.5}
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.3
+  smoothness:
+    m_OverrideState: 1
+    m_Value: 0.45
+  rounded:
+    m_OverrideState: 0
+    m_Value: 0
+--- !u!114 &8055683936970542261
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81180773991d8724ab7f2d216912b564, type: 3}
+  m_Name: ChromaticAberration
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ChromaticAberration
+  active: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.12

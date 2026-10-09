@@ -1,0 +1,148 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e20af928caa444fb9da6751a88aa3a4, type: 3}
+  m_Name: GameBalance
+  m_EditorClassIdentifier: Assembly-CSharp::GameBalance
+  Player:
+    MoveMaxSpeed: 3
+    MoveAccelTime: 0.08
+    MoveDecelTime: 0.08
+    DodgeLength: 1.8
+    DodgeDuration: 0.32
+    DodgeInvincibleDuration: 0.2
+    DodgeMaxCharge: 2
+    DodgeChargeTime: 1.15
+    JustDodgeWindow: 0.1
+    InteractRange: 1.25
+    HitInvincibilityDuration: 0.55
+    BodyRadius: 0.28
+    HurtboxRadius: 0.18
+    MaxHP: 6
+    CritChance: 0.05
+    CritDamageMultiplier: 1.5
+    CritChanceUpgradeStep: 0.02
+    CritDamageUpgradeStep: 0.1
+    StatUpgradeMaxLevel: 5
+    MoveSpeedFloor: 0.1
+  Weapon:
+    FireIntervalFloor: 0.04
+    PistolMoveSpeedBonus: 0.1
+    PistolDodgeChargeBonus: 1
+    RifleFireMoveSpeedMultiplier: 0.75
+    ShotgunFireMoveSpeedMultiplier: 0.7
+    ShotgunFireKickSlowDuration: 0.1
+    JustDodgeAmmoRefundRatio: 0.25
+    KnockbackDuration: 0.12
+    CollisionTieEpsilon: 0.001
+    RifleFiringGrace: 0.12
+  Camera:
+    ViewportHeightInH: 6
+    AimOffsetDistance: 0.65
+    FollowSmoothTime: 0.12
+    CombatEntryCatchupSmoothTime: 0.06
+    CombatEntryCatchupExitDistance: 0.05
+    TransitionFadeOut: 0.18
+    TransitionFadeIn: 0.18
+  CombatRoom:
+    RewardArtifactChance: 0.2
+    RewardCurrencyChance: 0.55
+    RewardHPChance: 0.25
+    RewardCurrencyAmount: 6
+    RewardHPAmount: 1
+    LargeArtifactChance: 0.4
+    LargeCurrencyChance: 0.4
+    LargeHPChance: 0.2
+    LargeCurrencyAmount: 12
+    LargeHPAmount: 2
+    WaveTransitionWarningDuration: 1
+    SpawnContactDamageGrace: 0.25
+    RewardPickupEnableDelay: 0.25
+    MonsterCurrencyDropDefault: 1
+    RoomRevealFadeDuration: 0.25
+    FirstEntrySafeRadius: 2
+  Shop:
+    SmallHealPrice: {x: 4, y: 6}
+    SmallHealAmount: 1
+    LargeHealPrice: {x: 7, y: 10}
+    LargeHealAmount: 2
+    PermanentBundleAmount: 2
+    PermanentBundlePrice: {x: 7, y: 10}
+    FourSlotChance: 0.5
+    ExtraSlotBundleChance: 0.5
+    LargeHealChance: 0.5
+    CommonArtifactPrice: {x: 8, y: 11}
+    RareArtifactPrice: {x: 14, y: 18}
+    LegendaryArtifactPrice: {x: 24, y: 30}
+    RerollCost: 6
+  Gamble:
+    HPCostPerAttempt: 1
+    BaseArtifactChance: 0.25
+    PityIncrement: 0.2
+  SecretRoom:
+    CurrencyWeight: 30
+    HPWeight: 20
+    ArtifactWeight: 35
+    GambleWeight: 15
+    SecondUIFallback: 0
+  FloorEnd:
+    WaitIndicatorDelay: 1
+    FloorNames:
+    - "1\uCE35 \uC784\uC2DC\uC774\uB984"
+    - "2\uCE35 \uC784\uC2DC\uC774\uB984"
+    - "3\uCE35 \uC784\uC2DC\uC774\uB984"
+  Boss:
+    HP: 1200
+    PhaseTransitionThreshold: 0.5
+    DeathMotionDuration: 1.5
+    IntroDuration: 1.5
+    ContactDamage: 1
+    BodyRadius: 0.9
+  Artifact:
+    SlotCount: 6
+    Tier1Threshold: 2
+    Tier2Threshold: 4
+    CommonWeight: 65
+    RareWeight: 27
+    LegendaryWeight: 8
+    SetBiasTriggerChance: 0.5
+    RerollMaxCount: 2
+    RerollFreeCount: 1
+    FieldDropSearchRadius: 0.75
+  Meta:
+    PermanentPerRoomCleared: 2
+    FloorClearBonus: 04000000070000000a000000
+    ArtifactUnlockCost: 30
+    StatUpgradeCost: 140000002300000037000000500000006e000000
+    RunEntryFadeOut: 0.18
+    RunEntryFadeIn: 0.18
+    DeathResultTransitionDuration: 0.75
+    AbandonResultFadeDuration: 0.3
+    EndingDuration: 12
+    EndingLastLine: "\uC774\uACF3\uC5D0 \uC228\uACA8\uC9C4 \uBCF4\uBB3C\uC774 \uB354
+      \uC788\uC744 \uAC83 \uAC19\uB2E4"
+  Feedback:
+    RifleHitShake: {x: 0.008, y: 0.04}
+    PistolHitShake: {x: 0.018, y: 0.06}
+    ShotgunHitShake: {x: 0.04, y: 0.08}
+    PlayerHitShake: {x: 0.08, y: 0.12}
+    HitShakeRetriggerInterval: 0.05
+    MonsterWhiteFlashDuration: 0.06
+    KillHitstopDuration: 0.04
+    PlayerHitTintDuration: 0.06
+    PlayerInvincibleBlinkPeriod: 0.08
+    SetActivationToastDuration: 1
+  UI:
+    MonsterHPBarFadeDelay: 1.25
+    FloorArrivalTextDuration: {x: 0.2, y: 1.3, z: 0.3}
+    ReferenceResolution: {x: 1920, y: 1080}
+    MinimapHUDViewRange: 20
+    ScreenShakeDefault: 75

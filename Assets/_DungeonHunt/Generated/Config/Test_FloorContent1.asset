@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf6e1469c1fa466abf8acada46130733, type: 3}
+  m_Name: Test_FloorContent1
+  m_EditorClassIdentifier: Assembly-CSharp::FloorContent
+  DisplayName: 
+  CombatPresets:
+  - {fileID: 11400000, guid: 7c549a2efc2a44b439985cbc5c385bc0, type: 2}
+  - {fileID: 11400000, guid: 7d6a66813d90a054695b072042afe415, type: 2}
+  - {fileID: 11400000, guid: 03d5cc8dadab1764ea5b1a2fdeb37c69, type: 2}
+  - {fileID: 11400000, guid: 1b9ffd8a69df32b4682383b609456091, type: 2}
+  ElitePresets:
+  - {fileID: 11400000, guid: 2cbb584a1131a544f9a83bbf220ea0da, type: 2}
+  - {fileID: 11400000, guid: 9303623f842b65040be2359569d79f1e, type: 2}
+  - {fileID: 11400000, guid: afa440c465c88e7488fd8a0926cda4fd, type: 2}
+  Boss: {fileID: 0}
+  FallbackMonsters:
+  - {fileID: 11400000, guid: 2eed4207c8f4f214f95a2f3f23c87986, type: 2}
+  - {fileID: 11400000, guid: 4d3736b5a34fcc34a87bcd1ee16c8785, type: 2}
+  - {fileID: 11400000, guid: 58718e26dc60359478187a0024d668bd, type: 2}
+  FallbackMonsterCount: 4
+  FogColor: {r: 0.16, g: 0.13, b: 0.11, a: 1}

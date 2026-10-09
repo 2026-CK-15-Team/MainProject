@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2463c2171eff49b893e5eb0e7dc544d6, type: 3}
+  m_Name: Test_F1_Elite1
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterWavePreset
+  Waves:
+  - Entries:
+    - SpawnPoint: 1
+      Monster: {fileID: 11400000, guid: 2eed4207c8f4f214f95a2f3f23c87986, type: 2}
+      CurrencyDrop: 1
+    - SpawnPoint: 2
+      Monster: {fileID: 11400000, guid: 2eed4207c8f4f214f95a2f3f23c87986, type: 2}
+      CurrencyDrop: 1
+    - SpawnPoint: 3
+      Monster: {fileID: 11400000, guid: 4d3736b5a34fcc34a87bcd1ee16c8785, type: 2}
+      CurrencyDrop: 1
+    - SpawnPoint: 4
+      Monster: {fileID: 11400000, guid: 4d3736b5a34fcc34a87bcd1ee16c8785, type: 2}
+      CurrencyDrop: 1
+    - SpawnPoint: 5
+      Monster: {fileID: 11400000, guid: 2eed4207c8f4f214f95a2f3f23c87986, type: 2}
+      CurrencyDrop: 1
+  - Entries:
+    - SpawnPoint: 1
+      Monster: {fileID: 11400000, guid: 2eed4207c8f4f214f95a2f3f23c87986, type: 2}
+      CurrencyDrop: 1
+    - SpawnPoint: 2
+      Monster: {fileID: 11400000, guid: 2eed4207c8f4f214f95a2f3f23c87986, type: 2}
+      CurrencyDrop: 1
+    - SpawnPoint: 3
+      Monster: {fileID: 11400000, guid: 4d3736b5a34fcc34a87bcd1ee16c8785, type: 2}
+      CurrencyDrop: 1
+    - SpawnPoint: 4
+      Monster: {fileID: 11400000, guid: 4d3736b5a34fcc34a87bcd1ee16c8785, type: 2}
+      CurrencyDrop: 1
+    - SpawnPoint: 5
+      Monster: {fileID: 11400000, guid: 2eed4207c8f4f214f95a2f3f23c87986, type: 2}
+      CurrencyDrop: 1
+    - SpawnPoint: 6
+      Monster: {fileID: 11400000, guid: 2eed4207c8f4f214f95a2f3f23c87986, type: 2}
+      CurrencyDrop: 1
