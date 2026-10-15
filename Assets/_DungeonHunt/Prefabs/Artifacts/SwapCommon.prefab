@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7697249164991262404
+--- !u!1 &5163297600194331961
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6748721928992400862}
-  - component: {fileID: 7757916636280775788}
+  - component: {fileID: 8765866989111223396}
+  - component: {fileID: 4084758461311417356}
   m_Layer: 0
   m_Name: Circle
   m_TagString: Untagged
@@ -17,13 +17,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6748721928992400862
+--- !u!4 &8765866989111223396
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7697249164991262404}
+  m_GameObject: {fileID: 5163297600194331961}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,14 +32,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4037953429616786252}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &7757916636280775788
+--- !u!212 &4084758461311417356
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7697249164991262404}
+  m_GameObject: {fileID: 5163297600194331961}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -81,8 +81,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.03525853, g: 1, b: 0, a: 1}
+  m_Sprite: {fileID: 1634120385027966765, guid: 20347d18e8651a043a01b362ea15d42f, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -118,11 +118,11 @@ Transform:
   m_GameObject: {fileID: 7936074897436944625}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.01815, y: 13.18086, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6748721928992400862}
+  - {fileID: 8765866989111223396}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &670994159334422876
@@ -139,6 +139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FieldArtifact
   definition: {fileID: 11400000, guid: d6fb26a01f153b6488c01547e875f593, type: 2}
   catalog: {fileID: 0}
+  isTreasureReward: 0
 --- !u!58 &8672439195451635350
 CircleCollider2D:
   m_ObjectHideFlags: 0

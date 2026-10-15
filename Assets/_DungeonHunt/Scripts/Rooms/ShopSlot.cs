@@ -7,7 +7,7 @@ public class ShopSlot : MonoBehaviour, IInteractable
     public SlotType Type;
     public int Price = 5;
     public bool SoldOut;
-
+    [SerializeField] private SpriteRenderer iconRenderer;
     [Header("HPHeal 전용")]
     public int HealAmount = 1;
 

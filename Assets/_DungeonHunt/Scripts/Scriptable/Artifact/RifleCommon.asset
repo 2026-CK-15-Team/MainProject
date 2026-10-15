@@ -16,3 +16,4 @@ MonoBehaviour:
   DisplayName: RIFLE Common
   Grade: 0
   SetType: 1
+  Icon: {fileID: 1634120385027966765, guid: 20347d18e8651a043a01b362ea15d42f, type: 3}

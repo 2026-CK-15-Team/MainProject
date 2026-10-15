@@ -16,3 +16,4 @@ MonoBehaviour:
   DisplayName: SHOTGUN Rare
   Grade: 1
   SetType: 2
+  Icon: {fileID: -8159898810716879005, guid: 0b247bdb6644a0b45be63b37607b3cc2, type: 3}

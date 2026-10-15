@@ -16,3 +16,4 @@ MonoBehaviour:
   DisplayName: PISTOL Common
   Grade: 0
   SetType: 0
+  Icon: {fileID: -3150528166993482388, guid: 9e0a20d2939da7742877576a03b85381, type: 3}

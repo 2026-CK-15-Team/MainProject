@@ -1,0 +1,49 @@
+{
+    "RunID": "7c2c036b-fadc-4cc8-ad41-b3865c79e40c",
+    "BuildVersion": "1.0",
+    "RNGSeed": 38689687,
+    "Result": "RunOver",
+    "RunTime": 3.7953054904937746,
+    "Events": [
+        {
+            "timestamp": 0.0,
+            "type": "ArtifactDraw",
+            "data": "source=treasure,branch=general,attempts=1,siblingRuleMet=True,gradeRoll=Common,gradeUsed=Common,flipped=False,poolSize=3,setBias=False,result=PT_SWAP_01"
+        },
+        {
+            "timestamp": 0.2599999010562897,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=5,crit=False"
+        },
+        {
+            "timestamp": 0.8199996948242188,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=4,crit=False"
+        },
+        {
+            "timestamp": 1.3799995183944703,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=3,crit=False"
+        },
+        {
+            "timestamp": 1.9399993419647217,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=2,crit=False"
+        },
+        {
+            "timestamp": 2.4999990463256838,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=1,crit=False"
+        },
+        {
+            "timestamp": 3.0599989891052248,
+            "type": "PlayerHit",
+            "data": "amount=1,hpAfter=0,crit=False"
+        },
+        {
+            "timestamp": 3.0599989891052248,
+            "type": "Death",
+            "data": "position=(-0.50, -7.66, 0.00)"
+        }
+    ]
+}

@@ -16,3 +16,4 @@ MonoBehaviour:
   DisplayName: SWAP Rare
   Grade: 1
   SetType: 3
+  Icon: {fileID: 1634120385027966765, guid: 20347d18e8651a043a01b362ea15d42f, type: 3}

@@ -16,3 +16,4 @@ MonoBehaviour:
   DisplayName: RIFLE Rare
   Grade: 1
   SetType: 1
+  Icon: {fileID: -5967001527201644432, guid: f56f2a8604da3634993bcaee8f292547, type: 3}

@@ -41,6 +41,16 @@ public class PauseMenuController : MonoBehaviour
         ModalGate.Register(false);
     }
 
+    public void QuitGame()
+    {
+        Debug.Log("[Pause] 프로그램 종료");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
     public void AbandonRun()
     {
         Debug.Log("[Pause] 런 포기 확정");

@@ -6,7 +6,8 @@ public class FieldArtifact : MonoBehaviour, IInteractable
     [SerializeField] private ArtifactDefinition definition; // 직접 지정하려면 채우고, 비워두면 카탈로그에서 무작위로 뽑음
     [SerializeField] private ArtifactCatalogData catalog;
     [SerializeField] private bool isTreasureReward;
-
+    [SerializeField] private SpriteRenderer iconRenderer;
+    
     private const int RerollCost = 6;
     private const int MaxRerollCount = 2;
 
@@ -66,6 +67,8 @@ public class FieldArtifact : MonoBehaviour, IInteractable
 
         ArtifactReservation.Reserve(definition.Id);
         sessionSeenIds.Add(definition.Id);
+        if (iconRenderer != null && definition.Icon != null)
+            iconRenderer.sprite = definition.Icon;
     }
 
     public void SetDefinition(ArtifactDefinition newDefinition)

@@ -16,3 +16,4 @@ MonoBehaviour:
   DisplayName: PISTOL Rare
   Grade: 1
   SetType: 0
+  Icon: {fileID: 4328352095013841556, guid: fe0c157992f92ac4ea43c158095a3a9f, type: 3}

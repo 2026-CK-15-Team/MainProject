@@ -19,4 +19,5 @@ public class ArtifactDefinition : ScriptableObject
     public string DisplayName;
     public ArtifactGrade Grade;
     public ArtifactSetType SetType;
+    public Sprite Icon;
 }

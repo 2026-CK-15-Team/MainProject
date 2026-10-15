@@ -49,6 +49,7 @@ MonoBehaviour:
   definition: {fileID: 0}
   catalog: {fileID: 11400000, guid: 9aeeef36af0f4c6429c5236f49e1f31f, type: 2}
   isTreasureReward: 0
+  iconRenderer: {fileID: 5063410019529994165}
 --- !u!58 &4143680697528043694
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -167,7 +168,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.03525853, g: 1, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
