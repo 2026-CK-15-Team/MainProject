@@ -7,9 +7,10 @@ public class ArtifactAcquireUI : MonoBehaviour
     [SerializeField] private PlayerInputReader input;
     [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text infoText;
+    [SerializeField] private Image infoImage;
     [SerializeField] private Button rerollButton;
     [SerializeField] private TMP_Text rerollButtonLabel;
-
+    
     private FieldArtifact currentSource;
 
     public bool IsOpen => panel.activeSelf;
@@ -30,6 +31,8 @@ public class ArtifactAcquireUI : MonoBehaviour
     {
         var def = currentSource.CurrentDefinition;
         infoText.text = $"{def.DisplayName}\n{def.Grade} / {def.SetType}";
+        if (infoImage != null && def.Icon != null)
+            infoImage.sprite = def.Icon;
         PlaytestLogger.Log("ArtifactShown", $"{def.Id},{def.Grade},{def.SetType},rerollCount={currentSource.RerollCount}");
 
         bool canReroll = currentSource.CanReroll;
