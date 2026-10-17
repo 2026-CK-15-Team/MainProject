@@ -11,7 +11,8 @@ public class ArtifactPickup : MonoBehaviour, IInteractable
 
     public ArtifactDefinition Candidate { get; private set; }
     public AcquisitionOrigin Origin { get; private set; }
-    // 처음 확인하는 세션에서만 리롤 가능. 미선택/드랍 뒤 재획득은 리롤 없음
+    // 필드 배치형(보물/전투/비밀/엘리트)만 리롤 가능. 미선택 뒤 다시 주워도 남은 리롤, 현재 후보, 확인 ID 그대로 (기획 변경, 07 §4.8 6번 대체)
+    // 장착했다가 버린 복사본은 리롤 없음
     public bool CanReroll { get; private set; }
     public int RerollsUsed { get; private set; }
     public bool SessionStarted { get; private set; }
@@ -187,11 +188,10 @@ public class ArtifactPickup : MonoBehaviour, IInteractable
     // 획득 대기 취소: 필드 배치형은 후보/리롤 상태 유지한 채 필드에 남음
     private void OnPendingCancelled() { }
 
-    // 미선택: 오브젝트는 원래 자리에 남고 세션 종료. 다시 주우면 재획득 → 리롤 없음 (§4.8 6번)
+    // 미선택: 오브젝트는 원래 자리에 남음. 리롤 상태(남은 횟수, 다음 비용, 현재 후보)는 그대로 유지
     public void NotSelected()
     {
         GameEvents.Raise(GameEvents.ArtifactNotSelected, Candidate);
-        CanReroll = false;
     }
 
     private void Consume()
