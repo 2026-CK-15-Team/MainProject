@@ -144,6 +144,13 @@
 `Generated/Config/Test_FloorContent1~3.asset` (`FloorContent`) — 그 층의 웨이브 프리셋, 엘리트 프리셋, 보스, 가림 색.
 **3층도 HasStairs 켜야 엔딩 룸이 생김.**
 
+### 5.6 타일셋 (코드 오토타일)
+
+- `FloorConfig > Tileset`에 `DungeonTileset`을 넣으면 그 층의 벽·바닥 모양을 코드가 칸마다 고름 (방/복도 이음새 없이). 비우면 기존 5칸 방식
+- 조각 목록과 ID: [ArtResourceList.md](ArtResourceList.md) 1장, 배치 예시: `ArtResourceList_TileSample.png`
+- 방 프리팹은 **바닥 칸만 정확히** 칠하면 됨. 벽은 자동이고 프리팹 타일맵은 숨겨짐 → 같은 방을 층마다 다른 타일셋으로
+- 빈 칸은 기본 칸으로 대체되니 아트를 일부만 넣어도 확인 가능. 테스트 생성기가 테두리 표시용 자리 표시 타일셋을 연결해 둠
+
 ---
 
 ## 6. 디버그

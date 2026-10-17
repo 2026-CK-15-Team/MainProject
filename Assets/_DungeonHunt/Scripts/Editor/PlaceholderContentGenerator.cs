@@ -36,8 +36,10 @@ public static class PlaceholderContentGenerator
         EnsureFolder("Assets/_DungeonHunt/Scenes");
 
         TileSet tiles = CreateTiles();
+        DungeonTileset tileset = CreateTileset();
         Dictionary<string, Room> rooms = CreateRooms(tiles);
         RunConfig run = CreateRunConfig(tiles, rooms);
+        foreach (FloorConfig floorConfig in run.Floors) { floorConfig.Tileset = tileset; EditorUtility.SetDirty(floorConfig); }
         GameBalance balance = CreateOrLoad<GameBalance>($"{Root}/Config/GameBalance.asset");
         Dictionary<MonsterArchetype, MonsterDefinition> monsters = CreateMonsters();
         FloorContent[] floors = CreateFloorContents(monsters);
@@ -101,6 +103,96 @@ public static class PlaceholderContentGenerator
 
         Tile tile = CreateOrLoad<Tile>($"{Root}/Tiles/{name}.asset");
         tile.sprite = sprite;
+        tile.colliderType = collider;
+        tile.color = Color.white;
+        EditorUtility.SetDirty(tile);
+        return tile;
+    }
+
+    // 코드 오토타일 확인용 자리 표시 타일셋. 조각마다 테두리 방향을 그려서 어느 조각이 깔렸는지 보이게
+    private static DungeonTileset CreateTileset()
+    {
+        var floor = new Color(0.33f, 0.3f, 0.27f); var floorEdge = new Color(0.22f, 0.2f, 0.18f);
+        var ceil = new Color(0.36f, 0.38f, 0.45f); var ceilInner = new Color(0.3f, 0.32f, 0.4f); var ceilEdge = new Color(0.12f, 0.12f, 0.16f);
+        var face1 = new Color(0.55f, 0.42f, 0.32f); var face2 = new Color(0.46f, 0.35f, 0.27f); var faceEdge = new Color(0.25f, 0.18f, 0.13f);
+        var front = new Color(0.4f, 0.33f, 0.27f, 0.9f); var open = new Color(0.85f, 0.75f, 0.55f);
+        TileBase T(string id, Color main, Color edge, string sides, Tile.ColliderType collider, string inner = "")
+            => CreateMaskedTile("Test_Auto_" + id, main, edge, sides, inner, collider);
+
+        var set = CreateOrLoad<DungeonTileset>($"{Root}/Tiles/Test_DungeonTileset.asset");
+        var none = Tile.ColliderType.None; var grid = Tile.ColliderType.Grid;
+        set.FloorCenter = new[] { T("F_C", floor, floorEdge, "", none), T("F_C2", floor * 1.06f, floorEdge, "", none) };
+        set.FloorTop = T("F_T", floor, floorEdge, "N", none);
+        set.FloorLeft = T("F_L", floor, floorEdge, "W", none);
+        set.FloorRight = T("F_R", floor, floorEdge, "E", none);
+        set.FloorTopLeft = T("F_TL", floor, floorEdge, "NW", none);
+        set.FloorTopRight = T("F_TR", floor, floorEdge, "NE", none);
+        set.FloorInnerNE = T("F_INE", floor, floorEdge, "", none, "NE");
+        set.FloorInnerNW = T("F_INW", floor, floorEdge, "", none, "NW");
+        set.FloorInnerSE = T("F_ISE", floor, floorEdge, "", none, "SE");
+        set.FloorInnerSW = T("F_ISW", floor, floorEdge, "", none, "SW");
+        set.FaceLow = Row("W1", face1, faceEdge, grid);
+        set.FaceHigh = Row("W2", face2, faceEdge, grid);
+        set.Front = Row("B", front, faceEdge, none);
+        set.CeilingTop = T("C_T", ceil, ceilEdge, "NS", grid);
+        set.CeilingBottom = T("C_B", ceil, ceilEdge, "NS", grid);
+        set.CeilingLeft = T("C_L", ceil, ceilEdge, "EW", grid);
+        set.CeilingRight = T("C_R", ceil, ceilEdge, "EW", grid);
+        set.CeilingOuterTL = T("C_OTL", ceil, ceilEdge, "NW", grid, "SE");
+        set.CeilingOuterTR = T("C_OTR", ceil, ceilEdge, "NE", grid, "SW");
+        set.CeilingOuterBL = T("C_OBL", ceil, ceilEdge, "SW", grid, "NE");
+        set.CeilingOuterBR = T("C_OBR", ceil, ceilEdge, "SE", grid, "NW");
+        set.CeilingInnerTL = T("C_ITL", ceilInner, ceilEdge, "NW", grid, "SE");
+        set.CeilingInnerTR = T("C_ITR", ceilInner, ceilEdge, "NE", grid, "SW");
+        set.CeilingInnerBL = T("C_IBL", ceilInner, ceilEdge, "SW", grid, "NE");
+        set.CeilingInnerBR = T("C_IBR", ceilInner, ceilEdge, "SE", grid, "NW");
+        set.CeilingFill = T("C_Fill", ceil, ceilEdge, "", grid);
+        set.Gap = new[] { T("G", new Color(0.09f, 0.08f, 0.08f), new Color(0.11f, 0.1f, 0.1f), "", none) };
+        EditorUtility.SetDirty(set);
+        return set;
+
+        DungeonTileset.FaceRow Row(string id, Color main, Color edge, Tile.ColliderType collider) => new DungeonTileset.FaceRow
+        {
+            Middle = new[] { T(id + "_M", main, edge, "", collider) },
+            LeftWall = T(id + "_LW", main, edge, "W", collider),
+            RightWall = T(id + "_RW", main, edge, "E", collider),
+            LeftOpen = T(id + "_LO", main, open, "W", collider),
+            RightOpen = T(id + "_RO", main, open, "E", collider),
+            SingleWallOpen = T(id + "_SWO", main, edge, "W", collider, "E"),
+            SingleOpenWall = T(id + "_SOW", main, edge, "E", collider, "W"),
+            SingleWallWall = T(id + "_SWW", main, edge, "EW", collider),
+        };
+    }
+
+    // sides: 굵은 테두리를 그릴 변(NESW), inner: 작은 모서리 점을 찍을 위치(NE 등) 또는 변 하나(E/W)
+    private static Tile CreateMaskedTile(string name, Color main, Color edge, string sides, string inner, Tile.ColliderType collider)
+    {
+        const int size = 16;
+        string texturePath = $"{Root}/Tiles/{name}.png";
+        var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                bool border = (sides.Contains("N") && y >= size - 3) || (sides.Contains("S") && y < 3)
+                    || (sides.Contains("E") && x >= size - 3) || (sides.Contains("W") && x < 3);
+                bool dot = inner.Length == 2 && (inner[0] == 'N' ? y >= size - 4 : y < 4) && (inner[1] == 'E' ? x >= size - 4 : x < 4);
+                bool line = inner.Length == 1 && (inner == "E" ? x >= size - 2 : x < 2);
+                texture.SetPixel(x, y, border || dot || line ? edge : main);
+            }
+        texture.Apply();
+        File.WriteAllBytes(texturePath, texture.EncodeToPNG());
+        Object.DestroyImmediate(texture);
+        AssetDatabase.ImportAsset(texturePath);
+        var importer = (TextureImporter)AssetImporter.GetAtPath(texturePath);
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
+        importer.spritePixelsPerUnit = size;
+        importer.filterMode = FilterMode.Point;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.alphaIsTransparency = true;
+        importer.SaveAndReimport();
+        Tile tile = CreateOrLoad<Tile>($"{Root}/Tiles/{name}.asset");
+        tile.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(texturePath);
         tile.colliderType = collider;
         tile.color = Color.white;
         EditorUtility.SetDirty(tile);

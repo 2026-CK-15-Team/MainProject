@@ -18,6 +18,7 @@ public class FogOfWar : MonoBehaviour
 
     private Tilemap fogMap;
     private Tile fogTile;
+    private TileBase paintTile; // 타일셋이 있으면 틈 타일(가림 덮개 = 틈과 같은 그림, 03 §6.4)
     private Color fogColor;
     private readonly Dictionary<RoomRuntime, List<Vector3Int>> roomCells = new Dictionary<RoomRuntime, List<Vector3Int>>();
     private readonly List<(RoomRuntime a, RoomRuntime b, List<Vector3Int> cells, bool secret)> corridors = new List<(RoomRuntime, RoomRuntime, List<Vector3Int>, bool)>();
@@ -48,6 +49,9 @@ public class FogOfWar : MonoBehaviour
             fogTile.flags = TileFlags.None;
         }
         fogTile.color = Color.white;
+        TileBase tilesetFog = builder.CurrentFloor != null && builder.CurrentFloor.Tileset != null ? builder.CurrentFloor.Tileset.FogTile : null;
+        paintTile = tilesetFog != null ? tilesetFog : fogTile;
+        if (tilesetFog != null) fogColor = Color.white;
 
         FloorBlueprint blueprint = builder.Blueprint;
         var roomByNode = new Dictionary<int, RoomRuntime>();
@@ -198,7 +202,7 @@ public class FogOfWar : MonoBehaviour
         if (fogMap == null) return;
         foreach (Vector3Int cell in cells)
         {
-            fogMap.SetTile(cell, fogTile);
+            fogMap.SetTile(cell, paintTile);
             fogMap.SetTileFlags(cell, TileFlags.None);
             fogMap.SetColor(cell, color);
         }
@@ -215,7 +219,7 @@ public class FogOfWar : MonoBehaviour
                 fogMap.SetTile(cell, null);
                 continue;
             }
-            fogMap.SetTile(cell, fogTile);
+            fogMap.SetTile(cell, paintTile);
             fogMap.SetTileFlags(cell, TileFlags.None);
             fogMap.SetColor(cell, color);
         }

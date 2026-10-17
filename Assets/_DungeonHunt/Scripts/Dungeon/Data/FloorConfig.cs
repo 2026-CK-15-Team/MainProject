@@ -23,6 +23,9 @@ public class FloorConfig : ScriptableObject
     [Min(1)] public int MinRoomSpacing = 3;
 
     [Header("타일")]
+    [Tooltip("코드 오토타일 타일셋. 넣으면 방/복도 벽과 바닥을 코드가 칸마다 골라 공용 타일맵에 칠하고(방 프리팹 타일맵은 숨김), 아래 5칸은 안 씀. 비우면 기존 방식")]
+    public DungeonTileset Tileset;
+
     public TileBase CorridorFloorTile;
 
     [Tooltip("바닥 위쪽 벽 (벽면 + 천장 닿는 칸). 복도 벽이랑 안 쓰는 문 막을 때 씀")]

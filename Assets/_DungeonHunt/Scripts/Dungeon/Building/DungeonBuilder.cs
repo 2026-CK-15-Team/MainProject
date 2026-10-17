@@ -106,6 +106,65 @@ public class DungeonBuilder : MonoBehaviour
         }
     }
 
+    // ---------------- 코드 오토타일 (FloorConfig.Tileset이 있을 때) ----------------
+    // 층 전체 바닥 칸. 방 프리팹 바닥(벽/앞면 칸 제외) - 막은 문 자리 + 복도 바닥
+    private readonly HashSet<Vector2Int> autoFloor = new HashSet<Vector2Int>();
+    private Tilemap gapTilemap;
+    private int autoSeed;
+
+    public bool UsesAutoTile => CurrentFloor != null && CurrentFloor.Tileset != null;
+
+    private void AddRoomFloor(Room room, Vector2Int origin)
+    {
+        Tilemap floorMap = room.FloorTilemap, wallMap = room.WallTilemap, frontMap = room.WallFrontTilemap;
+        if (floorMap == null) return;
+        BoundsInt bounds = floorMap.cellBounds;
+        foreach (Vector3Int c in bounds.allPositionsWithin)
+        {
+            if (!floorMap.HasTile(c)) continue;
+            if (wallMap != null && wallMap.HasTile(c)) continue;
+            if (frontMap != null && frontMap.HasTile(c)) continue;
+            autoFloor.Add(origin + (Vector2Int)c);
+        }
+    }
+
+    private void RemoveCells(Vector2Int origin, IEnumerable<WallCell> cells)
+    {
+        foreach (WallCell c in cells) autoFloor.Remove(origin + c.Cell);
+    }
+
+    // 방 타일맵은 판정 데이터(문 찾기, 이동 격자, 미니맵)로만 남기고 그림/충돌은 공용 타일맵이 맡음
+    private static void HideRoomTilemaps(Room room)
+    {
+        foreach (Tilemap map in new[] { room.FloorTilemap, room.WallTilemap, room.WallFrontTilemap })
+        {
+            if (map == null) continue;
+            if (map.TryGetComponent(out TilemapRenderer renderer)) renderer.enabled = false;
+            foreach (Collider2D col in map.GetComponents<Collider2D>()) col.enabled = false;
+        }
+    }
+
+    private void ApplyAutoTile()
+    {
+        if (gapTilemap == null && grid != null)
+        {
+            var go = new GameObject("Gap");
+            go.transform.SetParent(grid.transform, false);
+            gapTilemap = go.AddComponent<Tilemap>();
+            go.AddComponent<TilemapRenderer>().sortingOrder = -10;
+        }
+        DungeonAutoTiler.Map map = DungeonAutoTiler.Classify(autoFloor, runConfig.WallStyle);
+        DungeonAutoTiler.Paint(map, CurrentFloor.Tileset, corridorFloorTilemap, corridorWallTilemap, corridorWallFrontTilemap, gapTilemap, autoSeed);
+    }
+
+    // 비밀 벽 파괴 등으로 막힌 칸이 다시 바닥이 됐을 때 (층 칸 좌표)
+    public void OpenCells(IEnumerable<Vector2Int> worldCells)
+    {
+        if (!UsesAutoTile) return;
+        foreach (Vector2Int c in worldCells) autoFloor.Add(c);
+        ApplyAutoTile();
+    }
+
     public void Build(int runSeed, int floorIndex)
     {
         Clear();
@@ -121,6 +180,8 @@ public class DungeonBuilder : MonoBehaviour
         }
         Blueprint = blueprint;
         CurrentFloor = floor;
+        bool auto = UsesAutoTile;
+        autoSeed = runSeed * 31 + floorIndex;
 
         foreach (PlacedRoom placed in blueprint.Rooms)
         {
@@ -128,6 +189,12 @@ public class DungeonBuilder : MonoBehaviour
             Room room = Instantiate(floor.RoomPrefabs[placed.TemplateIndex], position, Quaternion.identity, roomRoot);
             room.name = $"{placed.Node.Type}_{placed.Node.Id}";
             room.Initialize(placed.Node);
+            if (auto)
+            {
+                AddRoomFloor(room, placed.Position);
+                RemoveCells(placed.Position, placed.GetSealedCells(style));
+                HideRoomTilemaps(room);
+            }
             PaintWalls(room.FloorTilemap, room.WallTilemap, room.WallFrontTilemap, placed.GetSealedCells(style), floor, frontFloorTile: null);
             rooms.Add(room);
 
@@ -136,6 +203,13 @@ public class DungeonBuilder : MonoBehaviour
         }
 
         SealSecretDoorways(blueprint, style, floor);
+
+        if (auto)
+        {
+            foreach (Vector2Int cell in blueprint.CorridorFloor) autoFloor.Add(cell);
+            ApplyAutoTile();
+            return;
+        }
 
         Vector3Int[] floorCells = blueprint.CorridorFloor.Select(cell => (Vector3Int)cell).ToArray();
         corridorFloorTilemap.SetTiles(floorCells, Enumerable.Repeat(floor.CorridorFloorTile, floorCells.Length).ToArray());
@@ -154,6 +228,7 @@ public class DungeonBuilder : MonoBehaviour
             RoomSide side = parentNode.SideTowards(placed.Node);
             Room parentRoom = rooms[parentNode.Id];
             List<WallCell> cells = parentPlaced.GetOpeningSealCells(side, style);
+            if (UsesAutoTile) RemoveCells(parentPlaced.Position, cells);
             PaintWalls(parentRoom.FloorTilemap, parentRoom.WallTilemap, parentRoom.WallFrontTilemap, cells, floor, frontFloorTile: null);
 
             RoomDoor door = null;
@@ -180,6 +255,8 @@ public class DungeonBuilder : MonoBehaviour
         }
         rooms.Clear();
         secretLinks.Clear();
+        autoFloor.Clear();
+        if (gapTilemap != null) gapTilemap.ClearAllTiles();
         StartRoom = null;
         Blueprint = null;
 

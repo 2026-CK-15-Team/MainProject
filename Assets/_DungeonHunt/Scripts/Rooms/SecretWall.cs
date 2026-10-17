@@ -16,6 +16,7 @@ public class SecretWall : MonoBehaviour
     private TileBase floorTile;
     private RoomDoor door;
     private Rect worldRect;
+    private Vector2Int cellOrigin;
     public bool IsBroken { get; private set; }
 
     public static SecretWall Create(RoomRuntime parent, RoomRuntime secret, Room parentRoomPrefab, List<WallCell> sealedCells, TileBase floorTile, RoomDoor door)
@@ -32,6 +33,7 @@ public class SecretWall : MonoBehaviour
         wall.door = door;
         Vector2 min = new Vector2(float.MaxValue, float.MaxValue), max = new Vector2(float.MinValue, float.MinValue);
         Vector2 origin = parentRoomPrefab.transform.position;
+        wall.cellOrigin = Vector2Int.RoundToInt(origin);
         foreach (WallCell c in sealedCells)
         {
             wall.cells.Add(((Vector3Int)c.Cell, c.IsFront));
@@ -88,6 +90,10 @@ public class SecretWall : MonoBehaviour
             door.gameObject.SetActive(true);
             door.SetLocked(false);
         }
+        // 코드 오토타일이면 열린 칸 주변 벽 모양을 다시 고름
+        var opened = new List<Vector2Int>();
+        foreach ((Vector3Int cell, bool _) in cells) opened.Add(cellOrigin + (Vector2Int)cell);
+        GameServices.Floor?.Builder?.OpenCells(opened);
         GameServices.Floor?.OnSecretWallBroken(this, secretRoom);
         (secretRoom != null ? secretRoom.Content as SecretRoomController : null)?.Reveal();
         GameServices.Feedback?.SpawnRewardBurst(worldRect.center, new Color(0.8f, 0.7f, 0.5f));

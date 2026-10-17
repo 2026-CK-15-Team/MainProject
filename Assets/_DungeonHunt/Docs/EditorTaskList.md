@@ -58,7 +58,8 @@ Test_ 에셋을 **Generated 밖으로 복제**해서 수정 (생성기 재실행
 
 ## 3단계 — 방 제작 (🎨 + 📝)
 
-- [ ] 실제 타일셋 → `Generated/Tiles` 대신 FloorConfig 타일 필드(복도 바닥, 위/아래/옆 벽, 아래 벽 앞면) + 방 프리팹 타일맵에 연결
+- [ ] 🎨 층 타일셋 그리기 (층당 45장, 축약 35장, 층끼리 재사용 가능, [ArtResourceList.md](ArtResourceList.md) 1장) → `Create > Dungeon > Dungeon Tileset`에 넣고 `FloorConfig > Tileset` 연결
+- [ ] 💻 테스트 생성기 실행 후 자리 표시 타일셋으로 오토타일 배치 확인 (방-복도 이음새, 깎인 모서리, 비밀 벽 파괴 후)
 - [ ] 방 프리팹 제작 ([RoomTemplateGuide.md](RoomTemplateGuide.md))
   - [ ] 각 방마다 **Add Missing Points** 후 지점 위치 조정
   - [ ] 전투룸 스폰점 수 ≥ 프리셋 요구 수

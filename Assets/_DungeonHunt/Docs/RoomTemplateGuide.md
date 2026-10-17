@@ -107,6 +107,9 @@ Room_Combat_01 (Grid + Room 컴포넌트)
 
 ## 5. 타일·아트 규칙
 
+> **코드 오토타일**(`FloorConfig > Tileset`)을 쓰는 층에서는 아래 RuleTile/필요한 타일 내용이 필요 없음. 방 프리팹은 **바닥 칸(걸어 다니는 칸)과 벽 칸을 정확히** 칠하기만 하면 되고, 그림은 층 타일셋으로 코드가 다시 칠함 (조각 목록: [ArtResourceList.md](ArtResourceList.md) 1장).
+> 아래 벽 앞면 칸은 지금처럼 바닥 + WallFront로 칠해 둘 것 (앞면 칸 판정용).
+
 ### 공통
 - **1타일 = 1유닛.** 스프라이트 PPU를 타일 픽셀 크기에 맞출 것 (예: 16px 타일이면 PPU 16).
 - 모든 방 프리팹의 Grid Cell Size는 `(1, 1, 0)`로 통일.
