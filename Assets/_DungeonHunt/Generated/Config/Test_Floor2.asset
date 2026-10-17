@@ -27,6 +27,7 @@ MonoBehaviour:
   - {fileID: 8470362934427259931, guid: e365bd793d0baac4a9a06ed0fd0ec753, type: 3}
   - {fileID: 6821671517808096482, guid: 34c47e545ac5a8c46bac0de0229b8c3b, type: 3}
   MinRoomSpacing: 3
+  Tileset: {fileID: 11400000, guid: 9cdb2bc7f7b043d498f0a878bfa69cff, type: 2}
   CorridorFloorTile: {fileID: 11400000, guid: 5669b714c6e226d45a221cd7a523cf0c, type: 2}
   TopWallTile: {fileID: 11400000, guid: 5a751c49097ca244eb7c70164a2da0c4, type: 2}
   BottomWallTile: {fileID: 11400000, guid: 04ea7012d8c170849addf6c542adf453, type: 2}

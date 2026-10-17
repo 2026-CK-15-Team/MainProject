@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14de1d368a064d769d37931bb7d45cfb, type: 3}
+  m_Name: Test_DungeonTileset
+  m_EditorClassIdentifier: Assembly-CSharp::DungeonTileset
+  FloorCenter:
+  - {fileID: 11400000, guid: 2c6624c0b3ca2c943a53b8e1c582c600, type: 2}
+  - {fileID: 11400000, guid: a4177502ee3bad34297d37c271c18876, type: 2}
+  FloorTop: {fileID: 11400000, guid: 968e620b310c992478c18ee312beb464, type: 2}
+  FloorLeft: {fileID: 11400000, guid: ef65e8fe0bc193249bf078883a35566a, type: 2}
+  FloorRight: {fileID: 11400000, guid: 8d74450be10762649aa092834ef751ee, type: 2}
+  FloorTopLeft: {fileID: 11400000, guid: 939f9e15d567e1d439056232fd9236a6, type: 2}
+  FloorTopRight: {fileID: 11400000, guid: 1853628e001fccc40a9c85329012fdde, type: 2}
+  FloorInnerNE: {fileID: 11400000, guid: a16a99f58eacdca4a852b21365b7ad88, type: 2}
+  FloorInnerNW: {fileID: 11400000, guid: 162336ef5397dfd42b0c1a78d6b7bbaf, type: 2}
+  FloorInnerSE: {fileID: 11400000, guid: 0dab90cb3ae403045b69b5160ffaf0b1, type: 2}
+  FloorInnerSW: {fileID: 11400000, guid: 9c52ec7c54263394c897c19369dc15fd, type: 2}
+  FloorBottom: {fileID: 0}
+  FloorBottomLeft: {fileID: 0}
+  FloorBottomRight: {fileID: 0}
+  FaceLow:
+    Middle:
+    - {fileID: 11400000, guid: 1269644d03a966a4897348ae01934b3a, type: 2}
+    LeftWall: {fileID: 11400000, guid: 741ee7d71aead0346abe537cb42aeac5, type: 2}
+    RightWall: {fileID: 11400000, guid: 38301e7fa7ff37e4798bdcce93c35568, type: 2}
+    LeftOpen: {fileID: 11400000, guid: b6a050f21a18c8042adb32fb84b3269d, type: 2}
+    RightOpen: {fileID: 11400000, guid: cdeb9e11111de0942acc576788b32819, type: 2}
+    SingleWallOpen: {fileID: 11400000, guid: 59e30ed121f9497408e763fc2828763b, type: 2}
+    SingleOpenWall: {fileID: 11400000, guid: 84900c69ad3701e4aa243a5c415f22d1, type: 2}
+    SingleWallWall: {fileID: 11400000, guid: a375bc4499465eb4a94695490456eb06, type: 2}
+    SingleOpenOpen: {fileID: 0}
+  FaceHigh:
+    Middle:
+    - {fileID: 11400000, guid: 6a3a4bd5d0b8b2d48ab8b7917b9da16f, type: 2}
+    LeftWall: {fileID: 11400000, guid: ef4791f3a9bbedc4fa4a9521b2ddeb98, type: 2}
+    RightWall: {fileID: 11400000, guid: e54e874e0a003e94abfd2edf09ad20ff, type: 2}
+    LeftOpen: {fileID: 11400000, guid: 79b4cd2bfe45fcf4eb9d2d2d2d1ba4bd, type: 2}
+    RightOpen: {fileID: 11400000, guid: 3f4d8d2783dc18441baba3e4e3cf5e26, type: 2}
+    SingleWallOpen: {fileID: 11400000, guid: 477397027bfd407469225c893cfc215b, type: 2}
+    SingleOpenWall: {fileID: 11400000, guid: 35e417981f9024648a6471bea31a4259, type: 2}
+    SingleWallWall: {fileID: 11400000, guid: 5d0bc93272138a140b0b74de4953f3b0, type: 2}
+    SingleOpenOpen: {fileID: 0}
+  Front:
+    Middle:
+    - {fileID: 11400000, guid: e3cbf074872b57b468aed6a0f67869d8, type: 2}
+    LeftWall: {fileID: 11400000, guid: eb0f395fa7a67124b9eee51e3d5bb45b, type: 2}
+    RightWall: {fileID: 11400000, guid: 776579434f988fc4d9c18e2e7f7b48f3, type: 2}
+    LeftOpen: {fileID: 11400000, guid: 854f1f4a507b2f1438abe828236bd38e, type: 2}
+    RightOpen: {fileID: 11400000, guid: 6faa03d68480a1e4ea6727843f13f0d0, type: 2}
+    SingleWallOpen: {fileID: 11400000, guid: 72b93496f594df9428ebbfe3f903a1aa, type: 2}
+    SingleOpenWall: {fileID: 11400000, guid: 8c96494ad053dd943b428a1e068a34f2, type: 2}
+    SingleWallWall: {fileID: 11400000, guid: 13b8d157d6ee954498137f758712d35b, type: 2}
+    SingleOpenOpen: {fileID: 0}
+  CeilingTop: {fileID: 11400000, guid: 7dab6e9993028db4ca9782d51a55b1b4, type: 2}
+  CeilingBottom: {fileID: 11400000, guid: 8bd7df120bb183b41b60ea33943214ea, type: 2}
+  CeilingLeft: {fileID: 11400000, guid: ebfa4519d4705824b9af2fbf3fb1a8e2, type: 2}
+  CeilingRight: {fileID: 11400000, guid: 93cee00bc2e786249aa4629b1839bbd4, type: 2}
+  CeilingOuterTL: {fileID: 11400000, guid: 6ccbbaf75634d2a489a907f4353aa257, type: 2}
+  CeilingOuterTR: {fileID: 11400000, guid: 4b990599f3428c64cb06904c838a71a8, type: 2}
+  CeilingOuterBL: {fileID: 11400000, guid: 7d4e0bb2bdf62ae4fa1088ce17e3c2b8, type: 2}
+  CeilingOuterBR: {fileID: 11400000, guid: ddd47c37f2deb574fb87e98769560179, type: 2}
+  CeilingInnerTL: {fileID: 11400000, guid: acbd7a26fe357f3468f3562bcbaf576c, type: 2}
+  CeilingInnerTR: {fileID: 11400000, guid: af3be2fccfc2bd84b8ae8e13c0ed3877, type: 2}
+  CeilingInnerBL: {fileID: 11400000, guid: 00a90e03acb8b784da435f0d27d07e6d, type: 2}
+  CeilingInnerBR: {fileID: 11400000, guid: a5a5bf478a37ca649a573d10269e9467, type: 2}
+  CeilingFill: {fileID: 11400000, guid: d235b9eb3d6a7d740bbd5ea6fc0e927d, type: 2}
+  Gap:
+  - {fileID: 11400000, guid: 5bde58337a139974fae6b2367ec64adb, type: 2}

@@ -21,6 +21,7 @@ MonoBehaviour:
   - Stat: 8
     Kind: 1
     Value: -0.05
+  Effects: []
   Description: "\uD14C\uC2A4\uD2B8\uC6A9 \uB354\uBBF8 \uD6A8\uACFC"
   Icon: {fileID: 0}
   CodexOrder: 2

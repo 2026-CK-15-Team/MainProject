@@ -19,4 +19,6 @@ MonoBehaviour:
   SpecializedWeapon: 0
   Tier1Modifiers: []
   Tier2Modifiers: []
+  Tier1Effects: []
+  Tier2Effects: []
   CodexGroupOrder: 5
