@@ -125,6 +125,7 @@ Edgar 기반 규칙(X2 대형룸, 흐름 템플릿 하드 제약, 전투 환산 
 | 다음 층 미리 계산, 두 번째 UI 폴백 | §4.1 참고 | `DungeonBuilder`, `RunPlanner`, `FloorDirector`, `RunManager` |
 | 연출 보강 (09 §3) | 적중/치명타 이펙트, 잠금 이펙트 등장/소멸, 엔딩 상자 개봉, 아티팩트 획득 파동, 세트 해제 안내, 플레이어 대기/이동/회피 잔상/사망, 몬스터 이동/정지 자세/조준 방향 | `FeedbackService`, `PlayerVisual`, `Monster`, `RoomDoor` |
 | 임시 사운드 | §4.2 참고. UI 버튼 클릭음 포함 | `Audio/AudioService` |
+| 아티팩트 UI 배치 (와이어프레임 v01) | 획득 / 상점 / 보유(열람·획득 대기) / 도박을 와이어프레임 배치로. 옵션 행 실효값 병기, 세트 진행 점, 경고 행, 6칸 링 + 같은 세트 점선, 교체 시 세트 변화 요약, 도박 결과 카드 뒤집기(공개 뒤 지급) + HP 게이지. 와이어프레임의 "미선택 = 리롤 소멸"은 확정 사항(리롤 유지)으로 대체 | `UI/Views/GameplayModalViews`, `UI/ArtifactUIText`, `UIFactory`, `GambleSession.Deliver` |
 
 ### 4.4 검증 한계
 

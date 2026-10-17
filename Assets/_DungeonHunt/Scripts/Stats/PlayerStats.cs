@@ -40,6 +40,20 @@ public class PlayerStats : MonoBehaviour
 
     public bool HasSource(string source) => sources.ContainsKey(source);
 
+    // UI 미리보기: 출처 하나를 잠깐 바꾼(null이면 뺀) 상태로 값을 계산. 알림 없이 원래대로 돌려놓음
+    public float EvaluateWith(string source, IEnumerable<StatModifier> modifiers, System.Func<float> evaluate)
+    {
+        bool had = sources.TryGetValue(source, out List<StatModifier> previous);
+        if (modifiers != null) sources[source] = new List<StatModifier>(modifiers);
+        else sources.Remove(source);
+        try { return evaluate(); }
+        finally
+        {
+            if (had) sources[source] = previous;
+            else sources.Remove(source);
+        }
+    }
+
     // 런 한정 수정값 전부 제거 (RunStarted / RunCleared / RunOver). 영구 강화(Permanent:)만 남김.
     public void ClearRunSources()
     {

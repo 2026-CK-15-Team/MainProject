@@ -32,8 +32,19 @@ public class GambleSession
 
     public enum AttemptResult { NotAllowed, Lost, Won, ReservationFailed }
 
+    // 당첨했지만 아직 지급 안 한 아티팩트 (결과 카드 공개 연출 중). Deliver로 지급
+    public ArtifactDefinition PendingDelivery { get; private set; }
+
+    public void Deliver()
+    {
+        ArtifactDefinition def = PendingDelivery;
+        PendingDelivery = null;
+        if (def != null) GameServices.Artifacts.GrantImmediate(def, AcquisitionOrigin.Gamble);
+    }
+
     // 당첨이면 후보 예약 성공 뒤에 HP 소모, 미당첨이면 바로 HP 소모 (03-4 §3)
-    public AttemptResult Attempt(out ArtifactDefinition won)
+    // deferDelivery면 당첨 아티팩트를 PendingDelivery에 두고 지급은 Deliver에서 (결과 카드 공개 뒤)
+    public AttemptResult Attempt(out ArtifactDefinition won, bool deferDelivery = false)
     {
         won = null;
         if (!CanAttempt) return AttemptResult.NotAllowed;
@@ -58,7 +69,8 @@ public class GambleSession
         State = GambleState.Depleted;
         GameEvents.Raise(GameEvents.GambleRoomAttempted, Room);
         GameEvents.Raise(GameEvents.GambleRoomArtifactWon, Room);
-        GameServices.Artifacts.GrantImmediate(won, AcquisitionOrigin.Gamble);
+        PendingDelivery = won;
+        if (!deferDelivery) Deliver();
         return AttemptResult.Won;
     }
 }

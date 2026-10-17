@@ -247,12 +247,39 @@ public class ArtifactSystem : MonoBehaviour
         }
     }
 
-    public SetTier TierOf(ArtifactSetDefinition set)
+    public SetTier TierOf(ArtifactSetDefinition set) => TierForCount(SetCount(set));
+
+    public SetTier TierForCount(int count)
     {
-        int count = SetCount(set);
         if (count >= Balance.Tier2Threshold) return SetTier.Tier2;
         if (count >= Balance.Tier1Threshold) return SetTier.Tier1;
         return SetTier.Inactive;
+    }
+
+    // 세트 진행 점 개수 = 다음 임계치 (2 또는 4)
+    public int NextThreshold(int count) => count < Balance.Tier1Threshold ? Balance.Tier1Threshold : Balance.Tier2Threshold;
+
+    // 지금 슬롯을 복사한 가상 배치 (UI 미리보기용). slot에 def를 넣음, slot < 0이면 첫 빈 칸
+    public List<ArtifactDefinition> LoadoutWith(int slot, ArtifactDefinition def)
+    {
+        var loadout = slots.ToList();
+        if (slot < 0) slot = loadout.IndexOf(null);
+        if (slot >= 0) loadout[slot] = def;
+        return loadout;
+    }
+
+    // 가상 배치에서 잠기는 무기 (특화 규칙 켜져 있을 때만)
+    public HashSet<WeaponType> LockedWeaponsFor(IList<ArtifactDefinition> loadout)
+    {
+        var locked = new HashSet<WeaponType>();
+        if (!Balance.WeaponSpecializationRules) return locked;
+        foreach (var group in loadout.Where(a => a != null && a.Set != null && a.Set.IsWeaponSpecialization).GroupBy(a => a.Set))
+        {
+            if (group.Count() < Balance.Tier1Threshold) continue;
+            foreach (WeaponType w in Enum.GetValues(typeof(WeaponType)))
+                if (w != group.Key.SpecializedWeapon) locked.Add(w);
+        }
+        return locked;
     }
 
     public IEnumerable<(ArtifactSetDefinition set, SetTier tier)> ActiveSets()

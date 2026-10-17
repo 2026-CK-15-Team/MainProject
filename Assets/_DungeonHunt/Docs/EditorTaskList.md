@@ -85,7 +85,8 @@ Test_ 에셋을 **Generated 밖으로 복제**해서 수정 (생성기 재실행
 | 가림 덮개 / 문 틈 | `FogOfWar` (`FloorContent.FogColor`) | 단색 / 반투명 검정 |
 | 기본 실루엣 전체 | `Core/PlaceholderArt` | 코드로 그린 64px 도형 |
 
-- [ ] UI 틀/아이콘 → 각 `UIView.Build()` 교체 또는 프리팹화 (`UI/Views/*`)
+- [ ] UI 틀/아이콘 → 각 `UIView.Build()` 교체 또는 프리팹화 (`UI/Views/*`). 아티팩트 4화면은 와이어프레임 배치 완료, 패널/칩/틀/탭/진행 점 스프라이트만 필요 (`UIFactory.Panel/Chip/Frame/Tab/Dots`)
+- [ ] 💻 아티팩트 4화면 Play 확인: 글자 넘침(긴 옵션 행), 링 점선, 도박 카드 뒤집기, 획득 대기에서 교체/버리기/이 칸에 장착 흐름
 - [ ] 폰트 → `GameConfig.UIFont` (지정 없으면 OS 폰트 자동 탐색)
 - [ ] 미니맵 룸 종류 아이콘 (현재 글자 기호 S $ T G ? E B > *, `MinimapRenderer.RoleIcon`)
 
