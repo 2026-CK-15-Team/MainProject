@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee6d46bce4e44609a97e8412fd38aba, type: 3}
+  m_Name: UNIV_03
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactDefinition
+  Id: UNIV_03
+  DisplayName: "\uC5EC\uD589\uC790\uC758 \uBD80\uCE20"
+  Grade: 0
+  Set: {fileID: 0}
+  UnlockSource: 0
+  Modifiers:
+  - Stat: 0
+    Kind: 1
+    Value: 0.1
+  - Stat: 1
+    Kind: 1
+    Value: -0.1
+  Effects: []
+  Description: 
+  Icon: {fileID: 0}
+  CodexOrder: 26
+  IsTestPlaceholder: 0

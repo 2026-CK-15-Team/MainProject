@@ -46,9 +46,10 @@ Test_ 에셋을 **Generated 밖으로 복제**해서 수정 (생성기 재실행
 - [ ] 몬스터 5종 확정 → `MonsterDefinition` (이름, HP, 속도, 아키타입별 값)
 - [ ] 층별 몬스터 구성 프리셋 → `MonsterWavePreset` (1층 4 / 2층 6 / 3층 8 + 엘리트 각 3)
 - [ ] 계열 비율 검수 규칙 (디자인_키워드 §5.2) → 검증기에 추가 요청
-- [ ] 아티팩트 카탈로그 → `ArtifactDefinition` (ID, 등급, 해금 출처, 세트, 수정값)
-- [ ] 세트 Tier 효과 → `ArtifactSetDefinition`
-- [ ] 아티팩트 **특수 효과** 목록 → 💻 구현 요청 (스탯 수정값으로 안 되는 것)
+- [x] 아티팩트 카탈로그 28종 + 세트 Tier 효과 → `Content/Artifacts/` ([ArtifactContent.md](ArtifactContent.md))
+- [ ] 아티팩트 이름(현재 더미), 아이콘, 설명 문구
+- [ ] 확인: `UNIV_02`/`UNIV_03` 해금 출처, 진행 해금 조건 연결 순서, UNIV_01 최대 HP +10 수치 ([ArtifactContent.md](ArtifactContent.md) 확인 필요)
+- [ ] 무기 특화 잠금 유지/폐기 결정 → `GameBalance > Artifact > Weapon Specialization Rules`
 - [ ] 최종보스 패턴 → `BossDefinition` 패턴 목록 (+ 💻 새 패턴 종류 구현)
 - [ ] 층 이름, 층 도착 대사, 엔딩 대사 → `GameBalance.FloorEnd`, `UI`
 - [ ] 엔딩 룸 일반 보물상자 내용물 결정
@@ -97,7 +98,6 @@ Test_ 에셋을 **Generated 밖으로 복제**해서 수정 (생성기 재실행
 
 ## 6단계 — 프로그래밍 남은 것 (💻)
 
-- [ ] 아티팩트 특수 효과 / 세트 효과 구현 (2단계 결과 받고)
 - [ ] 보스 패턴 구현 (2단계 결과 받고)
 - [ ] 플레이테스트 로그 (11 프로필)
 - [ ] 비전투 룸 가림 해제 페이드(0.25초) 중 덮개가 플레이어 위에 겹치는 현상 → 거슬리면 룸 단위 덮개 분리 (03 미정 `가림 덮개의 룸 단위 페이드`)

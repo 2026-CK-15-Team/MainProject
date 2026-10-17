@@ -48,7 +48,9 @@ public static class PlaceholderContentGenerator
         config.Run = run;
         config.Balance = balance;
         config.Floors = floors;
-        config.Artifacts = catalog;
+        // 실제 콘텐츠(Content/Artifacts)가 있으면 그걸 유지, 없을 때만 테스트 카탈로그
+        ArtifactCatalog content = AssetDatabase.LoadAssetAtPath<ArtifactCatalog>(ArtifactContentBuilder.CatalogPath);
+        config.Artifacts = content != null ? content : catalog;
         config.Weapons = weapons;
         if (config.PostProcessProfile == null) config.PostProcessProfile = PostProcessSetup.Setup();
         EditorUtility.SetDirty(config);

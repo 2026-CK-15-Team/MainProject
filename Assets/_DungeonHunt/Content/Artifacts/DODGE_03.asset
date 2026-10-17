@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee6d46bce4e44609a97e8412fd38aba, type: 3}
+  m_Name: DODGE_03
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactDefinition
+  Id: DODGE_03
+  DisplayName: "\uBC18\uC0AC \uC7A5\uAC11"
+  Grade: 0
+  Set: {fileID: 11400000, guid: 89fbc2fbf2ca1e8c62f6221c9402571a, type: 2}
+  UnlockSource: 0
+  Modifiers:
+  - Stat: 31
+    Kind: 0
+    Value: 0.2
+  - Stat: 30
+    Kind: 1
+    Value: 0.2
+  Effects: []
+  Description: 
+  Icon: {fileID: 0}
+  CodexOrder: 6
+  IsTestPlaceholder: 0

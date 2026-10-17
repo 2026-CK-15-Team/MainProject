@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee6d46bce4e44609a97e8412fd38aba, type: 3}
+  m_Name: PISTOL_03
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactDefinition
+  Id: PISTOL_03
+  DisplayName: "\uC815\uBC00 \uCD1D\uC5F4"
+  Grade: 1
+  Set: {fileID: 11400000, guid: d278560dace721252095423884656863, type: 2}
+  UnlockSource: 1
+  Modifiers:
+  - Stat: 12
+    Kind: 1
+    Value: 0.15
+  - Stat: 14
+    Kind: 0
+    Value: 2
+  Effects: []
+  Description: 
+  Icon: {fileID: 0}
+  CodexOrder: 2
+  IsTestPlaceholder: 0

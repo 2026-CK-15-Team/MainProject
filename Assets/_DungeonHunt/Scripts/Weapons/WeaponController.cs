@@ -28,6 +28,8 @@ public class WeaponController : MonoBehaviour
 
     public IReadOnlyList<WeaponRuntime> Slots => slots;
     public WeaponRuntime CurrentWeapon => slots.Count > 0 ? slots[currentIndex] : null;
+    // 라이플 사격 중 (감속 적용 기준과 같음). 라이플 세트 Tier2 이동속도 증가에 씀
+    public bool IsRifleFiring => rifleFiringApplied;
     public int CurrentIndex => currentIndex;
 
     private void Awake()
@@ -285,7 +287,7 @@ public class WeaponController : MonoBehaviour
     {
         WeaponRuntime weapon = CurrentWeapon;
         if (weapon == null) return;
-        int amount = Mathf.CeilToInt(weapon.MaxAmmo * GameBalance.Current.Weapon.JustDodgeAmmoRefundRatio);
+        int amount = Mathf.CeilToInt(weapon.MaxAmmo * stats.Get(StatId.JustDodgeAmmoRefund));
         weapon.RefundAmmo(amount);
         GameEvents.Raise(GameEvents.JustDodgeAmmoRefund, amount);
     }

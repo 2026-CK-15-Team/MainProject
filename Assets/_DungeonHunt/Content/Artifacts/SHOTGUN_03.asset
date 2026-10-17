@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee6d46bce4e44609a97e8412fd38aba, type: 3}
+  m_Name: SHOTGUN_03
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactDefinition
+  Id: SHOTGUN_03
+  DisplayName: "\uB113\uC740 \uCD1D\uAD6C"
+  Grade: 1
+  Set: {fileID: 11400000, guid: e742689fd2447f0788b11c7cc11339b5, type: 2}
+  UnlockSource: 0
+  Modifiers:
+  - Stat: 22
+    Kind: 1
+    Value: 0.1
+  - Stat: 19
+    Kind: 1
+    Value: -0.3
+  Effects: []
+  Description: 
+  Icon: {fileID: 0}
+  CodexOrder: 14
+  IsTestPlaceholder: 0

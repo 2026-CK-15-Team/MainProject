@@ -38,6 +38,11 @@ public enum StatId
     RifleFireInterval,
     RifleRange,
     RifleProjectileSpeed,
+
+    // 에셋에 정수로 저장되므로 새 스탯은 항상 맨 뒤에 추가
+    JustDodgeWindow,       // 저스트회피 판정 시간 (초)
+    JustDodgeAmmoRefund,   // 저스트회피 탄 반환 비율 (0.25 = 탄창의 25%)
+    HitInvincibleDuration, // 피격 후 무적 시간 (초)
 }
 
 public enum WeaponStat
@@ -124,6 +129,9 @@ public static class StatNames
         StatId.RifleFireInterval => "라이플 발사 간격",
         StatId.RifleRange => "라이플 사거리",
         StatId.RifleProjectileSpeed => "라이플 탄속",
+        StatId.JustDodgeWindow => "저스트회피 판정",
+        StatId.JustDodgeAmmoRefund => "저스트회피 탄 반환",
+        StatId.HitInvincibleDuration => "피격 후 무적 시간",
         _ => stat.ToString(),
     };
 

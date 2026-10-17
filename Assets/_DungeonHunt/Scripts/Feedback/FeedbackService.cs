@@ -165,6 +165,17 @@ public class FeedbackService : MonoBehaviour
         effects.Add(new TimedEffect { Go = ring.gameObject, Sprite = ring, Duration = 0.15f, EndTime = Time.unscaledTime + 0.15f, BaseColor = ring.color, Grow = true });
     }
 
+    // 권총 탄과 적 탄 상쇄: 일반 명중과 다른 짧은 섬광 + 원형 파동 (09 §5 6번)
+    public void SpawnProjectileCancel(Vector2 position)
+    {
+        SpriteRenderer flash = PlaceholderArt.CreateShape("CancelFlash", null, PlaceholderArt.Circle, new Color(0.6f, 1f, 1f, 1f), 0.3f, 236);
+        flash.transform.position = position;
+        AddTimed(flash.gameObject, 0.06f, flash);
+        SpriteRenderer ring = PlaceholderArt.CreateShape("CancelRing", null, PlaceholderArt.Ring, new Color(0.5f, 0.95f, 1f, 0.9f), 0.25f, 235);
+        ring.transform.position = position;
+        effects.Add(new TimedEffect { Go = ring.gameObject, Sprite = ring, Duration = 0.2f, EndTime = Time.unscaledTime + 0.2f, BaseColor = ring.color, Grow = true, GrowRate = 9f });
+    }
+
     public void SpawnRewardBurst(Vector2 position, Color color) => Burst(position, color, 6, 0.18f, 1.8f);
 
     public void SpawnSummonEffect(Vector2 position)

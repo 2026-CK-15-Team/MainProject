@@ -15,6 +15,8 @@ public class WeaponRuntime
     public WeaponType Type => Definition.WeaponType;
 
     public int Ammo { get; private set; }
+    // 강화탄 (스왑 세트 Tier1). 탄창 전체가 강화 또는 일반 한 가지. 재장전 시작/완료 시 일반탄으로 (01-2 §10)
+    public bool IsEnhanced { get; set; }
     public AmmoState State { get; private set; }
     public bool IsLocked { get; set; }
 
@@ -63,6 +65,7 @@ public class WeaponRuntime
                 Ammo = MaxAmmo;
                 State = AmmoState.Ready;
                 reloadProgress = 0f;
+                IsEnhanced = false;
                 GameEvents.Raise(GameEvents.ReloadComplete, Type);
             }
         }
@@ -83,6 +86,7 @@ public class WeaponRuntime
         if (IsReloading || Ammo >= MaxAmmo) return false;
         State = AmmoState.Reloading;
         reloadProgress = 0f;
+        IsEnhanced = false;
         GameEvents.Raise(GameEvents.ReloadStart, Type);
         return true;
     }
@@ -117,6 +121,7 @@ public class WeaponRuntime
         State = AmmoState.Ready;
         reloadProgress = 0f;
         swapDelayRemaining = 0f;
+        IsEnhanced = false;
     }
 
     public void ResetForNewRun()

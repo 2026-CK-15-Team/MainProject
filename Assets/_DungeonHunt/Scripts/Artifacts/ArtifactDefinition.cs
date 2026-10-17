@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 아티팩트 1개. ID마다 고정 등급과 효과 (07 §4.1).
-// 효과는 스탯 수정값 목록 { 대상 스탯, 분류, 값 } (07 §8.1). 개별 효과 콘텐츠는 기획 미정.
+// 효과 = 스탯 수정값 목록 { 대상 스탯, 분류, 값 } (07 §8.1) + 특수 효과 목록 (교체 직후 피해 등).
 [CreateAssetMenu(fileName = "Artifact", menuName = "DungeonHunt/Artifact")]
 public class ArtifactDefinition : ScriptableObject
 {
@@ -14,6 +14,8 @@ public class ArtifactDefinition : ScriptableObject
     public ArtifactSetDefinition Set;
     public ArtifactUnlockSource UnlockSource = ArtifactUnlockSource.Initial;
     public List<StatModifier> Modifiers = new List<StatModifier>();
+    [Tooltip("스탯으로 못 하는 특수 효과")]
+    public List<ArtifactEffect> Effects = new List<ArtifactEffect>();
     [TextArea] public string Description;
     public Sprite Icon;
     [Tooltip("도감 그룹 안 고정 순서")]
@@ -29,6 +31,7 @@ public class ArtifactDefinition : ScriptableObject
         {
             var parts = new List<string>();
             foreach (StatModifier modifier in Modifiers) parts.Add(modifier.ToString());
+            foreach (ArtifactEffect effect in Effects) parts.Add(effect.ToString());
             string mods = string.Join(", ", parts);
             if (string.IsNullOrEmpty(Description)) return mods;
             return string.IsNullOrEmpty(mods) ? Description : Description + "\n" + mods;

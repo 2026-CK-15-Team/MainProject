@@ -107,6 +107,7 @@ public class PlayerStats : MonoBehaviour
             case StatId.DodgeMaxCharge: return Mathf.Max(0f, value);
             case StatId.DodgeChargeTime: return Mathf.Max(0.05f, value);
             case StatId.SwapReadyDelay: return Mathf.Max(0f, value);
+            case StatId.JustDodgeAmmoRefund: return Mathf.Clamp01(value);
             case StatId.PistolFireInterval:
             case StatId.ShotgunFireInterval:
             case StatId.RifleFireInterval:
@@ -132,6 +133,9 @@ public class PlayerStats : MonoBehaviour
         StatId.CritChance => Balance.CritChance,
         StatId.CritDamage => Balance.CritDamageMultiplier,
         StatId.SwapReadyDelay => 0f, // 무기 정의값을 쓰므로 여기선 가산치만 다룸
+        StatId.JustDodgeWindow => Balance.JustDodgeWindow,
+        StatId.JustDodgeAmmoRefund => GameBalance.Current.Weapon.JustDodgeAmmoRefundRatio,
+        StatId.HitInvincibleDuration => Balance.HitInvincibilityDuration,
         _ => 0f,
     };
 

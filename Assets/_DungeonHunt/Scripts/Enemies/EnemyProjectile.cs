@@ -17,6 +17,7 @@ public class EnemyProjectile : MonoBehaviour
     private float travelled;
 
     public static IReadOnlyList<EnemyProjectile> Active => active;
+    public float Radius => spec.Radius;
 
     public static EnemyProjectile Spawn(Object owner, Vector2 origin, Vector2 direction, EnemyProjectileSpec spec, Color color)
     {
@@ -57,11 +58,22 @@ public class EnemyProjectile : MonoBehaviour
     private void Update()
     {
         float dt = GameClock.CombatDelta;
-        if (dt <= 0f) return;
+        if (dt <= 0f || removed) return;
 
         float step = Mathf.Min(spec.Speed * dt, spec.MaxDistance - travelled);
         Vector2 from = transform.position;
         Vector2 to = from + direction * step;
+
+        // 권총 도탄 상쇄는 같은 틱 플레이어 피격보다 먼저 (01-3 §7.2 1번)
+        IReadOnlyList<Projectile> bullets = Projectile.Active;
+        for (int i = bullets.Count - 1; i >= 0; i--)
+        {
+            Projectile bullet = bullets[i];
+            if (bullet == null || bullet.IsRemoved || !bullet.CanCancelEnemyProjectiles) continue;
+            if (Geometry2D.SweepCircle(from, to, spec.Radius, bullet.Position, bullet.HitRadius) < 0f) continue;
+            bullet.CancelWith(this);
+            return;
+        }
 
         // 벽
         RaycastHit2D wall = Physics2D.CircleCast(from, spec.Radius, direction, step, GameLayers.WallMask);
@@ -94,6 +106,17 @@ public class EnemyProjectile : MonoBehaviour
         if (travelled >= spec.MaxDistance - 1e-4f)
             Vanish();
     }
+
+    // 상쇄 연출은 호출한 쪽이 냄
+    public void RemoveSilently()
+    {
+        removed = true;
+        Destroy(gameObject);
+    }
+
+    // Destroy는 프레임 끝에 처리되므로 같은 프레임 남은 Update에서 판정하지 않게
+    private bool removed;
+    public bool IsRemoved => removed;
 
     public void Vanish()
     {

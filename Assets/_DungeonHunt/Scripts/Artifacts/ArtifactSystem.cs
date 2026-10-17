@@ -150,6 +150,7 @@ public class ArtifactSystem : MonoBehaviour
     // 특화 제한: 최종 6슬롯에서 Tier1 이상 무기 특화 세트는 1개뿐 (§4.14)
     public bool IsValidLoadout(IList<ArtifactDefinition> loadout)
     {
+        if (!Balance.WeaponSpecializationRules) return true;
         int activeSpecializations = loadout
             .Where(a => a != null && a.Set != null && a.Set.IsWeaponSpecialization)
             .GroupBy(a => a.Set)
@@ -229,6 +230,23 @@ public class ArtifactSystem : MonoBehaviour
 
     public int SetCount(ArtifactSetDefinition set) => slots.Count(s => s != null && s.Set == set);
 
+    // 장착 아티팩트 특수 효과 + 활성 세트 Tier 특수 효과 (Tier2면 Tier1 것도 포함)
+    public void CollectEffects(List<ArtifactEffect> result)
+    {
+        result.Clear();
+        foreach (ArtifactDefinition def in slots)
+        {
+            if (def == null || def.Effects == null) continue;
+            result.AddRange(def.Effects);
+        }
+        foreach (var pair in setTiers)
+        {
+            if (pair.Key == null) continue;
+            if (pair.Value >= SetTier.Tier1 && pair.Key.Tier1Effects != null) result.AddRange(pair.Key.Tier1Effects);
+            if (pair.Value >= SetTier.Tier2 && pair.Key.Tier2Effects != null) result.AddRange(pair.Key.Tier2Effects);
+        }
+    }
+
     public SetTier TierOf(ArtifactSetDefinition set)
     {
         int count = SetCount(set);
@@ -270,7 +288,7 @@ public class ArtifactSystem : MonoBehaviour
                 player.Stats.SetSource(StatSources.Set(set.Id), mods);
             }
 
-            if (set.IsWeaponSpecialization && tier >= SetTier.Tier1)
+            if (Balance.WeaponSpecializationRules && set.IsWeaponSpecialization && tier >= SetTier.Tier1)
             {
                 specialization = set.SpecializedWeapon;
                 foreach (WeaponType w in Enum.GetValues(typeof(WeaponType)))

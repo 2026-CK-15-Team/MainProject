@@ -282,6 +282,10 @@ public class ArtifactBalance
     public int RerollFreeCount = 1;
     [Tooltip("필드 드롭 시 벽과 다른 상호작용물을 피할 자리를 찾는 반경 (H)")]
     public float FieldDropSearchRadius = 0.75f;
+    [Tooltip("무기 특화 세트 규칙 (07 §4.14): Tier1부터 다른 두 무기 잠금 + 특화 세트 1개만. 끄면 잠그지 않고 여러 특화 세트 동시 활성 가능")]
+    public bool WeaponSpecializationRules = false;
+    [Tooltip("라이플 연속 명중 스택 유지 시간(초). 마지막 명중부터 이 시간이 지나거나 다른 대상을 맞히면 스택 초기화")]
+    public float RifleStackDuration = 3f;
 }
 
 [Serializable]

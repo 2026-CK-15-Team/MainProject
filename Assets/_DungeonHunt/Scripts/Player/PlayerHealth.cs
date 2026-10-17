@@ -27,6 +27,14 @@ public class PlayerHealth : MonoBehaviour
     public bool IsDead => State == PlayerLifeState.Dead;
     public PlayerLifeState State { get; private set; }
     public bool IsHitInvincible => State == PlayerLifeState.HitInvincible;
+    // 효과 무적 (회피 세트 Tier2 저스트회피 무적 등). 몬스터는 계속 노리지만 피해는 안 받음
+    public bool IsEffectInvincible => GameClock.CombatTime < effectInvincibleUntil;
+    private float effectInvincibleUntil;
+
+    public void GrantInvincibility(float duration)
+    {
+        effectInvincibleUntil = Mathf.Max(effectInvincibleUntil, GameClock.CombatTime + duration);
+    }
 
     // 기존 UI 호환
     public event Action<int> HPChanged;
@@ -54,6 +62,7 @@ public class PlayerHealth : MonoBehaviour
         pending.Clear();
         State = PlayerLifeState.Vulnerable;
         hitInvincibleUntil = 0f;
+        effectInvincibleUntil = 0f;
         SetHP(MaxHP);
     }
 
@@ -74,7 +83,7 @@ public class PlayerHealth : MonoBehaviour
         if (!attack.IsContact && dodgeInvincible && movement.TryTriggerJustDodge())
             GetComponent<WeaponController>()?.OnJustDodge();
 
-        if (dodgeInvincible || IsHitInvincible) return true;
+        if (dodgeInvincible || IsHitInvincible || IsEffectInvincible) return true;
 
         pending.Add(attack);
         return false;
@@ -84,7 +93,7 @@ public class PlayerHealth : MonoBehaviour
     private void LateUpdate()
     {
         if (pending.Count == 0) return;
-        if (IsDead || IsHitInvincible || (movement != null && movement.IsDodgeInvincible))
+        if (IsDead || IsHitInvincible || IsEffectInvincible || (movement != null && movement.IsDodgeInvincible))
         {
             pending.Clear();
             return;
@@ -125,7 +134,7 @@ public class PlayerHealth : MonoBehaviour
         }
 
         State = PlayerLifeState.HitInvincible;
-        hitInvincibleUntil = GameClock.CombatTime + GameBalance.Current.Player.HitInvincibilityDuration;
+        hitInvincibleUntil = GameClock.CombatTime + (stats != null ? stats.Get(StatId.HitInvincibleDuration) : GameBalance.Current.Player.HitInvincibilityDuration);
     }
 
     // HP 회복. 최대치까지만, 실제 회복량을 돌려줌.

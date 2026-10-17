@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsDodging => CurrentState == DodgeState;
     public bool IsDodgeInvincible => IsDodging && DodgeElapsed < Balance.DodgeInvincibleDuration;
-    public bool IsInJustDodgeWindow => IsDodging && DodgeElapsed < Balance.JustDodgeWindow;
+    public bool IsInJustDodgeWindow => IsDodging && DodgeElapsed < stats.Get(StatId.JustDodgeWindow);
 
     public float MoveMaxSpeed => stats.Get(StatId.MoveSpeed);
     public int DodgeMaxCharge => stats.GetInt(StatId.DodgeMaxCharge);

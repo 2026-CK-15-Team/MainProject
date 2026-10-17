@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee6d46bce4e44609a97e8412fd38aba, type: 3}
+  m_Name: ALLIN_04
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactDefinition
+  Id: ALLIN_04
+  DisplayName: "\uAD11\uC804\uC0AC\uC758 \uC778\uC7A5"
+  Grade: 2
+  Set: {fileID: 11400000, guid: 904c62c23f8dc2e31fd01df3fc0df15c, type: 2}
+  UnlockSource: 1
+  Modifiers:
+  - Stat: 7
+    Kind: 1
+    Value: 0.3
+  Effects: []
+  Description: 
+  Icon: {fileID: 0}
+  CodexOrder: 23
+  IsTestPlaceholder: 0

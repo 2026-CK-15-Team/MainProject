@@ -186,6 +186,12 @@ public class PlayerVisual : MonoBehaviour
             bool dim = Mathf.FloorToInt(GameClock.CombatTime / period) % 2 == 0;
             color.a = dim ? 0.4f : 1f;
         }
+        // 효과 무적 (저스트회피 무적 등): 금색으로 깜빡임
+        else if (player.Health.IsEffectInvincible)
+        {
+            bool on = Mathf.FloorToInt(GameClock.CombatTime / 0.1f) % 2 == 0;
+            color = Color.Lerp(color, new Color(1f, 0.9f, 0.4f, color.a), on ? 0.7f : 0.3f);
+        }
         // 회피 중 살짝 투명
         else if (player.Movement.IsDodgeInvincible)
         {

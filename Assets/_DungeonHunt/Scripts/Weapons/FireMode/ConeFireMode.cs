@@ -19,6 +19,7 @@ public class ConeFireMode : IWeaponFireMode
 
             Vector2 knockDir = (target.Position - origin).normalized;
             DamageInfo info = snapshot.ToDamage(target.Position, knockDir);
+            ArtifactEffectRunner.Instance?.ModifyPlayerHit(ref info, target);
             target.TakeDamage(info);
             GameEvents.Raise(GameEvents.ShotgunConeHit, info);
             if (info.IsCritical) GameEvents.Raise(GameEvents.CriticalHit, info);

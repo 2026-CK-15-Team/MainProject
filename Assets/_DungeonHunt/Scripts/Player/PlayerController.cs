@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public WeaponController Weapons { get; private set; }
     public PlayerInteractor Interactor { get; private set; }
     public PlayerVisual Visual { get; private set; }
+    public ArtifactEffectRunner ArtifactEffects { get; private set; }
 
     public Vector2 Position => transform.position;
     public float BodyRadius => GameBalance.Current.Player.BodyRadius;
@@ -26,6 +27,7 @@ public class PlayerController : MonoBehaviour
         Visual = GetOrAdd<PlayerVisual>();
         Interactor = GetOrAdd<PlayerInteractor>();
         Weapons = GetOrAdd<WeaponController>();
+        ArtifactEffects = GetOrAdd<ArtifactEffectRunner>();
         GameServices.Player = this;
     }
 

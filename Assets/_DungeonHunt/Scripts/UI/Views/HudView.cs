@@ -41,8 +41,13 @@ public class HudView : UIView
     private class WeaponSlotWidget
     {
         public Image Background, Icon, ReloadFill, SwapFill, Lock;
+        public Outline EnhancedOutline;
         public Text Label;
     }
+
+    private GameObject rifleStackRoot;
+    private Text rifleStackText;
+    private Image rifleStackFill;
 
     protected override void Build(RectTransform root)
     {
@@ -84,6 +89,11 @@ public class HudView : UIView
             UIFactory.Place(w.Lock.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-6f, -6f), new Vector2(44f, 44f));
             w.Label = UIFactory.Label("Name", w.Background.transform, "", 20, TextAnchor.UpperCenter);
             UIFactory.Place(w.Label.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 0f), new Vector2(0f, 4f), new Vector2(110f, 28f));
+            // 강화탄 남은 무기: 아이콘 외곽선 강조 (08 §4, 09 §7)
+            w.EnhancedOutline = w.Background.gameObject.AddComponent<Outline>();
+            w.EnhancedOutline.effectColor = new Color(1f, 0.55f, 0.1f, 1f);
+            w.EnhancedOutline.effectDistance = new Vector2(5f, -5f);
+            w.EnhancedOutline.enabled = false;
             weaponWidgets[i] = w;
         }
         ammoText = UIFactory.Label("Ammo", root, "", 44, TextAnchor.LowerRight);
@@ -92,6 +102,18 @@ public class HudView : UIView
         // 하단 중앙 세트
         setsText = UIFactory.Label("Sets", root, "", 26, TextAnchor.LowerCenter);
         UIFactory.Place(setsText.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 30f), new Vector2(900f, 80f));
+
+        // 라이플 스택 (08 §4): 현재 스택 + 만료까지 남은 시간 게이지. 효과 없거나 스택 0이면 숨김
+        Image stackBack = UIFactory.Panel("RifleStack", root, new Color(0f, 0f, 0f, 0.5f));
+        UIFactory.Place(stackBack.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 116f), new Vector2(220f, 34f));
+        rifleStackFill = UIFactory.Panel("Fill", stackBack.transform, new Color(1f, 0.85f, 0.4f, 0.6f));
+        UIFactory.Stretch(rifleStackFill.rectTransform, 3f);
+        rifleStackFill.type = Image.Type.Filled;
+        rifleStackFill.fillMethod = Image.FillMethod.Horizontal;
+        rifleStackText = UIFactory.Label("Text", stackBack.transform, "", 22, TextAnchor.MiddleCenter);
+        UIFactory.Stretch(rifleStackText.rectTransform);
+        rifleStackRoot = stackBack.gameObject;
+        rifleStackRoot.SetActive(false);
 
         // 상단 중앙 층 도착 안내 (10 §5.4)
         RectTransform arrival = UIFactory.CreateRect("FloorArrival", root);
@@ -182,6 +204,7 @@ public class HudView : UIView
             WeaponSlotWidget widget = weaponWidgets[i];
             bool current = i == weapons.CurrentIndex;
             widget.Background.color = current ? new Color(0.35f, 0.35f, 0.45f, 1f) : new Color(0.12f, 0.12f, 0.15f, 0.85f);
+            widget.EnhancedOutline.enabled = w.IsEnhanced;
             widget.Background.rectTransform.localScale = Vector3.one * (current ? 1.1f : 0.9f);
             widget.Icon.sprite = w.Definition.Icon != null ? w.Definition.Icon : PlaceholderArt.WeaponIcon(w.Definition.WeaponType);
             Color iconColor = w.Definition.Icon != null ? Color.white : w.Definition.PlaceholderColor;
@@ -202,6 +225,15 @@ public class HudView : UIView
         {
             var parts = artifacts.ActiveSets().Select(s => $"<color=#{ColorUtility.ToHtmlStringRGB(s.set.Color)}>{s.set.DisplayName} {(s.tier == SetTier.Tier2 ? "Tier2" : "Tier1")}</color>");
             setsText.text = string.Join("   ", parts);
+        }
+
+        ArtifactEffectRunner effects = player.ArtifactEffects;
+        int stacks = effects != null && effects.HasRifleStackEffect ? effects.RifleStacks : 0;
+        rifleStackRoot.SetActive(stacks > 0);
+        if (stacks > 0)
+        {
+            rifleStackText.text = $"라이플 스택 x{stacks}";
+            rifleStackFill.fillAmount = effects.RifleStackRemaining01;
         }
 
         TickFloorArrival();

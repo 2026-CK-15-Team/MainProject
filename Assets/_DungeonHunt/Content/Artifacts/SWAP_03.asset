@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ee6d46bce4e44609a97e8412fd38aba, type: 3}
+  m_Name: SWAP_03
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactDefinition
+  Id: SWAP_03
+  DisplayName: "\uAC00\uBCBC\uC6B4 \uD0C4\uB760"
+  Grade: 0
+  Set: {fileID: 11400000, guid: 036504d352aeeec4fda9dc894fe47dfa, type: 2}
+  UnlockSource: 0
+  Modifiers:
+  - Stat: 9
+    Kind: 1
+    Value: -0.25
+  - Stat: 7
+    Kind: 1
+    Value: 0.02
+  Effects:
+  - Kind: 1
+    Value: 1.08
+    Duration: 1.5
+  Description: 
+  Icon: {fileID: 0}
+  CodexOrder: 18
+  IsTestPlaceholder: 0

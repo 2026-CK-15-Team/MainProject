@@ -124,10 +124,13 @@
 
 ### 5.3 아티팩트
 
-`Create > DungeonHunt > Artifact`
-- ID(고유), 이름, 등급, 해금 출처, 세트(선택), `Modifiers`(스탯 수정값)
-- `ArtifactCatalog` 에셋 목록에 추가
-- 세트: `Create > DungeonHunt > Artifact Set` → Tier별 수정값, 무기 특화면 특화 무기 지정
+실제 콘텐츠는 **`Content/Artifacts/`** (세트 6, 아티팩트 28). 목록과 수치는 [ArtifactContent.md](ArtifactContent.md)
+- 표 수정 → `Scripts/Editor/ArtifactContentBuilder.cs` 데이터 수정 → **DungeonHunt > Content > Build Artifact Content** (같은 에셋에 값만 덮어씀, GameConfig 연결)
+- 에셋을 직접 고쳐도 됨: `Modifiers`(스탯 수정값) + `Effects`(특수 효과: 교체 직후 피해, 도탄, 회피 버프, 저스트회피 무적, 라이플 스택, 라이플 사격 이동속도, 강화탄, 탄창 회복). 단 빌더를 다시 돌리면 빌더 데이터로 덮어씀
+- 세트: Tier1/Tier2 수정값 + 특수 효과. **Tier2는 Tier1에 더해짐**
+- 라이플 스택 유지 시간: `GameBalance > Artifact > Rifle Stack Duration` (기본 3초)
+- 무기 특화 잠금: `GameBalance > Artifact > Weapon Specialization Rules` (기본 꺼짐)
+- 새 아티팩트를 손으로 만들 때: `Create > DungeonHunt > Artifact` → `ArtifactCatalog` 목록에 추가
 
 ### 5.4 보스
 

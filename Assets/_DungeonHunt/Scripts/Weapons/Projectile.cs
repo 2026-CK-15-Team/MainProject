@@ -13,6 +13,12 @@ public class Projectile : MonoBehaviour
     private Vector2 direction;
     private float travelled;
 
+    // 권총 세트 도탄: 적 탄과 부딪히면 둘 다 사라짐 (투사체 상쇄). 발사 때 확률로 한 번 정함
+    public bool CanCancelEnemyProjectiles { get; private set; }
+    public Vector2 Position => transform.position;
+    public float HitRadius => snapshot.HitRadius;
+    public static IReadOnlyList<Projectile> Active => active;
+
     public static void Spawn(in AttackSnapshot snapshot, Vector2 origin, Vector2 direction, GameObject prefab)
     {
         GameObject go = prefab != null ? Instantiate(prefab, origin, Quaternion.identity) : CreatePlaceholder(origin, snapshot.Weapon);
@@ -62,18 +68,20 @@ public class Projectile : MonoBehaviour
         direction = dir.normalized;
         travelled = 0f;
         transform.right = direction;
+        CanCancelEnemyProjectiles = attack.Weapon == WeaponType.Pistol && ArtifactEffectRunner.Instance != null && ArtifactEffectRunner.Instance.RollRicochet();
     }
 
     private void Update()
     {
         float dt = GameClock.CombatDelta;
-        if (dt <= 0f) return;
+        if (dt <= 0f || IsRemoved) return;
 
         float remaining = snapshot.Range - travelled;
         float step = Mathf.Min(snapshot.ProjectileSpeed * dt, remaining);
         Vector2 from = transform.position;
         Vector2 to = from + direction * step;
 
+        if (CanCancelEnemyProjectiles && TryCancelEnemyProjectile(from, to)) return;
         if (ResolveCollision(from, to, step)) return;
 
         transform.position = to;
@@ -127,6 +135,7 @@ public class Projectile : MonoBehaviour
         {
             Vector2 point = from + direction * bestTargetDistance;
             DamageInfo info = snapshot.ToDamage(point, direction);
+            ArtifactEffectRunner.Instance?.ModifyPlayerHit(ref info, bestTarget);
             bestTarget.TakeDamage(info);
             GameEvents.Raise(GameEvents.ProjectileHit, info);
             if (info.IsCritical) GameEvents.Raise(GameEvents.CriticalHit, info);
@@ -134,6 +143,33 @@ public class Projectile : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    // 이번 이동 구간에 닿는 적 탄이 있으면 둘 다 제거
+    private bool TryCancelEnemyProjectile(Vector2 from, Vector2 to)
+    {
+        IReadOnlyList<EnemyProjectile> enemies = EnemyProjectile.Active;
+        for (int i = enemies.Count - 1; i >= 0; i--)
+        {
+            EnemyProjectile enemy = enemies[i];
+            if (enemy == null || enemy.IsRemoved) continue;
+            if (Geometry2D.SweepCircle(from, to, snapshot.HitRadius, enemy.transform.position, enemy.Radius) < 0f) continue;
+            CancelWith(enemy);
+            return true;
+        }
+        return false;
+    }
+
+    // 상쇄 확정: 권총 탄과 적 탄 각각 하나씩 제거 + 상쇄 연출 (09 §5 6번)
+    public bool IsRemoved { get; private set; }
+
+    public void CancelWith(EnemyProjectile enemy)
+    {
+        IsRemoved = true;
+        Vector2 point = ((Vector2)transform.position + (Vector2)enemy.transform.position) * 0.5f;
+        GameServices.Feedback?.SpawnProjectileCancel(point);
+        enemy.RemoveSilently();
+        Destroy(gameObject);
     }
 
     private void OnWallHit(RaycastHit2D hit, Vector2 point)

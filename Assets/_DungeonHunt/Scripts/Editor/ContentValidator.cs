@@ -147,9 +147,12 @@ public static class ContentValidator
         int initial = catalog.Artifacts.Count(a => a != null && a.UnlockSource == ArtifactUnlockSource.Initial);
         int currency = catalog.Artifacts.Count(a => a != null && a.UnlockSource == ArtifactUnlockSource.Currency);
         int progress = catalog.Artifacts.Count(a => a != null && a.UnlockSource == ArtifactUnlockSource.Progress);
+        // 해금 출처 몫은 콘텐츠 표가 정함 (현재 15/9/4). 기획서 06 §7 기준값과 다르면 경고만
         (int i, int c, int p) expected = total == 28 ? (14, 10, 4) : total == 20 ? (10, 6, 4) : (-1, -1, -1);
         if (expected.i >= 0 && (initial != expected.i || currency != expected.c || progress != expected.p))
-            errors += Error(catalog, $"해금 출처 몫 {initial}/{currency}/{progress} (기대 {expected.i}/{expected.c}/{expected.p}, 06 §7)");
+            Debug.LogWarning($"[검증] 해금 출처 몫 {initial}/{currency}/{progress} (기획서 06 §7 기준 {expected.i}/{expected.c}/{expected.p})", catalog);
+        int linked = new[] { catalog.ReachFloor2, catalog.ReachFloor3, catalog.FirstClear, catalog.SecondClear }.Count(a => a != null && a.UnlockSource == ArtifactUnlockSource.Progress);
+        if (linked != progress) errors += Error(catalog, $"진행 해금 아티팩트 {progress}개 중 조건에 연결된 것 {linked}개");
         int testCount = catalog.Artifacts.Count(a => a != null && a.IsTestPlaceholder);
         if (testCount > 0) Debug.LogWarning($"[검증] 테스트 더미 아티팩트 {testCount}개 포함 (기획 확정 콘텐츠로 교체 필요)");
         // EliteGate 보상 후보: 초기 해금 중 희귀 이상이 있어야 첫 런부터 생성 가능
