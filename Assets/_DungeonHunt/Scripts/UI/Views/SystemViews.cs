@@ -184,6 +184,9 @@ public class SettingsView : UIView
 
     protected override void Build(RectTransform root)
     {
+        // 메뉴(첫 화면, 로비)에서 열 때 뒤 버튼이 눌리지 않게 막음. 일시정지 메뉴 위에서는 어둡게 겹치지 않도록 투명
+        Image blocker = UIFactory.Panel("Blocker", root, new Color(0f, 0f, 0f, 0f));
+        UIFactory.Stretch(blocker.rectTransform);
         RectTransform panel = CenterPanel(root, new Vector2(1000f, 860f), dimBackground: false);
         Title(panel, "설정");
         float y = -120f;
