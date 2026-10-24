@@ -579,7 +579,7 @@ public static class PlaceholderContentGenerator
 
         var universal = new[]
         {
-            (ArtifactGrade.Common, M(StatId.MaxHP, ModifierKind.Flat, 1f)),
+            (ArtifactGrade.Common, M(StatId.MaxHP, ModifierKind.Flat, 8f)),
             (ArtifactGrade.Rare, M(StatId.CritChance, ModifierKind.Flat, 0.05f)),
             (ArtifactGrade.Legendary, M(StatId.CritDamage, ModifierKind.Flat, 0.3f)),
             (ArtifactGrade.Common, M(StatId.MoveSpeed, ModifierKind.Percent, 0.06f)),

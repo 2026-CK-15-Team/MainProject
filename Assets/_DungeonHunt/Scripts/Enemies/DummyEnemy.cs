@@ -6,7 +6,7 @@ public class DummyEnemy : MonoBehaviour, ICombatTarget
 {
     [Header("테스트용 값 (기획 확정값 아님)")]
     public int MaxHP = 30;
-    public int ContactDamage = 1;
+    public int ContactDamage = 8;
     public float Radius = 0.35f;
 
     public int CurrentHP { get; private set; }

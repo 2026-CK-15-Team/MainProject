@@ -20,7 +20,7 @@ MonoBehaviour:
   HPByFloor: 1e0000002a00000038000000
   MoveSpeed: 0.9
   BodyRadius: 0.3
-  ContactDamage: 1
+  ContactDamage: 8
   SeparationSpeed: 0.6
   RepathInterval: 0.25
   AttackInterval: 1.2
@@ -32,29 +32,29 @@ MonoBehaviour:
   DashSpeed: 6
   DashDistance: 3
   PostDashRecovery: 0.8
-  DashDamage: 1
+  DashDamage: 8
   BrawlerAttackRange: 1
   BrawlerAttackArc: 120
-  BrawlerAttackDamage: 1
+  BrawlerAttackDamage: 8
   BurstGap: 0.15
   BurstLeadRatio: 0.5
   SingleProjectile:
     Speed: 5
     Radius: 0.1
     MaxDistance: 6
-    Damage: 1
+    Damage: 8
   BurstProjectile:
     Speed: 3.5
     Radius: 0.1
     MaxDistance: 6
-    Damage: 1
+    Damage: 8
   BarrageProjectileCount: 8
   BarrageProjectile:
     Speed: 2.6
     Radius: 0.08
     MaxDistance: 5.5
-    Damage: 1
+    Damage: 8
   SniperHitscanWidth: 0.36
-  SniperDamage: 2
+  SniperDamage: 16
   StrafeFlipInterval: {x: 1, y: 2}
   StrafeSightProbeDistance: 0.5

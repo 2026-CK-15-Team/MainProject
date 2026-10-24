@@ -63,7 +63,7 @@ public class MonsterDefinition : ScriptableObject
     [Tooltip("몸체 반경 (H). 피격, 이동, 접촉 판정에 씀")]
     public float BodyRadius = 0.35f;
     [Tooltip("플레이어와 몸이 닿았을 때 피해")]
-    public int ContactDamage = 1;
+    public int ContactDamage = 8;
     [Tooltip("몬스터끼리 겹쳤을 때 밀어내는 속도 (H/초)")]
     public float SeparationSpeed = 0.6f;
     [Tooltip("경로 재탐색 주기 (초). 개발 착수값 (기준안 0.5초)")]
@@ -91,7 +91,7 @@ public class MonsterDefinition : ScriptableObject
     [Tooltip("돌진 후 경직 시간 (초)")]
     public float PostDashRecovery = 0.8f;
     [Tooltip("돌진 명중 피해")]
-    public int DashDamage = 1;
+    public int DashDamage = 8;
 
     [Header("근접 유지형")]
     [Tooltip("부채꼴 공격 반경 (H)")]
@@ -99,7 +99,7 @@ public class MonsterDefinition : ScriptableObject
     [Tooltip("부채꼴 공격 각도 (도)")]
     public float BrawlerAttackArc = 120f;
     [Tooltip("부채꼴 공격 피해")]
-    public int BrawlerAttackDamage = 1;
+    public int BrawlerAttackDamage = 8;
 
     [Header("조준 사격형")]
     [Tooltip("연발 사이 간격 (초). 2 x 이 값 < 공격 간격이어야 함")]
@@ -107,21 +107,21 @@ public class MonsterDefinition : ScriptableObject
     [Tooltip("연발탄 예측 사격 비율. 0 = 현재 위치, 1 = 이동 예측 위치 그대로")]
     public float BurstLeadRatio = 0.5f;
     [Tooltip("단발탄 수치")]
-    public EnemyProjectileSpec SingleProjectile = new EnemyProjectileSpec(5f, 0.1f, 6f, 1);
+    public EnemyProjectileSpec SingleProjectile = new EnemyProjectileSpec(5f, 0.1f, 6f, 8);
     [Tooltip("연발탄 수치")]
-    public EnemyProjectileSpec BurstProjectile = new EnemyProjectileSpec(3.5f, 0.1f, 6f, 1);
+    public EnemyProjectileSpec BurstProjectile = new EnemyProjectileSpec(3.5f, 0.1f, 6f, 8);
 
     [Header("탄막 패턴형")]
     [Tooltip("한 번에 원형으로 쏘는 탄 수")]
     public int BarrageProjectileCount = 8;
     [Tooltip("탄막 탄 수치")]
-    public EnemyProjectileSpec BarrageProjectile = new EnemyProjectileSpec(2.6f, 0.08f, 5.5f, 1);
+    public EnemyProjectileSpec BarrageProjectile = new EnemyProjectileSpec(2.6f, 0.08f, 5.5f, 8);
 
     [Header("예고 후 저격형")]
     [Tooltip("저격 판정 폭 (H)")]
     public float SniperHitscanWidth = 0.36f;
     [Tooltip("저격 피해")]
-    public int SniperDamage = 2;
+    public int SniperDamage = 16;
 
     [Header("원거리 스트레이프 (04 §9.3)")]
     [Tooltip("옆걸음 방향을 바꾸는 간격 범위 (최소, 최대) 초")]
@@ -163,7 +163,7 @@ public class MonsterDefinition : ScriptableObject
     public void ResetToArchetypeDefaults()
     {
         HPByFloor = new[] { 30, 42, 56 };
-        ContactDamage = 1;
+        ContactDamage = 8;
         SeparationSpeed = 0.6f;
         StrafeFlipInterval = new Vector2(1f, 2f);
         StrafeSightProbeDistance = 0.5f;
@@ -173,7 +173,7 @@ public class MonsterDefinition : ScriptableObject
                 DisplayName = "돌진형";
                 MoveSpeed = 1.4f; BodyRadius = 0.35f;
                 AttackInterval = 2.4f; TelegraphDuration = 0.65f; AimLockLeadTime = 0.25f;
-                ChargerTriggerDistance = 3f; DashSpeed = 6f; DashDistance = 3f; PostDashRecovery = 0.8f; DashDamage = 1;
+                ChargerTriggerDistance = 3f; DashSpeed = 6f; DashDistance = 3f; PostDashRecovery = 0.8f; DashDamage = 8;
                 PlaceholderColor = new Color(0.85f, 0.35f, 0.25f);
                 break;
             case MonsterArchetype.Brawler:
@@ -181,7 +181,7 @@ public class MonsterDefinition : ScriptableObject
                 MoveSpeed = 1.2f; BodyRadius = 0.35f;
                 AttackInterval = 1.5f; TelegraphDuration = 0.45f; AimLockLeadTime = 0.25f;
                 KeepDistanceBand = new Vector2(0.55f, 0.8f);
-                BrawlerAttackRange = 1f; BrawlerAttackArc = 120f; BrawlerAttackDamage = 1;
+                BrawlerAttackRange = 1f; BrawlerAttackArc = 120f; BrawlerAttackDamage = 8;
                 AttackMaxDistance = 1f;
                 PlaceholderColor = new Color(0.6f, 0.25f, 0.7f);
                 break;
@@ -191,8 +191,8 @@ public class MonsterDefinition : ScriptableObject
                 AttackInterval = 1.2f; TelegraphDuration = 0f; AimLockLeadTime = 0f;
                 KeepDistanceBand = new Vector2(2.5f, 3.5f); AttackMaxDistance = 4.5f;
                 BurstGap = 0.15f; BurstLeadRatio = 0.5f;
-                SingleProjectile = new EnemyProjectileSpec(5f, 0.1f, 6f, 1);
-                BurstProjectile = new EnemyProjectileSpec(3.5f, 0.1f, 6f, 1);
+                SingleProjectile = new EnemyProjectileSpec(5f, 0.1f, 6f, 8);
+                BurstProjectile = new EnemyProjectileSpec(3.5f, 0.1f, 6f, 8);
                 PlaceholderColor = new Color(0.3f, 0.55f, 0.85f);
                 break;
             case MonsterArchetype.Barrage:
@@ -201,7 +201,7 @@ public class MonsterDefinition : ScriptableObject
                 AttackInterval = 2.4f; TelegraphDuration = 0.6f; AimLockLeadTime = 0f;
                 KeepDistanceBand = new Vector2(3f, 4f); AttackMaxDistance = 5f;
                 BarrageProjectileCount = 8;
-                BarrageProjectile = new EnemyProjectileSpec(2.6f, 0.08f, 5.5f, 1);
+                BarrageProjectile = new EnemyProjectileSpec(2.6f, 0.08f, 5.5f, 8);
                 PlaceholderColor = new Color(0.3f, 0.75f, 0.6f);
                 break;
             case MonsterArchetype.Sniper:
@@ -209,7 +209,7 @@ public class MonsterDefinition : ScriptableObject
                 MoveSpeed = 0.75f; BodyRadius = 0.3f;
                 AttackInterval = 2.0f; TelegraphDuration = 1.2f; AimLockLeadTime = 0.25f;
                 KeepDistanceBand = new Vector2(4f, 5f); AttackMaxDistance = 6f;
-                SniperHitscanWidth = 0.36f; SniperDamage = 2;
+                SniperHitscanWidth = 0.36f; SniperDamage = 16;
                 PlaceholderColor = new Color(0.9f, 0.8f, 0.3f);
                 break;
         }

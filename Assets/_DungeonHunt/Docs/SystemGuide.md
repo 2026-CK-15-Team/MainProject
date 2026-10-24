@@ -124,7 +124,7 @@ Locked ─ 웨이브 전멸 → (히트스톱 끝) → 예고 1초 → 다음 �
        └ 마지막 웨이브 전멸 + 플레이어 생존 → 잠금 해제 → "클리어" → 보상
 Cleared ─ 재방문 자유
 ```
-보상: 아티팩트 20% / 재화 55%(6) / HP 25%(1) → RewardSpawnPoint. EliteGate는 희귀 이상 아티팩트 1개 확정 + FloorExitAvailable.
+보상: 아티팩트 20% / 재화 55%(6) / HP 25%(8) → RewardSpawnPoint. EliteGate는 희귀 이상 아티팩트 1개 확정 + FloorExitAvailable.
 
 ### 3.4 몬스터 (`Monster` + `MonsterBehaviour`)
 

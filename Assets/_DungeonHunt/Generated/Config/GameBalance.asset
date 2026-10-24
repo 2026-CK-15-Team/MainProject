@@ -26,7 +26,7 @@ MonoBehaviour:
     HitInvincibilityDuration: 0.55
     BodyRadius: 0.28
     HurtboxRadius: 0.18
-    MaxHP: 6
+    MaxHP: 50
     CritChance: 0.05
     CritDamageMultiplier: 1.5
     MoveSpeedFloor: 0.1
@@ -54,12 +54,12 @@ MonoBehaviour:
     RewardCurrencyChance: 0.55
     RewardHPChance: 0.25
     RewardCurrencyAmount: 6
-    RewardHPAmount: 1
+    RewardHPAmount: 8
     LargeArtifactChance: 0.4
     LargeCurrencyChance: 0.4
     LargeHPChance: 0.2
     LargeCurrencyAmount: 12
-    LargeHPAmount: 2
+    LargeHPAmount: 16
     WaveTransitionWarningDuration: 1
     SpawnContactDamageGrace: 0.25
     RewardPickupEnableDelay: 0.25
@@ -68,9 +68,9 @@ MonoBehaviour:
     FirstEntrySafeRadius: 2
   Shop:
     SmallHealPrice: {x: 4, y: 6}
-    SmallHealAmount: 1
+    SmallHealAmount: 8
     LargeHealPrice: {x: 7, y: 10}
-    LargeHealAmount: 2
+    LargeHealAmount: 16
     PermanentBundleAmount: 2
     PermanentBundlePrice: {x: 7, y: 10}
     FourSlotChance: 0.5
@@ -101,7 +101,7 @@ MonoBehaviour:
     PhaseTransitionThreshold: 0.5
     DeathMotionDuration: 1.5
     IntroDuration: 1.5
-    ContactDamage: 1
+    ContactDamage: 8
     BodyRadius: 0.9
   Artifact:
     SlotCount: 6

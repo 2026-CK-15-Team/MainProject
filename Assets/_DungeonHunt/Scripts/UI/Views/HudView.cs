@@ -8,8 +8,9 @@ using UnityEngine.UI;
 // 하단 중앙: 활성 세트 / 상단 중앙: 층 도착 안내, 보스 체력바
 public class HudView : UIView
 {
-    private RectTransform hpRow;
-    private readonly List<Image> hpPips = new List<Image>();
+    private RectTransform hpBar;
+    private Image hpFill, hpTrail;
+    private Text hpText;
     private RectTransform dodgeRow;
     private readonly List<Image> dodgePips = new List<Image>();
     private Text currencyText;
@@ -52,8 +53,20 @@ public class HudView : UIView
     protected override void Build(RectTransform root)
     {
         // 좌상단
-        hpRow = UIFactory.CreateRect("HP", root);
-        UIFactory.Place(hpRow, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -36f), new Vector2(600f, 44f));
+        // HP 게이지: 길이는 최대 HP에 비례, 깎인 부분은 잠깐 밝게 남았다가 줄어듦
+        Image hpBack = UIFactory.Panel("HP", root, new Color(0.3f, 0.12f, 0.14f, 0.9f));
+        hpBar = hpBack.rectTransform;
+        UIFactory.Place(hpBar, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -36f), new Vector2(400f, 40f));
+        hpTrail = UIFactory.Panel("Trail", hpBar, new Color(1f, 0.85f, 0.85f, 0.9f));
+        UIFactory.Stretch(hpTrail.rectTransform, 3f);
+        hpTrail.type = Image.Type.Filled;
+        hpTrail.fillMethod = Image.FillMethod.Horizontal;
+        hpFill = UIFactory.Panel("Fill", hpBar, new Color(0.95f, 0.25f, 0.3f));
+        UIFactory.Stretch(hpFill.rectTransform, 3f);
+        hpFill.type = Image.Type.Filled;
+        hpFill.fillMethod = Image.FillMethod.Horizontal;
+        hpText = UIFactory.Label("Text", hpBar, "", 24, TextAnchor.MiddleCenter);
+        UIFactory.Stretch(hpText.rectTransform);
         dodgeRow = UIFactory.CreateRect("Dodge", root);
         UIFactory.Place(dodgeRow, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(40f, -92f), new Vector2(400f, 22f));
         currencyText = UIFactory.Label("Currency", root, "", 30, TextAnchor.MiddleLeft, UIFactory.AccentColor);
@@ -178,9 +191,14 @@ public class HudView : UIView
 
         // HP
         int maxHP = player.Health.MaxHP;
-        EnsurePips(hpPips, hpRow, maxHP, new Vector2(38f, 38f), 46f);
-        for (int i = 0; i < hpPips.Count; i++)
-            hpPips[i].color = i < player.Health.CurrentHP ? new Color(0.95f, 0.25f, 0.3f) : new Color(0.3f, 0.12f, 0.14f);
+        int hp = player.Health.CurrentHP;
+        UIBalance ui = GameBalance.Current.UI;
+        float width = Mathf.Clamp(maxHP * ui.HPBarWidthPerHP, ui.HPBarWidthRange.x, ui.HPBarWidthRange.y);
+        hpBar.sizeDelta = new Vector2(width, hpBar.sizeDelta.y);
+        float ratio = maxHP > 0 ? Mathf.Clamp01(hp / (float)maxHP) : 0f;
+        hpFill.fillAmount = ratio;
+        hpTrail.fillAmount = hpTrail.fillAmount > ratio ? Mathf.MoveTowards(hpTrail.fillAmount, ratio, Time.unscaledDeltaTime * 0.6f) : ratio;
+        hpText.text = $"{hp} / {maxHP}";
 
         // 회피 충전: 가득 차면 숨김, 하나라도 소모하면 표시
         int maxCharge = player.Movement.DodgeMaxCharge;

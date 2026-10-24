@@ -68,8 +68,8 @@ public class PlayerBalance
     public float HurtboxRadius = 0.18f;
 
     [Header("01-4 스탯")]
-    [Tooltip("시작 최대 HP")]
-    public int MaxHP = 6;
+    [Tooltip("시작 최대 HP. 몬스터 피해와 회복량은 이 규모(약 50)에 맞춘 값")]
+    public int MaxHP = 50;
     [Tooltip("기본 치명타 확률 (0~1)")]
     [Range(0, 1)] public float CritChance = 0.05f;
     [Tooltip("치명타 피해 배율")]
@@ -137,7 +137,7 @@ public class CombatRoomBalance
     [Tooltip("런 재화 보상 수량")]
     public int RewardCurrencyAmount = 6;
     [Tooltip("HP 회복 보상 수량")]
-    public int RewardHPAmount = 1;
+    public int RewardHPAmount = 8;
     [Header("대형룸 전용 풀")]
     [Tooltip("대형룸 클리어 보상 가중치: 아티팩트")]
     [Range(0, 1)] public float LargeArtifactChance = 0.40f;
@@ -148,7 +148,7 @@ public class CombatRoomBalance
     [Tooltip("대형룸 런 재화 보상 수량")]
     public int LargeCurrencyAmount = 12;
     [Tooltip("대형룸 HP 회복 보상 수량")]
-    public int LargeHPAmount = 2;
+    public int LargeHPAmount = 16;
     [Header("진행")]
     [Tooltip("다음 웨이브 등장 예고 시간 (초). 예고 중에는 적 없음")]
     public float WaveTransitionWarningDuration = 1.0f;
@@ -171,11 +171,11 @@ public class ShopBalance
     [Tooltip("소형 회복 가격 범위 (최소, 최대)")]
     public Vector2Int SmallHealPrice = new Vector2Int(4, 6);
     [Tooltip("소형 회복 HP")]
-    public int SmallHealAmount = 1;
+    public int SmallHealAmount = 8;
     [Tooltip("대형 회복 가격 범위 (최소, 최대)")]
     public Vector2Int LargeHealPrice = new Vector2Int(7, 10);
     [Tooltip("대형 회복 HP")]
-    public int LargeHealAmount = 2;
+    public int LargeHealAmount = 16;
     [Tooltip("영구 재화 묶음 수량")]
     public int PermanentBundleAmount = 2;
     [Tooltip("영구 재화 묶음 가격 범위 (최소, 최대)")]
@@ -247,7 +247,7 @@ public class BossBalance
     [Tooltip("등장 연출 길이 (초). 개발 착수값")]
     public float IntroDuration = 1.5f;
     [Tooltip("보스 몸체 접촉 피해")]
-    public int ContactDamage = 1;
+    public int ContactDamage = 8;
     [Tooltip("보스 피격, 접촉 반경 (H)")]
     public float BodyRadius = 0.9f;
 }
@@ -374,6 +374,10 @@ public class UIBalance
     public float MinimapHUDViewRange = 20f;
     [Tooltip("설정의 화면 흔들림 기본값 (0~100)")]
     [Range(0, 100)] public float ScreenShakeDefault = 75f;
+    [Tooltip("HUD HP바 길이: 최대 HP 1당 픽셀. 최대 HP가 늘면 바가 길어짐")]
+    public float HPBarWidthPerHP = 8f;
+    [Tooltip("HUD HP바 길이 범위 (최소, 최대) 픽셀")]
+    public Vector2 HPBarWidthRange = new Vector2(120f, 900f);
 }
 
 // 06-1 성장 트리 한 카테고리. 노드는 아래(1번)부터 위(4번) 순서

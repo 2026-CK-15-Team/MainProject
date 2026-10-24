@@ -236,12 +236,12 @@ public class FinalBoss : MonoBehaviour, ICombatTarget
     // ---- 테스트용 더미 패턴 (기획 확정 아님) ----
     private static readonly List<BossPatternData> PlaceholderPhase1 = new List<BossPatternData>
     {
-        new BossPatternData { Kind = BossPatternKind.RadialBurst, Interval = 2.6f, TelegraphDuration = 0.8f, ProjectileCount = 12, Projectile = new EnemyProjectileSpec(2.6f, 0.12f, 9f, 1) },
-        new BossPatternData { Kind = BossPatternKind.AimedFan, Interval = 2.2f, TelegraphDuration = 0.6f, ProjectileCount = 5, SpreadAngle = 50f, Projectile = new EnemyProjectileSpec(3.5f, 0.1f, 9f, 1) },
+        new BossPatternData { Kind = BossPatternKind.RadialBurst, Interval = 2.6f, TelegraphDuration = 0.8f, ProjectileCount = 12, Projectile = new EnemyProjectileSpec(2.6f, 0.12f, 9f, 8) },
+        new BossPatternData { Kind = BossPatternKind.AimedFan, Interval = 2.2f, TelegraphDuration = 0.6f, ProjectileCount = 5, SpreadAngle = 50f, Projectile = new EnemyProjectileSpec(3.5f, 0.1f, 9f, 8) },
     };
     private static readonly List<BossPatternData> PlaceholderPhase2 = new List<BossPatternData>
     {
-        new BossPatternData { Kind = BossPatternKind.Spiral, Interval = 1.6f, TelegraphDuration = 0.5f, ProjectileCount = 16, Projectile = new EnemyProjectileSpec(2.8f, 0.12f, 9f, 1) },
-        new BossPatternData { Kind = BossPatternKind.AimedFan, Interval = 1.8f, TelegraphDuration = 1.0f, ProjectileCount = 7, SpreadAngle = 70f, Projectile = new EnemyProjectileSpec(4f, 0.12f, 9f, 2) },
+        new BossPatternData { Kind = BossPatternKind.Spiral, Interval = 1.6f, TelegraphDuration = 0.5f, ProjectileCount = 16, Projectile = new EnemyProjectileSpec(2.8f, 0.12f, 9f, 8) },
+        new BossPatternData { Kind = BossPatternKind.AimedFan, Interval = 1.8f, TelegraphDuration = 1.0f, ProjectileCount = 7, SpreadAngle = 70f, Projectile = new EnemyProjectileSpec(4f, 0.12f, 9f, 16) },
     };
 }

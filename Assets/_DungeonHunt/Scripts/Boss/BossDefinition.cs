@@ -23,7 +23,7 @@ public class BossPatternData
     [Tooltip("조준 부채꼴 전체 각도 (도). AimedFan에서만 씀")]
     public float SpreadAngle = 40f;
     [Tooltip("탄 수치")]
-    public EnemyProjectileSpec Projectile = new EnemyProjectileSpec(3f, 0.12f, 9f, 1);
+    public EnemyProjectileSpec Projectile = new EnemyProjectileSpec(3f, 0.12f, 9f, 8);
 }
 
 // 05 최종보스 데이터. 패턴은 기획 미정 → 비워두면 접촉 피해만 있는 상태로 FSM과 페이즈 전환만 동작.
