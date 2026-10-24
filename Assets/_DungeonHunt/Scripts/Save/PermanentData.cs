@@ -11,8 +11,8 @@ public class PermanentData
     public List<string> PendingUnlocks = new List<string>();          // 해금 대기 (진행 조건)
     public List<string> RevealedPendingUnlocks = new List<string>();  // 카드 공개 완료
     public List<string> DiscoveredArtifacts = new List<string>();
-    public int CritChanceLevel;
-    public int CritDamageLevel;
+    public int GrowthPointsPurchased;                                 // 06-1 구매한 성장 포인트 수
+    public List<int> GrowthAllocation = new List<int>();              // 06-1 트리마다 배치된 노드 수
     public int RunClearedCount;
     public int HighestFloorReached;                                   // 1부터
     public List<int> AchievedConditions = new List<int>();            // ProgressCondition 값

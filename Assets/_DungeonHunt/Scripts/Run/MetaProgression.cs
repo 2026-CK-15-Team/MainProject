@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-// 06 §5.3 영구 진행 규칙 (해금, 기본 스탯 강화, 진행 조건). 저장 시점은 RunManager가 정함.
+// 06 §5.3 영구 진행 규칙 (해금, 진행 조건) + 06-1 성장 포인트. 저장 시점은 RunManager가 정함.
 public static class MetaProgression
 {
     private static PermanentData Data => GameServices.Save != null ? GameServices.Save.Data : null;
@@ -55,46 +55,158 @@ public static class MetaProgression
         return true;
     }
 
-    public static int StatLevel(StatId stat) => Data == null ? 0 : stat == StatId.CritChance ? Data.CritChanceLevel : Data.CritDamageLevel;
+    // ---------- 성장 포인트 (06-1) ----------
+    // 저장값은 구매 수와 트리별 배치 수뿐. 사용/남은 포인트는 매번 계산.
 
-    public static int MaxStatLevel => GameBalance.Current.Player.StatUpgradeMaxLevel;
+    public enum NodeState { Locked, Available, Allocated }
 
-    public static int NextStatCost(StatId stat)
+    private static MetaBalance Meta => GameBalance.Current.Meta;
+    public static GrowthCategory[] GrowthTree => Meta.GrowthTree ?? new GrowthCategory[0];
+
+    // 노드 k(0부터)의 필요 포인트 = k + 1
+    public static int NodeCost(int node) => node + 1;
+
+    public static int GrowthPointsMax => Meta.GrowthPointPrices != null ? Meta.GrowthPointPrices.Length : 0;
+    public static int GrowthPointsPurchased => Data != null ? Data.GrowthPointsPurchased : 0;
+
+    public static int Allocation(int category)
     {
-        int level = StatLevel(stat);
-        int[] costs = GameBalance.Current.Meta.StatUpgradeCost;
-        if (level >= MaxStatLevel || costs == null || costs.Length == 0) return -1;
-        return costs[Mathf.Min(level, costs.Length - 1)];
+        if (Data == null || category < 0 || category >= Data.GrowthAllocation.Count) return 0;
+        return Data.GrowthAllocation[category];
     }
 
-    public static bool CanUpgrade(StatId stat)
+    // 배치 수 n이면 1 + 2 + ... + n
+    public static int GrowthPointsUsed
     {
-        int cost = NextStatCost(stat);
-        return cost >= 0 && Data != null && Data.PermanentCurrency >= cost;
+        get
+        {
+            int used = 0;
+            for (int c = 0; c < GrowthTree.Length; c++)
+            {
+                int n = Allocation(c);
+                used += n * (n + 1) / 2;
+            }
+            return used;
+        }
     }
 
-    public static bool Upgrade(StatId stat)
+    public static int GrowthPointsRemaining => GrowthPointsPurchased - GrowthPointsUsed;
+
+    // 다음 포인트 가격. 상한이면 -1
+    public static int NextGrowthPointPrice
+        => GrowthPointsPurchased >= GrowthPointsMax ? -1 : Meta.GrowthPointPrices[GrowthPointsPurchased];
+
+    public static bool CanBuyGrowthPoint
     {
-        if (!CanUpgrade(stat)) return false;
-        Data.PermanentCurrency -= NextStatCost(stat);
-        if (stat == StatId.CritChance) Data.CritChanceLevel++;
-        else Data.CritDamageLevel++;
-        ApplyPermanentStats();
-        GameEvents.Raise(GameEvents.BaseStatUpgraded, stat, StatLevel(stat));
+        get
+        {
+            int price = NextGrowthPointPrice;
+            return price >= 0 && Data != null && Data.PermanentCurrency >= price;
+        }
+    }
+
+    public static bool BuyGrowthPoint()
+    {
+        if (!CanBuyGrowthPoint) return false;
+        int price = NextGrowthPointPrice;
+        Data.PermanentCurrency -= price;
+        Data.GrowthPointsPurchased++;
+        GameEvents.Raise(GameEvents.GrowthPointPurchased, Data.GrowthPointsPurchased, price);
         return true;
     }
 
-    // 영구 강화 고정값 (01-4 §6)
+    public static NodeState GetNodeState(int category, int node)
+    {
+        int allocated = Allocation(category);
+        if (node < allocated) return NodeState.Allocated;
+        return node == allocated ? NodeState.Available : NodeState.Locked;
+    }
+
+    public static bool IsTopAllocated(int category, int node) => node == Allocation(category) - 1;
+
+    public static bool CanAllocate(int category, int node)
+        => GetNodeState(category, node) == NodeState.Available && GrowthPointsRemaining >= NodeCost(node);
+
+    public static bool Allocate(int category, int node)
+    {
+        SanitizeGrowth();
+        if (!CanAllocate(category, node)) return false;
+        Data.GrowthAllocation[category]++;
+        OnAllocationChanged();
+        return true;
+    }
+
+    // 가장 위 배치 노드만 해제. 포인트는 남은 포인트로 돌아가고 영구 재화는 돌려주지 않음
+    public static bool Release(int category, int node)
+    {
+        if (Data == null || !IsTopAllocated(category, node)) return false;
+        Data.GrowthAllocation[category]--;
+        OnAllocationChanged();
+        return true;
+    }
+
+    // 배치만 0으로. 구매 수와 영구 재화는 그대로
+    public static bool ResetGrowth()
+    {
+        if (Data == null || GrowthPointsUsed == 0) return false;
+        for (int c = 0; c < Data.GrowthAllocation.Count; c++) Data.GrowthAllocation[c] = 0;
+        OnAllocationChanged();
+        return true;
+    }
+
+    private static void OnAllocationChanged()
+    {
+        ApplyPermanentStats();
+        GameEvents.Raise(GameEvents.GrowthAllocationChanged);
+    }
+
+    // 배치된 노드 수정값 전부 (UI 미리보기는 extra로 노드 하나를 더 얹어 계산)
+    public static List<StatModifier> GrowthModifiers(int extraCategory = -1)
+    {
+        var mods = new List<StatModifier>();
+        GrowthCategory[] tree = GrowthTree;
+        for (int c = 0; c < tree.Length; c++)
+        {
+            int count = Allocation(c) + (c == extraCategory ? 1 : 0);
+            for (int n = 0; n < count && n < tree[c].Nodes.Length; n++)
+                mods.AddRange(tree[c].Nodes[n].Modifiers);
+        }
+        return mods;
+    }
+
+    // 세이브 보정: 트리 수에 맞추고, 범위 밖이거나 사용 포인트가 구매 수를 넘으면 배치를 0으로 (06-1 §9)
+    private static void SanitizeGrowth()
+    {
+        if (Data == null) return;
+        GrowthCategory[] tree = GrowthTree;
+        if (Data.GrowthAllocation == null) Data.GrowthAllocation = new List<int>();
+        while (Data.GrowthAllocation.Count < tree.Length) Data.GrowthAllocation.Add(0);
+        if (Data.GrowthAllocation.Count > tree.Length) Data.GrowthAllocation.RemoveRange(tree.Length, Data.GrowthAllocation.Count - tree.Length);
+        Data.GrowthPointsPurchased = Mathf.Clamp(Data.GrowthPointsPurchased, 0, GrowthPointsMax);
+
+        bool invalid = false;
+        for (int c = 0; c < tree.Length; c++)
+            if (Data.GrowthAllocation[c] < 0 || Data.GrowthAllocation[c] > tree[c].Nodes.Length) invalid = true;
+        if (invalid || GrowthPointsUsed > Data.GrowthPointsPurchased)
+            for (int c = 0; c < tree.Length; c++) Data.GrowthAllocation[c] = 0;
+    }
+
+    // 영구 강화 원천 (01-4 §5). 배치가 바뀌면 원천 하나를 통째로 교체
     public static void ApplyPermanentStats()
     {
+        SanitizeGrowth();
         PlayerController player = GameServices.Player;
         if (player == null || Data == null) return;
-        PlayerBalance b = GameBalance.Current.Player;
-        player.Stats.SetSource(StatSources.PermanentCrit, new[]
-        {
-            new StatModifier(StatId.CritChance, ModifierKind.Flat, b.CritChanceUpgradeStep * Data.CritChanceLevel),
-            new StatModifier(StatId.CritDamage, ModifierKind.Flat, b.CritDamageUpgradeStep * Data.CritDamageLevel),
-        });
+        player.Stats.SetSource(StatSources.PermanentGrowth, GrowthModifiers());
+    }
+
+    // 상점 문구: 치명타는 %p, 회피 충전 수는 정수, 비율은 %
+    public static string Describe(StatModifier m)
+    {
+        string name = StatNames.Display(m.Stat);
+        if (m.Kind == ModifierKind.Percent) return $"{name} {m.Value * 100f:+0.#;-0.#}%";
+        if (m.Stat == StatId.CritChance || m.Stat == StatId.CritDamage) return $"{name} {m.Value * 100f:+0.#;-0.#}%p";
+        return m.ToString();
     }
 
     // ---------- 진행 조건 (06 §5.3 표) ----------

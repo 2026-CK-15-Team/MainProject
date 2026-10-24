@@ -74,12 +74,6 @@ public class PlayerBalance
     [Range(0, 1)] public float CritChance = 0.05f;
     [Tooltip("치명타 피해 배율")]
     public float CritDamageMultiplier = 1.5f;
-    [Tooltip("영구 강화 1단계당 치명타 확률 증가량")]
-    public float CritChanceUpgradeStep = 0.02f;
-    [Tooltip("영구 강화 1단계당 치명타 배율 증가량")]
-    public float CritDamageUpgradeStep = 0.1f;
-    [Tooltip("영구 스탯 강화 최대 단계")]
-    public int StatUpgradeMaxLevel = 5;
     [Tooltip("이동속도 하한 (H/초). 비율 수정값 뒤, 상태 배율 앞에 적용 (01-4 §7)")]
     public float MoveSpeedFloor = 0.1f;
 }
@@ -298,8 +292,34 @@ public class MetaBalance
     public int[] FloorClearBonus = { 4, 7, 10 };
     [Tooltip("아티팩트 1개 해금 비용 (영구 재화)")]
     public int ArtifactUnlockCost = 30;
-    [Tooltip("영구 스탯 강화 단계별 비용 (1단계부터)")]
-    public int[] StatUpgradeCost = { 20, 35, 55, 80, 110 };
+    [Header("06-1 성장 포인트")]
+    [Tooltip("n번째 성장 포인트 가격 (1번째부터). 개수가 곧 구매 상한")]
+    public int[] GrowthPointPrices = { 20, 20, 25, 30, 35, 40, 45, 55, 60, 70, 80, 90, 100 };
+    [Tooltip("성장 트리 (공격, 회피, 유틸). 노드 k는 k포인트를 쓰고 아래 노드가 모두 배치돼야 배치 가능")]
+    public GrowthCategory[] GrowthTree =
+    {
+        new GrowthCategory("공격", new[]
+        {
+            new GrowthNode("GROWTH_ATK_1", new StatModifier(StatId.CritChance, ModifierKind.Flat, 0.08f)),
+            new GrowthNode("GROWTH_ATK_2", new StatModifier(StatId.CritChance, ModifierKind.Flat, 0.05f), new StatModifier(StatId.CritDamage, ModifierKind.Flat, 0.3f)),
+            new GrowthNode("GROWTH_ATK_3", new StatModifier(StatId.CritChance, ModifierKind.Flat, 0.06f), new StatModifier(StatId.CritDamage, ModifierKind.Flat, 0.3f)),
+            new GrowthNode("GROWTH_ATK_4", new StatModifier(StatId.WeaponDamageAll, ModifierKind.Percent, 0.09f), new StatModifier(StatId.CritDamage, ModifierKind.Flat, 0.3f)),
+        }),
+        new GrowthCategory("회피", new[]
+        {
+            new GrowthNode("GROWTH_DOD_1", new StatModifier(StatId.DodgeChargeTime, ModifierKind.Percent, -0.1f)),
+            new GrowthNode("GROWTH_DOD_2", new StatModifier(StatId.MaxHP, ModifierKind.Percent, 0.05f)),
+            new GrowthNode("GROWTH_DOD_3", new StatModifier(StatId.MaxHP, ModifierKind.Percent, 0.08f)),
+            new GrowthNode("GROWTH_DOD_4", new StatModifier(StatId.DodgeMaxCharge, ModifierKind.Flat, 1f)),
+        }),
+        new GrowthCategory("유틸", new[]
+        {
+            new GrowthNode("GROWTH_UTL_1", new StatModifier(StatId.ReloadTimeAll, ModifierKind.Percent, -0.15f), new StatModifier(StatId.MagazineSizeAll, ModifierKind.Percent, 0.1f)),
+            new GrowthNode("GROWTH_UTL_2", new StatModifier(StatId.MoveSpeed, ModifierKind.Percent, 0.1f)),
+            new GrowthNode("GROWTH_UTL_3", new StatModifier(StatId.FireIntervalAll, ModifierKind.Percent, -0.1f)),
+            new GrowthNode("GROWTH_UTL_4", new StatModifier(StatId.FireIntervalAll, ModifierKind.Percent, -0.12f), new StatModifier(StatId.MoveSpeed, ModifierKind.Percent, 0.05f), new StatModifier(StatId.ReloadTimeAll, ModifierKind.Percent, -0.1f)),
+        }),
+    };
     [Tooltip("런 시작 시 페이드 아웃 시간 (초)")]
     public float RunEntryFadeOut = 0.18f;
     [Tooltip("런 시작 시 페이드 인 시간 (초)")]
@@ -354,4 +374,36 @@ public class UIBalance
     public float MinimapHUDViewRange = 20f;
     [Tooltip("설정의 화면 흔들림 기본값 (0~100)")]
     [Range(0, 100)] public float ScreenShakeDefault = 75f;
+}
+
+// 06-1 성장 트리 한 카테고리. 노드는 아래(1번)부터 위(4번) 순서
+[Serializable]
+public class GrowthCategory
+{
+    public string Name;
+    public GrowthNode[] Nodes;
+
+    public GrowthCategory() { }
+
+    public GrowthCategory(string name, GrowthNode[] nodes)
+    {
+        Name = name;
+        Nodes = nodes;
+    }
+}
+
+[Serializable]
+public class GrowthNode
+{
+    public string Id;
+    [Tooltip("영구 강화 수정값. 비율(Percent)은 아티팩트 비율과 합산됨")]
+    public StatModifier[] Modifiers;
+
+    public GrowthNode() { }
+
+    public GrowthNode(string id, params StatModifier[] modifiers)
+    {
+        Id = id;
+        Modifiers = modifiers;
+    }
 }

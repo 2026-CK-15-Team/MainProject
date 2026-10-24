@@ -214,10 +214,11 @@ public class RunManager : MonoBehaviour
 
         SetPlayerActive(true);
         PlayerController player = GameServices.Player;
+        // 영구 강화(최대 HP 포함)를 먼저 등록해야 풀피가 새 최대치로 채워짐 (06-1 §5.3)
+        MetaProgression.ApplyPermanentStats();
         player.ResetForNewRun();
         GameServices.Wallet.ResetForNewRun();
         GameServices.Artifacts.BeginRun(MetaProgression.UnlockedArtifactIds());
-        MetaProgression.ApplyPermanentStats();
         GameEvents.Raise(GameEvents.RunStarted);
 
         State = RunState.InRun;

@@ -29,9 +29,6 @@ MonoBehaviour:
     MaxHP: 6
     CritChance: 0.05
     CritDamageMultiplier: 1.5
-    CritChanceUpgradeStep: 0.02
-    CritDamageUpgradeStep: 0.1
-    StatUpgradeMaxLevel: 5
     MoveSpeedFloor: 0.1
   Weapon:
     FireIntervalFloor: 0.04
@@ -121,7 +118,6 @@ MonoBehaviour:
     PermanentPerRoomCleared: 2
     FloorClearBonus: 04000000070000000a000000
     ArtifactUnlockCost: 30
-    StatUpgradeCost: 140000002300000037000000500000006e000000
     RunEntryFadeOut: 0.18
     RunEntryFadeIn: 0.18
     DeathResultTransitionDuration: 0.75

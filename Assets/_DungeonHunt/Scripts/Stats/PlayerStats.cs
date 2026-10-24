@@ -185,7 +185,7 @@ public class PlayerStats : MonoBehaviour
 public static class StatSources
 {
     public const string PermanentPrefix = "Permanent:";
-    public const string PermanentCrit = PermanentPrefix + "Crit";
+    public const string PermanentGrowth = PermanentPrefix + "Growth";
     public const string PistolPassive = "Passive:Pistol";
     public const string RifleFiring = "State:RifleFiring";
     public const string ShotgunKick = "State:ShotgunKick";

@@ -37,7 +37,7 @@
 | 03-6 층 종료 | EliteGate(2웨이브, 희귀 이상 보상), FloorExit, FinalBoss, RunEndTreasure(엔딩 상자) | `CombatRoomController`(IsEliteGate), `FloorExitController`, `FinalBossRoomController`, `RunEndTreasureController` | 완료 |
 | 04 몬스터 | 5 아키타입, 공격 예약(t0, D 추첨, Armed, 경로 1~3), 방향 잠금, 사거리/LOS 표, 스트레이프, 넉백 곡선, 분리 이동, 경로 탐색(A*), 사망 시 탄 제거 | `Enemies/*` | 완료 |
 | 05 보스 | Idle→Phase1→Phase2→Defeated, 조우 페이드 순서, 사망 모션 동안 비전투 | `Boss/*`, `RunManager.BossEncounterRoutine` | 구조 완료 (패턴은 미정 → 더미) |
-| 06 런/저장 | 런 FSM, RunTime, 정산(정산 ID 1회 반영), 진행 해금 4조건, 영구 강화, 저장 시점, 저장 실패 2단계 팝업, 손상 세이브 초기화 | `Run/RunManager`, `Run/MetaProgression`, `Save/*` | 완료 (영구재화 상점은 잠정) |
+| 06 런/저장 | 런 FSM, RunTime, 정산(정산 ID 1회 반영), 진행 해금 4조건, 영구 강화, 저장 시점, 저장 실패 2단계 팝업, 손상 세이브 초기화 | `Run/RunManager`, `Run/MetaProgression`, `Save/*` | 완료 |
 | 07 아티팩트 | 6슬롯, 등급→ID 2단계 추첨, 제외 목록 3종, 빈 등급 재정규화, 세트 쏠림, 리롤(무료 1/유료 1), 획득 세션, 즉시 지급, 획득 대기, 버리기, 안전 배치, 세트 Tier, 무기 특화 잠금 | `Artifacts/*` | 완료 (개별 효과는 미정 → 스탯 수정값만) |
 | 08 UI | 화면 상태 17종 대부분, 모달 정책 4그룹, ESC 처리 순서, 커서 제한, 포커스 이탈 정지, HUD 배치, 미니맵/확대 미니맵/순간이동, 설정(10초 유지 확인) | `UI/*` | 완료 (모양은 기본 도형) |
 | 09 연출 | 피해 숫자(같은 공격 1개), 화이트 플래시, 적중/치명타 이펙트, 흔들림 중첩, 처치 히트스톱(공격당 1회), 공통 소멸 표현, 예고 도형, 잠금 이펙트 등장/소멸, 엔딩 상자 개봉, 아티팩트 획득, 세트 활성/해제 안내, 플레이어 이동/회피 잔상/사망 모션, 몬스터 이동/조준 방향 표시 | `Feedback/FeedbackService`, `Enemies/TelegraphView`, `Player/PlayerVisual`, `Enemies/Monster` | 완료 (임시 합성 사운드 `Audio/AudioService`) |
@@ -97,7 +97,7 @@ Edgar 기반 규칙(X2 대형룸, 흐름 템플릿 하드 제약, 전투 환산 
 | 해금 출처별 아티팩트 ID (06 §5.3) | 콘텐츠 표 기준 15/9/4 |
 | 몬스터 구성 프리셋, 스폰점 (03 §8.1) | Test_ 프리셋 (1층 4종 / 2층 6종 / 3층 8종, 엘리트 3종씩) |
 | 최종보스 패턴 (05) | `BossDefinition.UsePlaceholderPatterns` 켜면 더미 패턴 (방사/조준 부채꼴/회전). 끄면 접촉 피해만 |
-| 영구재화 상점 내부 화면 (06 §5.3, 08 §3) | 기본 스탯 강화 2종 + 재화 해금 아티팩트 목록으로 잠정 구성 |
+| 영구재화 상점 내부 화면 (06-1) | 성장 포인트 트리(좌클릭 배치, 우클릭 해제) + 아티팩트 해금 탭. 노드 효과와 가격은 PrototypeDefault |
 | 엔딩 화면 형식 (10) | 검은 화면 + 마지막 대사 |
 | RunEndTreasureRoom 일반 보물상자 내용물 | "비어 있음" 표시만 |
 | 층 이름 (10 §5.4) | `GameBalance.FloorEnd.FloorNames` 임시 이름 |

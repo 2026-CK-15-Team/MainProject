@@ -41,7 +41,8 @@ public static class GameEvents
     public static Action SaveLoaded, RunStarted, RunCleared, RunOver, GameSaved;
     public static Action<int> PermanentCurrencyGranted;
     public static Action<string> ArtifactUnlockedViaCurrency, ArtifactProgressUnlockPending, ArtifactProgressUnlockRevealed;
-    public static Action<StatId, int> BaseStatUpgraded;
+    public static Action<int, int> GrowthPointPurchased;   // 구매한 포인트 수, 가격
+    public static Action GrowthAllocationChanged;
 
     // 07 아티팩트
     public static Action<ArtifactDefinition> ArtifactPickedUp, ArtifactAcquired, ArtifactNotSelected;
