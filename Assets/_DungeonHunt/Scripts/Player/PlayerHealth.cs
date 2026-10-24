@@ -146,12 +146,6 @@ public class PlayerHealth : MonoBehaviour
         return CurrentHP - before;
     }
 
-    // 도박 비용처럼 사망하지 않는 범위의 HP 소모 (조건 검사는 호출 쪽)
-    public void Spend(int amount)
-    {
-        SetHP(Mathf.Max(1, CurrentHP - amount));
-    }
-
     public bool IsFull => CurrentHP >= MaxHP;
 
     private void SetHP(int value)

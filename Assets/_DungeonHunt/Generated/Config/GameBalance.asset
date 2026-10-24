@@ -81,7 +81,7 @@ MonoBehaviour:
     LegendaryArtifactPrice: {x: 24, y: 30}
     RerollCost: 6
   Gamble:
-    HPCostPerAttempt: 1
+    CurrencyCostPerAttempt: 3
     BaseArtifactChance: 0.25
     PityIncrement: 0.2
   SecretRoom:

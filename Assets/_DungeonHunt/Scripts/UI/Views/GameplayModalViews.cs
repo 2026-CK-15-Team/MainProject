@@ -709,13 +709,12 @@ public class GambleView : UIView
     private static readonly Vector2 CardSize = new Vector2(440f, 440f);
     private GambleSession session;
     private GambleRoomController owner;
-    private RectTransform card, hpGauge;
-    private Text chance, hpText;
+    private RectTransform card;
+    private Text chance, costText;
     private Button attempt;
     private Face face, pendingFace;
     private ArtifactDefinition shownArtifact;
     private float revealTimer = -1f;
-    private int lastHp = -1, lastMax = -1;
     public override ModalKind Kind => ModalKind.NonStop;
     private bool Revealing => revealTimer >= 0f;
 
@@ -737,12 +736,10 @@ public class GambleView : UIView
         chance = UIFactory.Label("Chance", panel, "", 22, TextAnchor.MiddleCenter, ArtifactUIText.Muted);
         UIFactory.Place(chance.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -540f), new Vector2(PanelSize.x - 60f, 36f));
 
-        Image gauge = UIFactory.Panel("HPGauge", panel, new Color(0.25f, 0.12f, 0.14f, 1f));
-        UIFactory.Place(gauge.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -590f), new Vector2(CardSize.x, 64f));
-        hpGauge = UIFactory.CreateRect("Cells", gauge.transform);
-        UIFactory.Stretch(hpGauge, 8f);
-        hpText = UIFactory.Label("HPText", panel, "", 22, TextAnchor.MiddleCenter);
-        UIFactory.Place(hpText.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -662f), new Vector2(PanelSize.x - 60f, 36f));
+        Image costBack = UIFactory.Panel("Cost", panel, UIFactory.PanelLight);
+        UIFactory.Place(costBack.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -590f), new Vector2(CardSize.x, 64f));
+        costText = UIFactory.Label("CostText", costBack.transform, "", 26, TextAnchor.MiddleCenter);
+        UIFactory.Stretch(costText.rectTransform);
 
         float w = (CardSize.x - 20f) / 2f;
         attempt = UIFactory.Button("Attempt", panel, "시도한다", OnAttempt, UIFactory.PrimaryColor);
@@ -758,7 +755,6 @@ public class GambleView : UIView
         if (owner != null) owner.UIOpen = true;
         revealTimer = -1f;
         shownArtifact = null;
-        lastHp = lastMax = -1;
         ShowFace(session.State == GambleState.Depleted ? Face.Depleted : Face.Back);
     }
 
@@ -837,37 +833,24 @@ public class GambleView : UIView
         ArtifactCardParts.Warnings(face, ArtifactUIText.WarningRows(def), new Vector2(24f, y), width, 20);
     }
 
-    private void RebuildGauge()
+    // 보유 런 재화와 시도 비용. 부족하면 비용을 빨갛게
+    private void RefreshCost()
     {
-        PlayerController player = GameServices.Player;
-        int hp = player != null ? player.Health.CurrentHP : 0;
-        int max = player != null ? player.Health.MaxHP : 0;
-        if (hp == lastHp && max == lastMax) return;
-        lastHp = hp;
-        lastMax = max;
-        UIFactory.Clear(hpGauge);
-        if (max <= 0) return;
-        float total = CardSize.x - 16f, gap = 4f;
-        float cell = (total - gap * (max - 1)) / max;
-        int cost = session != null ? session.Cost : 0;
-        bool showCost = session != null && session.State == GambleState.Active;
-        for (int i = 0; i < max; i++)
+        int balance = GameServices.Wallet != null ? GameServices.Wallet.Balance : 0;
+        if (session.State != GambleState.Active)
         {
-            // 채운 칸 = 현재 HP, 그중 오른쪽 cost칸 = 시도하면 소모될 체력
-            Color color = i >= hp ? new Color(0.12f, 0.06f, 0.07f, 1f)
-                : showCost && i >= hp - cost ? new Color(1f, 0.65f, 0.65f, 1f)
-                : new Color(0.9f, 0.25f, 0.3f, 1f);
-            Image c = UIFactory.Panel("Cell" + i, hpGauge, color);
-            c.raycastTarget = false;
-            UIFactory.Place(c.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(i * (cell + gap), 0f), new Vector2(cell, 48f));
+            costText.text = $"보유 ● {balance}";
+            return;
         }
-        hpText.text = showCost ? $"HP {hp}/{max} · 시도 비용 HP {cost}" : $"HP {hp}/{max}";
+        string cost = $"시도 비용 ● {session.Cost}";
+        if (balance < session.Cost) cost = $"<color=#{ArtifactUIText.Hex(ArtifactUIText.Bad)}>{cost}</color>";
+        costText.text = $"보유 ● {balance}   ·   {cost}";
     }
 
     public override void Tick()
     {
         if (session == null) return;
-        RebuildGauge();
+        RefreshCost();
         GambleBalance b = GameBalance.Current.Gamble;
         chance.text = session.State == GambleState.Depleted ? "" : $"당첨 확률 {session.CurrentChance * 100f:0}% · 실패마다 +{b.PityIncrement * 100f:0}%";
 
@@ -889,7 +872,6 @@ public class GambleView : UIView
                 if (done)
                 {
                     revealTimer = -1f;
-                    lastHp = -1;
                     // 즉시 장착 못 하면 GrantImmediate가 도박을 닫고 획득 대기 모드를 엶
                     if (pendingFace == Face.Won) session.Deliver();
                 }

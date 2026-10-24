@@ -200,8 +200,8 @@ public class ShopBalance
 public class GambleBalance
 {
     [Header("03-4 도박룸")]
-    [Tooltip("도박 1회당 HP 소모")]
-    public int HPCostPerAttempt = 1;
+    [Tooltip("도박 1회당 런 재화 소모")]
+    public int CurrencyCostPerAttempt = 3;
     [Tooltip("도박 첫 시도의 아티팩트 확률")]
     [Range(0, 1)] public float BaseArtifactChance = 0.25f;
     [Tooltip("실패마다 더해지는 확률. 현재 확률 = 기본 + 이 값 x 실패 횟수 (최대 1)")]
