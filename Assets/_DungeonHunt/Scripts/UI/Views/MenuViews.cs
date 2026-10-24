@@ -34,7 +34,7 @@ public class FirstScreenView : UIView
     }
 }
 
-// 로비 (08 §3): 탐사 시작, 영구재화 상점, 아티팩트 도감, 설정, 돌아가기
+// 로비 (08 §3): 탐사 시작, 영구재화 상점, 아티팩트 도감, 돌아가기
 public class LobbyView : UIView
 {
     private Action onStart, onShop, onCodex, onBack;
@@ -54,12 +54,12 @@ public class LobbyView : UIView
         statsText = UIFactory.Label("Stats", root, "", 24, TextAnchor.LowerLeft, new Color(0.75f, 0.75f, 0.8f));
         UIFactory.Place(statsText.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(60f, 60f), new Vector2(800f, 140f));
 
-        string[] labels = { "탐사 시작", "영구재화 상점", "아티팩트 도감", "설정", "돌아가기" };
-        Action[] actions = { () => onStart?.Invoke(), () => onShop?.Invoke(), () => onCodex?.Invoke(), () => Manager.OpenSettings(), () => onBack?.Invoke() };
+        string[] labels = { "탐사 시작", "영구재화 상점", "아티팩트 도감", "돌아가기" };
+        Action[] actions = { () => onStart?.Invoke(), () => onShop?.Invoke(), () => onCodex?.Invoke(), () => onBack?.Invoke() };
         for (int i = 0; i < labels.Length; i++)
         {
             Button b = UIFactory.Button(labels[i], root, labels[i], actions[i], 36);
-            UIFactory.Place((RectTransform)b.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 170f - i * 100f), new Vector2(460f, 80f));
+            UIFactory.Place((RectTransform)b.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 120f - i * 100f), new Vector2(460f, 80f));
         }
     }
 
