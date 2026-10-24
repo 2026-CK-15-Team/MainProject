@@ -26,6 +26,37 @@ public class MonsterWavePreset : ScriptableObject
 
     public List<Wave> Waves = new List<Wave>();
 
+    // 방 스폰점에 직접 넣은 몬스터(RoomPoint.Spawns)로 만든 구성. 하나도 없으면 null.
+    // 웨이브 수 = 가장 큰 Wave 번호, 같은 웨이브 안은 스폰점 번호 순. 중간 웨이브가 비면 그 웨이브는 건너뜀
+    public static MonsterWavePreset FromPoints(IEnumerable<RoomPoint> points, string name)
+    {
+        var spawns = new List<(int wave, int point, PointSpawn spawn)>();
+        foreach (RoomPoint point in points)
+        {
+            if (point == null || !point.HasSpawns) continue;
+            foreach (PointSpawn s in point.Spawns)
+                if (s != null && s.Monster != null) spawns.Add((Mathf.Max(1, s.Wave), point.Index, s));
+        }
+        if (spawns.Count == 0) return null;
+
+        var preset = CreateInstance<MonsterWavePreset>();
+        preset.name = name + " (스폰점 지정)";
+        spawns.Sort((a, b) => a.wave != b.wave ? a.wave.CompareTo(b.wave) : a.point.CompareTo(b.point));
+        Wave current = null;
+        int currentWave = 0;
+        foreach (var (wave, point, spawn) in spawns)
+        {
+            if (wave != currentWave)
+            {
+                current = new Wave();
+                preset.Waves.Add(current);
+                currentWave = wave;
+            }
+            current.Entries.Add(new SpawnEntry { SpawnPoint = point, Monster = spawn.Monster, CurrencyDrop = Mathf.Max(1, spawn.CurrencyDrop) });
+        }
+        return preset;
+    }
+
     public int MonsterCount
     {
         get

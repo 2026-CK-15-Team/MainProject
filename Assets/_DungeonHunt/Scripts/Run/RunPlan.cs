@@ -105,16 +105,14 @@ public class RunPlan
         }
     }
 
-    // 방 프리팹에 RoomMonsterWaves가 있으면 그 구성. 스폰점이 안 맞으면 경고하고 층 프리셋으로
+    // 방 스폰점에 몬스터를 직접 넣었으면 그 구성 (층 프리셋 추첨 안 함). 사용 불가 몬스터면 경고하고 층 프리셋으로
     public static MonsterWavePreset RoomPreset(RoomRuntime room)
     {
-        RoomMonsterWaves waves = room.GetComponent<RoomMonsterWaves>();
-        if (waves == null || !waves.HasWaves) return null;
-        MonsterWavePreset preset = waves.CreatePreset();
-        var spawnIndices = new HashSet<int>(room.SpawnPoints().Keys);
-        if (!preset.IsCompatible(spawnIndices, out string error))
+        MonsterWavePreset preset = MonsterWavePreset.FromPoints(room.Points(RoomPointKind.MonsterSpawn), room.name);
+        if (preset == null) return null;
+        if (!preset.IsCompatible(null, out string error))
         {
-            Debug.LogWarning($"{room.name}: 방 지정 몬스터 구성 사용 불가 - {error}. 층 프리셋 사용", room);
+            Debug.LogWarning($"{room.name}: 스폰점 지정 몬스터 사용 불가 - {error}. 층 프리셋 사용", room);
             return null;
         }
         return preset;
