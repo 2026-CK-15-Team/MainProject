@@ -28,6 +28,8 @@ public class CombatRoomController : RoomContent
     private bool waveRegistered;
     private float waveStartAt;
     private readonly List<GameObject> warningMarkers = new List<GameObject>();
+    // 예고 때 정한 엔트리별 위치. 대체 스폰은 플레이어 위치에 따라 달라지므로 소환 때 다시 고르지 않음
+    private readonly List<Vector2> plannedPositions = new List<Vector2>();
 
     private void OnEnable() => GameEvents.MonsterDied += OnMonsterDied;
     private void OnDisable() => GameEvents.MonsterDied -= OnMonsterDied;
@@ -54,13 +56,12 @@ public class CombatRoomController : RoomContent
     {
         aliveMonsters.Clear();
         waveRegistered = false;
-        Dictionary<int, Vector2> points = Runtime.SpawnPoints();
         MonsterWavePreset.Wave wave = Preset.Waves[index];
         for (int entryIndex = 0; entryIndex < wave.Entries.Count; entryIndex++)
         {
             MonsterWavePreset.SpawnEntry entry = wave.Entries[entryIndex];
             if (entry.Monster == null) continue;
-            Vector2 position = points.TryGetValue(entry.SpawnPoint, out Vector2 p) ? p : FallbackSpawn(entryIndex);
+            Vector2 position = plannedPositions[entryIndex];
             int spawnOrder = (index + 1) * 1000 + (entryIndex + 1);
             Monster monster = Monster.Spawn(entry.Monster, position, Runtime, Runtime.FloorIndex, spawnOrder, entry.CurrencyDrop);
             aliveMonsters.Add(monster);
@@ -130,9 +131,12 @@ public class CombatRoomController : RoomContent
         waveStartAt = GameClock.CombatTime + GameBalance.Current.CombatRoom.WaveTransitionWarningDuration;
         Dictionary<int, Vector2> points = Runtime.SpawnPoints();
         MonsterWavePreset.Wave next = Preset.Waves[waveIndex + 1];
+        plannedPositions.Clear();
         for (int i = 0; i < next.Entries.Count; i++)
         {
             Vector2 at = points.TryGetValue(next.Entries[i].SpawnPoint, out Vector2 p) ? p : FallbackSpawn(i);
+            plannedPositions.Add(at);
+            if (next.Entries[i].Monster == null) continue;
             warningMarkers.Add(GameServices.Feedback != null ? GameServices.Feedback.SpawnWaveWarning(at) : null);
         }
         if (waveIndex >= 0) GameServices.UI?.ShowCenterToast("다음 웨이브", 0.8f);
