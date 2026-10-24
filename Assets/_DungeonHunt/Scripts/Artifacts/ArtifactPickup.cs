@@ -140,13 +140,22 @@ public class ArtifactPickup : MonoBehaviour, IInteractable
     public bool NextRerollIsFree => RerollsUsed < GameBalance.Current.Artifact.RerollFreeCount;
     public int NextRerollCost => NextRerollIsFree ? 0 : GameBalance.Current.Shop.RerollCost;
 
+    // 바꿔 줄 후보가 남아 있는지. 엘리트 보상은 희귀 이상만이라 해금 풀이 작으면 금방 없어짐
+    public bool RerollHasCandidate
+    {
+        get
+        {
+            ArtifactSystem artifacts = GameServices.Artifacts;
+            return artifacts != null && artifacts.HasAnyCandidate(Origin, SessionSeen);
+        }
+    }
+
     public bool RerollEnabled
     {
         get
         {
             if (!RerollVisible) return false;
-            ArtifactSystem artifacts = GameServices.Artifacts;
-            if (artifacts == null || !artifacts.HasAnyCandidate(Origin, SessionSeen)) return false;
+            if (!RerollHasCandidate) return false;
             if (!NextRerollIsFree && (GameServices.Wallet == null || GameServices.Wallet.Balance < NextRerollCost)) return false;
             return true;
         }

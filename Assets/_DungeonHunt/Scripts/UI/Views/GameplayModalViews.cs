@@ -175,7 +175,15 @@ public class AcquireView : UIView
 
         // 리롤 버튼: 첫 회 무료, 두 번째 비용, 다 쓰면 숨김, 재화 부족이면 회색 (07 §4.13 8번)
         reroll.gameObject.SetActive(pickup.RerollVisible);
-        UIFactory.SetButtonText(reroll, pickup.NextRerollIsFree ? "리롤 - 무료" : $"리롤 - ● {pickup.NextRerollCost}");
+        RefreshReroll();
+    }
+
+    // 후보가 없어 못 누르면 이유를 버튼에 표시
+    private void RefreshReroll()
+    {
+        string label = !pickup.RerollHasCandidate ? "리롤 - 후보 없음"
+            : pickup.NextRerollIsFree ? "리롤 - 무료" : $"리롤 - ● {pickup.NextRerollCost}";
+        UIFactory.SetButtonText(reroll, label);
         reroll.interactable = pickup.RerollEnabled;
     }
 
@@ -201,7 +209,7 @@ public class AcquireView : UIView
     public override void Tick()
     {
         if (pickup == null) { Manager.CloseView(this); return; }
-        if (reroll.gameObject.activeSelf) reroll.interactable = pickup.RerollEnabled;
+        if (reroll.gameObject.activeSelf) RefreshReroll();
     }
 }
 
