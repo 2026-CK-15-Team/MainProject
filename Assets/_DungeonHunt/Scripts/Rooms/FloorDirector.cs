@@ -129,7 +129,8 @@ public class FloorDirector : MonoBehaviour
             {
                 var combat = go.AddComponent<CombatRoomController>();
                 combat.IsEliteGate = true;
-                MonsterWavePreset preset = plan != null && GameServices.Config != null ? plan.ElitePreset(GameServices.Config, floor) : null;
+                MonsterWavePreset preset = RunPlan.RoomPreset(runtime);
+                if (preset == null && plan != null && GameServices.Config != null) preset = plan.ElitePreset(GameServices.Config, floor);
                 if (preset == null)
                 {
                     preset = RunPlan.CreateFallbackPreset(floor, content, runtime);

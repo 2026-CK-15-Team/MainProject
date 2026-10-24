@@ -68,6 +68,15 @@ public static class ContentValidator
                 }
                 var spawnIndices = points.Where(p => p.Kind == RoomPointKind.MonsterSpawn).Select(p => p.Index).ToList();
                 if (spawnIndices.Count != spawnIndices.Distinct().Count()) errors += Error(room, "MonsterSpawn 번호 중복");
+                RoomMonsterWaves roomWaves = room.GetComponent<RoomMonsterWaves>();
+                if (roomWaves != null && roomWaves.HasWaves)
+                {
+                    MonsterWavePreset own = roomWaves.CreatePreset();
+                    if (!own.IsCompatible(new HashSet<int>(spawnIndices), out string waveError)) errors += Error(room, $"방 지정 몬스터 구성: {waveError}");
+                    if (type == RoomType.Boss && own.Waves.Count != 2) errors += Error(room, "방 지정 몬스터 구성: EliteGate는 2웨이브 (03-6 §7)");
+                    if (floor == config.Run.Floors[0] && own.ContainsGuardian()) Debug.LogWarning($"[검증] {room.name}: 1층에서 쓰는 방 지정 구성에 원래 수호자 포함", room);
+                    Object.DestroyImmediate(own);
+                }
                 if (room.Template.Size == Vector2Int.zero) errors += Error(room, "Bake 안 됨 (크기 0)");
                 foreach (RoomDoor door in room.GetComponentsInChildren<RoomDoor>(true))
                 {

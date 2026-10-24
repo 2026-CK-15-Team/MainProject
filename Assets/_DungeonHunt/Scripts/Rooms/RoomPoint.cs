@@ -37,6 +37,12 @@ public class RoomPoint : MonoBehaviour
             Gizmos.DrawLine(transform.position + Vector3.left * 0.2f, transform.position + Vector3.right * 0.2f);
 #if UNITY_EDITOR
         string label = Kind == RoomPointKind.MonsterSpawn ? $"S{Index}" : Kind == RoomPointKind.RoomObject && Role != RoomObjectRole.Default ? Role.ToString() : Kind.ToString();
+        RoomMonsterWaves waves = Kind == RoomPointKind.MonsterSpawn ? GetComponentInParent<RoomMonsterWaves>() : null;
+        if (waves != null && waves.HasWaves)
+        {
+            string spawns = waves.LabelFor(Index);
+            if (spawns.Length > 0) label += "\n" + spawns;
+        }
         UnityEditor.Handles.Label(transform.position + Vector3.up * 0.4f, label);
 #endif
     }

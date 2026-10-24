@@ -134,6 +134,11 @@
 - 완성한 프리셋은 `FloorContent.CombatPresets` / `ElitePresets`에 넣기
 - 방의 스폰점 개수가 부족하면 그 방에는 배정 안 됨 (`IsCompatible`)
 
+**방마다 직접 정하기**: 방 프리팹 루트에 `RoomMonsterWaves` 컴포넌트 추가 → `Waves`에 웨이브 순서대로 `Entries`(스폰점 번호, 몬스터, 처치 재화)
+- 웨이브가 하나라도 있으면 그 방은 층 프리셋 추첨 대신 이 구성을 씀 (전투룸, 엘리트룸 공통. 엘리트는 2웨이브)
+- 씬 뷰 스폰점 라벨에 `S1` 아래로 `1W 몬스터` 줄이 붙어 어느 웨이브에 무엇이 나오는지 보임
+- 스폰점 번호가 방에 없으면 경고 후 층 프리셋으로 대체. Validate가 미리 잡아 줌
+
 ### 5.3 아티팩트
 
 실제 콘텐츠는 **`Content/Artifacts/`** (세트 6, 아티팩트 28). 목록과 수치는 [ArtifactContent.md](ArtifactContent.md)

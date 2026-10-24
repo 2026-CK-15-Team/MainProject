@@ -60,6 +60,13 @@ public class RunPlan
         foreach (RoomRuntime room in rooms)
         {
             if (room.Role != RoomRole.Combat || !(room.Content is CombatRoomController combat)) continue;
+            MonsterWavePreset own = RoomPreset(room);
+            if (own != null)
+            {
+                combat.Preset = own;
+                assigned[room] = own;
+                continue;
+            }
             HashSet<int> spawnIndices = new HashSet<int>(room.SpawnPoints().Keys);
             var candidates = new List<MonsterWavePreset>();
             foreach (MonsterWavePreset preset in presets)
@@ -96,6 +103,21 @@ public class RunPlan
             assigned[room] = chosen;
             used[chosen] = (used.TryGetValue(chosen, out int count) ? count : 0) + 1;
         }
+    }
+
+    // 방 프리팹에 RoomMonsterWaves가 있으면 그 구성. 스폰점이 안 맞으면 경고하고 층 프리셋으로
+    public static MonsterWavePreset RoomPreset(RoomRuntime room)
+    {
+        RoomMonsterWaves waves = room.GetComponent<RoomMonsterWaves>();
+        if (waves == null || !waves.HasWaves) return null;
+        MonsterWavePreset preset = waves.CreatePreset();
+        var spawnIndices = new HashSet<int>(room.SpawnPoints().Keys);
+        if (!preset.IsCompatible(spawnIndices, out string error))
+        {
+            Debug.LogWarning($"{room.name}: 방 지정 몬스터 구성 사용 불가 - {error}. 층 프리셋 사용", room);
+            return null;
+        }
+        return preset;
     }
 
     private static List<T> Filter<T>(List<T> list, System.Predicate<T> predicate)
