@@ -36,11 +36,31 @@ public class DebugCheatsWindow : EditorWindow
             GameServices.Save.Data.PermanentCurrency += 100;
             GameServices.Save.TrySave();
         }
+        if (player != null) DrawStats(player);
         if (GameServices.Save != null)
         {
             if (GUILayout.Button("저장 실패 흉내 켜기")) GameServices.Save.SetSimulateFailure(true);
             if (GUILayout.Button("저장 실패 흉내 끄기")) GameServices.Save.SetSimulateFailure(false);
         }
+    }
+
+    // 영구 성장, 아티팩트가 실제로 들어갔는지 확인용 최종값
+    private static void DrawStats(PlayerController player)
+    {
+        PlayerStats stats = player.Stats;
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("최종 스탯", EditorStyles.boldLabel);
+        int used = MetaProgression.GrowthPointsUsed;
+        EditorGUILayout.LabelField("영구 성장", stats.HasSource(StatSources.PermanentGrowth)
+            ? $"등록됨 (배치 {used}P / 구매 {MetaProgression.GrowthPointsPurchased}P)"
+            : used > 0 ? "배치는 있는데 등록 안 됨" : "배치 없음");
+        EditorGUILayout.LabelField("최대 HP", $"{player.Health.CurrentHP} / {player.Health.MaxHP}");
+        EditorGUILayout.LabelField("치명타 확률 / 피해", $"{stats.Get(StatId.CritChance) * 100f:0.#}% / x{stats.Get(StatId.CritDamage):0.##}");
+        EditorGUILayout.LabelField("이동속도", stats.Get(StatId.MoveSpeed).ToString("0.##"));
+        EditorGUILayout.LabelField("회피 충전 / 시간", $"{stats.GetInt(StatId.DodgeMaxCharge)} / {stats.Get(StatId.DodgeChargeTime):0.##}초");
+        WeaponRuntime w = player.Weapons.CurrentWeapon;
+        if (w != null)
+            EditorGUILayout.LabelField(w.Definition.WeaponName, $"피해 {stats.GetWeaponDamageRaw(w.Type):0.##} · 탄창 {w.MaxAmmo} · 재장전 {w.ReloadTime:0.##}초 · 발사 간격 {w.FireInterval:0.###}초");
     }
 
     private void OnInspectorUpdate() => Repaint();
