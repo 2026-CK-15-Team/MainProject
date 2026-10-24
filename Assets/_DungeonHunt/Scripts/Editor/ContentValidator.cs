@@ -39,6 +39,7 @@ public static class ContentValidator
         foreach (FloorConfig floor in config.Run.Floors)
         {
             if (floor == null || floor.RoomPrefabs == null) continue;
+            ValidateTileset(floor);
             foreach (Room room in floor.RoomPrefabs)
             {
                 if (room == null || !seen.Add(room)) continue;
@@ -85,6 +86,24 @@ public static class ContentValidator
             }
         }
         return errors;
+    }
+
+    // 코드 오토타일 타일셋: 빈 칸은 같은 분류 기본 칸으로 대체되므로 경고만. 기본 칸까지 비면 그 분류는 안 그려짐
+    private static void ValidateTileset(FloorConfig floor)
+    {
+        DungeonTileset set = floor.Tileset;
+        if (set == null)
+        {
+            Debug.LogWarning($"[검증] {floor.name}: Tileset 없음 → 오토타일 안 함. 방 프리팹에 칠한 벽/바닥 그림이 그대로 보임", floor);
+            return;
+        }
+        var missing = new List<string>();
+        if (set.FloorCenter == null || set.FloorCenter.Length == 0) missing.Add("바닥 F_C");
+        if (set.FaceLow.Middle == null || set.FaceLow.Middle.Length == 0) missing.Add("벽 정면 W1 가운데");
+        if (set.Front.Middle == null || set.Front.Middle.Length == 0) missing.Add("아래 벽 앞면 B 가운데");
+        if (set.CeilingFill == null && set.CeilingTop == null) missing.Add("천장 C_T 또는 C_Fill");
+        if (set.Gap == null || set.Gap.Length == 0) missing.Add("틈 G");
+        if (missing.Count > 0) Debug.LogWarning($"[검증] {set.name}: 기본 칸 비어 있음 ({string.Join(", ", missing)})", set);
     }
 
     private static int ValidateMonsters(GameConfig config)

@@ -40,7 +40,7 @@ public class DungeonTileset : ScriptableObject
 
     [Header("벽 정면 W (위 벽, 충돌)")]
     [Tooltip("W1 바닥에 닿는 줄")] public FaceRow FaceLow = new FaceRow();
-    [Tooltip("W2 그 위 줄들 (위 벽 두께 4 이상이면 이 줄이 반복)")] public FaceRow FaceHigh = new FaceRow();
+    [Tooltip("W2 그 위 줄들 (위 벽 두께 4 이상이면 이 줄이 반복). 비우면 W1을 반복")] public FaceRow FaceHigh = new FaceRow();
 
     [Header("아래 벽 앞면 B (캐릭터 위에 그림, 충돌 없음)")]
     public FaceRow Front = new FaceRow();

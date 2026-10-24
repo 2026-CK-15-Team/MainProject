@@ -116,7 +116,9 @@ public static class DungeonAutoTiler
                         frontCells.Add(cell); frontTiles.Add(RowTile(map, set.Front, x, y, Kind.Front, seed));
                         break;
                     case Kind.Face:
-                        wallCells.Add(cell); wallTiles.Add(RowTile(map, map.DepthAt(x, y) <= 1 ? set.FaceLow : set.FaceHigh, x, y, Kind.Face, seed));
+                        // W2가 비어 있으면 W1 줄을 위로 반복
+                        bool high = map.DepthAt(x, y) > 1 && set.FaceHigh.Middle != null && set.FaceHigh.Middle.Length > 0;
+                        wallCells.Add(cell); wallTiles.Add(RowTile(map, high ? set.FaceHigh : set.FaceLow, x, y, Kind.Face, seed));
                         break;
                     case Kind.Ceiling:
                         wallCells.Add(cell); wallTiles.Add(CeilingTile(map, set, x, y));
