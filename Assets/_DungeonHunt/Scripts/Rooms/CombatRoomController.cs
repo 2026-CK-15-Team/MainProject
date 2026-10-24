@@ -10,7 +10,7 @@ public enum CombatRoomState
 }
 
 // 03-1 전투룸 + 03-6 EliteGateRoom (2웨이브, 희귀 이상 아티팩트, FloorExitAvailable).
-// - 최초 RoomEntered에 문 잠금 + 첫 웨이브를 소환 이펙트 없이 즉시 활성화
+// - 최초 RoomEntered에 문 잠금 + 첫 웨이브도 이후 웨이브처럼 예고 1초 → 소환 이펙트 + 접촉 피해 유예
 // - 웨이브 전멸 → (히트스톱 끝난 뒤) 예고 1초 → 다음 웨이브 + 접촉 피해 유예
 // - 마지막 웨이브 전멸 + 플레이어 생존 → 처치 피드백, 잠금 해제, 클리어 표시, 보상 생성 순서
 [DefaultExecutionOrder(100)]
@@ -42,16 +42,15 @@ public class CombatRoomController : RoomContent
             return;
         }
 
-        State = CombatRoomState.Locked;
         Runtime.SetDoorsLocked(true);
         if (IsEliteGate) GameEvents.Raise(GameEvents.FloorGateRoomLocked, Runtime);
         else GameEvents.Raise(GameEvents.CombatRoomLocked, Runtime);
 
-        waveIndex = 0;
-        SpawnWave(0, laterWave: false);
+        waveIndex = -1;
+        BeginWaveTransition();
     }
 
-    private void SpawnWave(int index, bool laterWave)
+    private void SpawnWave(int index)
     {
         aliveMonsters.Clear();
         waveRegistered = false;
@@ -63,9 +62,9 @@ public class CombatRoomController : RoomContent
             if (entry.Monster == null) continue;
             Vector2 position = points.TryGetValue(entry.SpawnPoint, out Vector2 p) ? p : FallbackSpawn(entryIndex);
             int spawnOrder = (index + 1) * 1000 + (entryIndex + 1);
-            Monster monster = Monster.Spawn(entry.Monster, position, Runtime, Runtime.FloorIndex, spawnOrder, entry.CurrencyDrop, laterWave);
+            Monster monster = Monster.Spawn(entry.Monster, position, Runtime, Runtime.FloorIndex, spawnOrder, entry.CurrencyDrop);
             aliveMonsters.Add(monster);
-            if (laterWave) GameServices.Feedback?.SpawnSummonEffect(position);
+            GameServices.Feedback?.SpawnSummonEffect(position);
         }
         // 등록을 클리어 판정보다 먼저 끝냄 (03-1 §9 첫 적 등록 전 0마리)
         waveRegistered = true;
@@ -118,8 +117,8 @@ public class CombatRoomController : RoomContent
                 warningMarkers.Clear();
                 waveIndex++;
                 State = CombatRoomState.Locked;
-                SpawnWave(waveIndex, laterWave: true);
-                if (IsEliteGate) GameEvents.Raise(GameEvents.EliteGateWaveAdvanced, Runtime);
+                SpawnWave(waveIndex);
+                if (IsEliteGate && waveIndex > 0) GameEvents.Raise(GameEvents.EliteGateWaveAdvanced, Runtime);
             }
         }
     }
@@ -136,7 +135,7 @@ public class CombatRoomController : RoomContent
             Vector2 at = points.TryGetValue(next.Entries[i].SpawnPoint, out Vector2 p) ? p : FallbackSpawn(i);
             warningMarkers.Add(GameServices.Feedback != null ? GameServices.Feedback.SpawnWaveWarning(at) : null);
         }
-        GameServices.UI?.ShowCenterToast("다음 웨이브", 0.8f);
+        if (waveIndex >= 0) GameServices.UI?.ShowCenterToast("다음 웨이브", 0.8f);
     }
 
     private void Clear()

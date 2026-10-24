@@ -29,7 +29,7 @@
 | 01-4 스탯 | 고정→비율→(이속 하한)→상태 배율→상하한→반올림, 원천 단위 등록 | `Stats/*` | 완료 |
 | 02 카메라 | 조준 오프셋(화면 좌표), 룸 경계 고정, 복도 무제한, 전투룸 진입 빠른 보간, 무방향 흔들림, 고정 줌(세로 6H) | `CameraSystem/CameraController` | 완료 |
 | 03 던전 | 층 생성(기존 생성기), 룸 종류 매핑, RoomEntered/CorridorEntered, 층 전환, 미방문 룸 가림, 비밀 벽 | `Dungeon/*`(기존), `Rooms/FloorDirector`, `Rooms/FogOfWar`, `Rooms/SecretWall` | 부분 (§4 참고) |
-| 03-1 전투룸 | 잠금 이펙트, 첫 웨이브 즉시 활성, 웨이브 예고, 접촉 유예, 클리어 순서, 보상 풀, 처치 재화 | `Rooms/CombatRoomController` | 완료 |
+| 03-1 전투룸 | 잠금 이펙트, 첫 웨이브 포함 웨이브 예고, 접촉 유예, 클리어 순서, 보상 풀, 처치 재화 | `Rooms/CombatRoomController` | 완료 |
 | 03-2 보물룸 | 최초 진입 아티팩트 1개 | `Rooms/TreasureRoomController` | 완료 |
 | 03-3 상점 | 재고 1회 결정, 가중 가격, 슬롯 구성, 원자 구매, 영구재화 묶음 | `Rooms/ShopRoomController` | 완료 |
 | 03-4 도박룸 | HP 비용, 천장형 확률, 예약 실패 시 롤백, Depleted | `Rooms/GambleSession`, `GambleRoomController` | 완료 |

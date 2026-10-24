@@ -150,9 +150,9 @@ public class CombatRoomBalance
     [Tooltip("대형룸 HP 회복 보상 수량")]
     public int LargeHPAmount = 16;
     [Header("진행")]
-    [Tooltip("다음 웨이브 등장 예고 시간 (초). 예고 중에는 적 없음")]
+    [Tooltip("웨이브 등장 예고 시간 (초). 첫 웨이브 포함. 예고 중에는 적 없음")]
     public float WaveTransitionWarningDuration = 1.0f;
-    [Tooltip("2번째 이후 웨이브 몬스터가 등장 직후 접촉 피해를 주지 않는 시간 (초)")]
+    [Tooltip("웨이브 몬스터가 등장 직후 접촉 피해를 주지 않는 시간 (초)")]
     public float SpawnContactDamageGrace = 0.25f;
     [Tooltip("보상이 나타난 뒤 주울 수 있게 되기까지 시간 (초)")]
     public float RewardPickupEnableDelay = 0.25f;

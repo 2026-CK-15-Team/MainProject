@@ -77,18 +77,18 @@ public class Monster : MonoBehaviour, ICombatTarget
     private Transform hpBarFill;
     private float hpBarHideAt;
 
-    public static Monster Spawn(MonsterDefinition def, Vector2 position, RoomRuntime room, int floorIndex, int spawnOrder, int currencyDrop, bool laterWave)
+    public static Monster Spawn(MonsterDefinition def, Vector2 position, RoomRuntime room, int floorIndex, int spawnOrder, int currencyDrop)
     {
         GameObject go = def.Prefab != null ? Instantiate(def.Prefab, position, Quaternion.identity) : new GameObject(def.DisplayName);
         go.transform.position = position;
         if (room != null) go.transform.SetParent(room.MonsterRoot, true);
         Monster monster = go.GetComponent<Monster>();
         if (monster == null) monster = go.AddComponent<Monster>();
-        monster.Init(def, room, floorIndex, spawnOrder, currencyDrop, laterWave);
+        monster.Init(def, room, floorIndex, spawnOrder, currencyDrop);
         return monster;
     }
 
-    private void Init(MonsterDefinition def, RoomRuntime room, int floorIndex, int spawnOrder, int currencyDrop, bool laterWave)
+    private void Init(MonsterDefinition def, RoomRuntime room, int floorIndex, int spawnOrder, int currencyDrop)
     {
         Definition = def;
         Room = room;
@@ -117,7 +117,7 @@ public class Monster : MonoBehaviour, ICombatTarget
         CreateHPBar();
 
         // 후속 웨이브는 생성 직후 접촉 피해 유예 (03-1 §8.3 7번)
-        contactGraceUntil = laterWave ? Now + GameBalance.Current.CombatRoom.SpawnContactDamageGrace : 0f;
+        contactGraceUntil = Now + GameBalance.Current.CombatRoom.SpawnContactDamageGrace;
         Activate();
     }
 
