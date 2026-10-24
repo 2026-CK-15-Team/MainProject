@@ -19,7 +19,8 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
     public bool AttackPressedThisFrame { get; private set; }
 
     public event Action DodgePressed;
-    public event Action<int> WeaponChangeRequested; // -1 = 이전 무기(Q), +1 = 다음 무기(E)
+    public event Action<int> WeaponChangeRequested; // -1 = 이전 무기(휠 위), +1 = 다음 무기(휠 아래)
+    public event Action<int> WeaponSelectRequested; // 슬롯 번호 0부터 (1, 2, 3키)
     public event Action ReloadPressed;
 
     private PlayerControls controls;
@@ -31,11 +32,13 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
     private bool dodgeQueued;
     private int weaponQueued;
     private bool weaponConflict;
+    private int selectQueued = -1;
     private bool attackQueued;
 
     // 히트스톱 버퍼
     private bool bufferedDodge;
     private int bufferedWeapon;
+    private int bufferedSelect = -1;
     private bool bufferedReload;
 
     private bool Blocked => InputGate.GameplayBlocked || GameClock.IsPaused || !enabled;
@@ -73,17 +76,20 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
         if (context.performed) dodgeQueued = true;
     }
 
-    public void OnWeaponChange(InputAction.CallbackContext context)
+    // 액션 바인딩 없음 (Q/E 제거). 무기 전환은 Update에서 휠과 1, 2, 3키로 읽음
+    public void OnWeaponChange(InputAction.CallbackContext context) { }
+
+    // 휠 한 칸 = 순환, 숫자키 = 그 슬롯. 숫자키 둘을 같은 틱에 누르면 둘 다 무시 (01-1 §7.2)
+    private void ReadWeaponKeys()
     {
-        if (!context.performed) return;
-        float value = context.ReadValue<float>();
-        // Q와 E를 같은 틱에 누르면 둘 다 무시 (01-1 §7.2)
-        if (Mathf.Approximately(value, 0f) || (weaponQueued != 0 && weaponQueued != Math.Sign(value)))
+        weaponQueued = -InputGate.ScrollStep;
+        Key[] keys = { Key.Digit1, Key.Digit2, Key.Digit3 };
+        for (int i = 0; i < keys.Length; i++)
         {
-            weaponConflict = true;
-            return;
+            if (!InputGate.KeyDown(keys[i])) continue;
+            if (selectQueued >= 0) weaponConflict = true;
+            selectQueued = i;
         }
-        weaponQueued = Math.Sign(value);
     }
 
     // 모달이 열리면 호출. 지금 누르고 있는 공격은 뗄 때까지 무시.
@@ -95,7 +101,9 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
     private void Update()
     {
         bool reloadQueued = InputGate.KeyDown(Key.R);
-        int weapon = weaponConflict ? 0 : weaponQueued;
+        ReadWeaponKeys();
+        int weapon = weaponQueued;
+        int select = weaponConflict ? -1 : selectQueued;
         AttackPressedThisFrame = false;
 
         if (Blocked || InputGate.ConsumedThisFrame)
@@ -109,20 +117,23 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
         if (GameClock.IsHitstop)
         {
             if (dodgeQueued) bufferedDodge = true;
-            if (weapon != 0 && bufferedWeapon == 0) bufferedWeapon = weapon;
+            if (weapon != 0 && bufferedWeapon == 0 && bufferedSelect < 0) bufferedWeapon = weapon;
+            if (select >= 0 && bufferedSelect < 0 && bufferedWeapon == 0) bufferedSelect = select;
             if (reloadQueued) bufferedReload = true;
             ClearQueued();
             return;
         }
 
         bool doDodge = dodgeQueued || bufferedDodge;
-        int doWeapon = weapon != 0 ? weapon : bufferedWeapon;
+        int doSelect = select >= 0 ? select : bufferedSelect;
+        int doWeapon = doSelect >= 0 ? 0 : weapon != 0 ? weapon : bufferedWeapon;
         bool doReload = reloadQueued || bufferedReload;
         ClearBuffer();
 
         // 회피 > 무기 전환 > 공격 > 재장전
         if (doDodge) DodgePressed?.Invoke();
-        if (doWeapon != 0) WeaponChangeRequested?.Invoke(doWeapon);
+        if (doSelect >= 0) WeaponSelectRequested?.Invoke(doSelect);
+        else if (doWeapon != 0) WeaponChangeRequested?.Invoke(doWeapon);
         AttackPressedThisFrame = attackQueued && !attackLatch;
         if (doReload) ReloadPressed?.Invoke();
         ClearQueued();
@@ -133,6 +144,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
         dodgeQueued = false;
         weaponQueued = 0;
         weaponConflict = false;
+        selectQueued = -1;
         attackQueued = false;
     }
 
@@ -140,6 +152,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
     {
         bufferedDodge = false;
         bufferedWeapon = 0;
+        bufferedSelect = -1;
         bufferedReload = false;
     }
 }

@@ -74,7 +74,7 @@ public class WeaponRuntime
         if (Ammo > MaxAmmo) Ammo = MaxAmmo;
     }
 
-    // 새로 장착되는 순간 항상 부여 (Q/E 또는 ForcedUnequip)
+    // 새로 장착되는 순간 항상 부여 (휠·숫자키 교체 또는 ForcedUnequip)
     public void OnEquipped()
     {
         swapDelayRemaining = SwapReadyDelay;

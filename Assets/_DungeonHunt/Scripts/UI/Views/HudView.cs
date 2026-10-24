@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // 08 §4 인게임 상시 HUD
-// 좌상단: HP, 회피 충전, 런전용 재화 / 우상단: 미니맵 / 우하단: 무기, 탄약, 재장전, Q/E 순환
+// 좌상단: HP, 회피 충전, 런전용 재화 / 우상단: 미니맵 / 우하단: 무기, 탄약, 재장전, 휠·1 2 3 전환
 // 하단 중앙: 활성 세트 / 상단 중앙: 층 도착 안내, 보스 체력바
 public class HudView : UIView
 {
@@ -322,14 +322,14 @@ public class HudView : UIView
 public class OnboardingView : UIView
 {
     public const string ControlsText =
-        "이동 : W A S D\n공격 : 마우스 왼쪽 (누르고 있으면 연사)\n회피 : Space\n무기 전환 : Q / E\n\n재장전 : R    상호작용 : F\n미니맵 : Tab    보유 아티팩트 : I    일시정지 : ESC";
+        "이동 : W A S D\n공격 : 마우스 왼쪽 (누르고 있으면 연사)\n회피 : Space\n무기 전환 : 휠 / 1 2 3\n\n재장전 : R    상호작용 : F\n미니맵 : Tab    보유 아티팩트 : I    일시정지 : ESC";
 
     protected override void Build(RectTransform root)
     {
         Image panel = UIFactory.Panel("Panel", root, new Color(0f, 0f, 0f, 0.55f));
         UIFactory.Place(panel.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(40f, -40f), new Vector2(520f, 260f));
         panel.raycastTarget = false;
-        Text text = UIFactory.Label("Text", panel.transform, "이동 : W A S D\n공격 : 마우스 왼쪽\n회피 : Space\n무기 전환 : Q / E", 32, TextAnchor.MiddleLeft);
+        Text text = UIFactory.Label("Text", panel.transform, "이동 : W A S D\n공격 : 마우스 왼쪽\n회피 : Space\n무기 전환 : 휠 / 1 2 3", 32, TextAnchor.MiddleLeft);
         UIFactory.Stretch(text.rectTransform, 24f);
     }
 

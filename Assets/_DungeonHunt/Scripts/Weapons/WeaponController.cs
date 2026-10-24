@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 01-1 무기 전환/재장전 상태 + 01-2 발사 실행.
-// 순환 순서 라이플 → 권총 → 샷건 → 라이플 (E 정방향, Q 역방향, 잠긴 무기 건너뜀). 런 시작은 라이플.
+// 순환 순서 라이플 → 권총 → 샷건 → 라이플 (휠 아래 정방향, 휠 위 역방향, 1 2 3키 직접 선택, 잠긴 무기 건너뜀). 런 시작은 라이플.
 // 발사 가능 = 장착 중 AND SwapReadyDelay 끝 AND 회피 아님 AND 탄창 1 이상 (01-1 §5.2)
 [RequireComponent(typeof(PlayerInputReader))]
 public class WeaponController : MonoBehaviour
@@ -45,12 +45,14 @@ public class WeaponController : MonoBehaviour
     private void OnEnable()
     {
         input.WeaponChangeRequested += OnWeaponChangeRequested;
+        input.WeaponSelectRequested += OnWeaponSelectRequested;
         input.ReloadPressed += OnReloadPressed;
     }
 
     private void OnDisable()
     {
         input.WeaponChangeRequested -= OnWeaponChangeRequested;
+        input.WeaponSelectRequested -= OnWeaponSelectRequested;
         input.ReloadPressed -= OnReloadPressed;
     }
 
@@ -227,6 +229,13 @@ public class WeaponController : MonoBehaviour
         int next = FindNextUsable(direction);
         if (next < 0 || next == currentIndex) return; // 사용 가능 무기가 1개면 무시
         SwitchTo(next, manual: true);
+    }
+
+    // 숫자키 직접 선택. 슬롯 순서 = 순환 순서 (1 라이플, 2 권총, 3 샷건). 잠긴 무기나 지금 무기면 무시
+    private void OnWeaponSelectRequested(int slot)
+    {
+        if (slot < 0 || slot >= slots.Count || slot == currentIndex || slots[slot].IsLocked) return;
+        SwitchTo(slot, manual: true);
     }
 
     private int FindNextUsable(int direction)

@@ -25,11 +25,24 @@ public static class InputGate
             Key.I => keyboard.iKey.wasPressedThisFrame,
             Key.F => keyboard.fKey.wasPressedThisFrame,
             Key.R => keyboard.rKey.wasPressedThisFrame,
+            Key.Digit1 => keyboard.digit1Key.wasPressedThisFrame || keyboard.numpad1Key.wasPressedThisFrame,
+            Key.Digit2 => keyboard.digit2Key.wasPressedThisFrame || keyboard.numpad2Key.wasPressedThisFrame,
+            Key.Digit3 => keyboard.digit3Key.wasPressedThisFrame || keyboard.numpad3Key.wasPressedThisFrame,
             _ => false,
         };
     }
 
     public static bool LeftMouseHeld => Mouse.current != null && Mouse.current.leftButton.isPressed;
     public static bool LeftMouseDown => Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+    // 이번 프레임 휠: 위 +1, 아래 -1, 없음 0 (한 프레임에 여러 칸 굴러도 1칸)
+    public static int ScrollStep
+    {
+        get
+        {
+            float y = Mouse.current != null ? Mouse.current.scroll.ReadValue().y : 0f;
+            return y > 0.01f ? 1 : y < -0.01f ? -1 : 0;
+        }
+    }
+
     public static Vector2 MousePosition => Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
 }

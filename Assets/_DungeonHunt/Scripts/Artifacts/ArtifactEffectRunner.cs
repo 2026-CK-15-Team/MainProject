@@ -164,7 +164,7 @@ public class ArtifactEffectRunner : MonoBehaviour
 
     // ---------- 이벤트 ----------
 
-    // 수동 교체(Q/E)만. 특화 강제 전환은 제외 (01-1 §3 WeaponSwapped 비고)
+    // 수동 교체(휠, 숫자키)만. 특화 강제 전환은 제외 (01-1 §3 WeaponSwapped 비고)
     private void OnManualSwap(WeaponType type)
     {
         Recalculate();

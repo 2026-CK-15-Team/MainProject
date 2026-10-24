@@ -322,7 +322,7 @@
 | BG_Ending | 엔딩 | 형식 미정 (지금 검은 화면 + 마지막 대사) | 1920×1080 |
 | ILLUST_Onboarding | 온보딩 일러스트 | 첫 런 조작 안내 (미정) | ★ |
 | ILLUST_FloorIntro | 층 도입 컷신 | 미정 (10 미정) | ★ |
-| UI_KeyIcons | 키 아이콘 | WASD, 마우스, Space, Q/E, R, F, Tab, I, ESC (조작법 화면) | 48×48 |
+| UI_KeyIcons | 키 아이콘 | WASD, 마우스, Space, 휠, 1 2 3, R, F, Tab, I, ESC (조작법 화면) | 48×48 |
 
 ---
 
