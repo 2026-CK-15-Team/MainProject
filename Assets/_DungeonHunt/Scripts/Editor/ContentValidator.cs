@@ -101,9 +101,10 @@ public static class ContentValidator
         var missing = new List<string>();
         if (set.FloorCenter == null || set.FloorCenter.Length == 0) missing.Add("바닥 F_C");
         if (set.FaceLow.Middle == null || set.FaceLow.Middle.Length == 0) missing.Add("벽 정면 W1 가운데");
-        if (set.Front.Middle == null || set.Front.Middle.Length == 0) missing.Add("아래 벽 앞면 B 가운데");
+        if (set.CeilingBottom == null && set.CeilingFill == null) missing.Add("천장 C_B (아래 벽 앞면)");
+        if (set.CeilingFill == null) missing.Add("천장 채움 C_Fill (벽 너머, 없으면 G로 칠함)");
         if (set.CeilingFill == null && set.CeilingTop == null) missing.Add("천장 C_T 또는 C_Fill");
-        if (set.Gap == null || set.Gap.Length == 0) missing.Add("틈 G");
+        if (set.Gap == null || set.Gap.Length == 0) missing.Add("틈 G (미방문 룸 가림)");
         if (missing.Count > 0) Debug.LogWarning($"[검증] {set.name}: 기본 칸 비어 있음 ({string.Join(", ", missing)})", set);
     }
 

@@ -153,7 +153,7 @@ public class DungeonBuilder : MonoBehaviour
             gapTilemap = go.AddComponent<Tilemap>();
             go.AddComponent<TilemapRenderer>().sortingOrder = -10;
         }
-        DungeonAutoTiler.Map map = DungeonAutoTiler.Classify(autoFloor, runConfig.WallStyle);
+        DungeonAutoTiler.Map map = DungeonAutoTiler.Classify(autoFloor, runConfig.WallStyle, CurrentFloor.Tileset.VoidMargin);
         DungeonAutoTiler.Paint(map, CurrentFloor.Tileset, corridorFloorTilemap, corridorWallTilemap, corridorWallFrontTilemap, gapTilemap, autoSeed);
     }
 

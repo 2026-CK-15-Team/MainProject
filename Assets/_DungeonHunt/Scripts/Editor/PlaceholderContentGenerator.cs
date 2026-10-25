@@ -115,7 +115,7 @@ public static class PlaceholderContentGenerator
         var floor = new Color(0.33f, 0.3f, 0.27f); var floorEdge = new Color(0.22f, 0.2f, 0.18f);
         var ceil = new Color(0.36f, 0.38f, 0.45f); var ceilInner = new Color(0.3f, 0.32f, 0.4f); var ceilEdge = new Color(0.12f, 0.12f, 0.16f);
         var face1 = new Color(0.55f, 0.42f, 0.32f); var face2 = new Color(0.46f, 0.35f, 0.27f); var faceEdge = new Color(0.25f, 0.18f, 0.13f);
-        var front = new Color(0.4f, 0.33f, 0.27f, 0.9f); var open = new Color(0.85f, 0.75f, 0.55f);
+        var open = new Color(0.85f, 0.75f, 0.55f);
         TileBase T(string id, Color main, Color edge, string sides, Tile.ColliderType collider, string inner = "")
             => CreateMaskedTile("Test_Auto_" + id, main, edge, sides, inner, collider);
 
@@ -133,7 +133,6 @@ public static class PlaceholderContentGenerator
         set.FloorInnerSW = T("F_ISW", floor, floorEdge, "", none, "SW");
         set.FaceLow = Row("W1", face1, faceEdge, grid);
         set.FaceHigh = Row("W2", face2, faceEdge, grid);
-        set.Front = Row("B", front, faceEdge, none);
         set.CeilingTop = T("C_T", ceil, ceilEdge, "NS", grid);
         set.CeilingBottom = T("C_B", ceil, ceilEdge, "NS", grid);
         set.CeilingLeft = T("C_L", ceil, ceilEdge, "EW", grid);

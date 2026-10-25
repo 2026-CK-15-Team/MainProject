@@ -8,9 +8,10 @@ using UnityEngine.Tilemaps;
 // 칸 분류 (WallStyle 두께 기준)
 //   바닥  : 걸어 다니는 칸 (아래 벽 앞면 칸 제외)
 //   정면  : 바로 아래 (위 벽 두께 - 1)칸 안에 바닥 → 바닥 쪽부터 1줄, 2줄...
-//   앞면  : 바로 위 (아래 벽 두께 - 1)칸 안에 바닥 (걸어 다니지만 벽이 캐릭터 위에 겹침)
+//   앞면  : 바로 위 (아래 벽 두께 - 1)칸 안에 바닥 (걸어 다니지만 벽이 캐릭터 위에 겹침).
+//           3/4 시점에서 아래 벽은 윗면만 보이므로 천장 타일로 칠함
 //   천장  : 바닥에서 위 두께 / 아래 두께 / 좌우 두께 안의 나머지 칸
-//   틈    : 그 밖
+//   틈    : 그 밖. 화면에 보이는 범위(타일셋 VoidMargin)까지 천장 채움으로 칠해 배경색이 안 보이게 함
 public static class DungeonAutoTiler
 {
     public enum Kind : byte { Gap, Floor, Face, Front, Ceiling }
@@ -34,7 +35,7 @@ public static class DungeonAutoTiler
         }
     }
 
-    public static Map Classify(HashSet<Vector2Int> floor, WallStyle style)
+    public static Map Classify(HashSet<Vector2Int> floor, WallStyle style, int voidMargin = 0)
     {
         int xMin = int.MaxValue, yMin = int.MaxValue, xMax = int.MinValue, yMax = int.MinValue;
         foreach (Vector2Int c in floor)
@@ -44,7 +45,7 @@ public static class DungeonAutoTiler
             if (c.x > xMax) xMax = c.x;
             if (c.y > yMax) yMax = c.y;
         }
-        int margin = Mathf.Max(style.Top, style.Bottom, style.Side) + 1;
+        int margin = Mathf.Max(style.Top, style.Bottom, style.Side) + 1 + Mathf.Max(0, voidMargin);
         var map = new Map
         {
             Bounds = floor.Count == 0 ? new RectInt(0, 0, 0, 0) : new RectInt(xMin - margin, yMin - margin, xMax - xMin + 1 + margin * 2, yMax - yMin + 1 + margin * 2),
@@ -113,7 +114,7 @@ public static class DungeonAutoTiler
                     case Kind.Front:
                         // 앞면 칸 밑에도 바닥이 이어짐
                         floorCells.Add(cell); floorTiles.Add(FloorTile(map, set, x, y, seed));
-                        frontCells.Add(cell); frontTiles.Add(RowTile(map, set.Front, x, y, Kind.Front, seed));
+                        frontCells.Add(cell); frontTiles.Add(CeilingTile(map, set, x, y));
                         break;
                     case Kind.Face:
                         // W2가 비어 있으면 W1 줄을 위로 반복
@@ -124,7 +125,7 @@ public static class DungeonAutoTiler
                         wallCells.Add(cell); wallTiles.Add(CeilingTile(map, set, x, y));
                         break;
                     default:
-                        if (gapMap != null) { gapCells.Add(cell); gapTiles.Add(Pick(set.Gap, x, y, seed)); }
+                        if (gapMap != null) { gapCells.Add(cell); gapTiles.Add(Or(set.CeilingFill, Pick(set.Gap, x, y, seed))); }
                         break;
                 }
             }
@@ -185,25 +186,41 @@ public static class DungeonAutoTiler
         return r == 'O' ? Or(row.RightOpen, row.RightWall, middle) : Or(row.RightWall, middle);
     }
 
-    // 천장 띠(두께 1): 같은 천장끼리 이어진 방향 + 안쪽(바닥/정면/앞면)이 어디인지로 직선/바깥 모서리/안쪽 모서리
+    // 천장(벽 윗면): 상하좌우로 맞닿은 안쪽(바닥, 벽 정면)이 어디인지로 띠/모서리를 고름. 벽 두께와 상관없음
+    //   한 방향만 안쪽 → 띠 (아래가 안쪽 = C_T, 위 = C_B, 오른쪽 = C_L, 왼쪽 = C_R)
+    //   두 방향(꺾임) → 안쪽 모서리, 상하좌우는 없고 대각선만 안쪽 → 바깥 모서리
+    //   안쪽에 안 닿는 칸(두꺼운 벽 바깥 줄) → 채움
+    // 아래 벽 앞면 칸도 천장으로 칠하므로 안쪽으로 보지 않음
     private static TileBase CeilingTile(Map map, DungeonTileset s, int x, int y)
     {
-        bool C(int dx, int dy) => map.Get(x + dx, y + dy) == Kind.Ceiling;
-        bool In(int dx, int dy) { Kind k = map.Get(x + dx, y + dy); return k == Kind.Floor || k == Kind.Face || k == Kind.Front; }
-        bool n = C(0, 1), e = C(1, 0), so = C(0, -1), w = C(-1, 0);
+        bool In(int dx, int dy) { Kind k = map.Get(x + dx, y + dy); return k == Kind.Floor || k == Kind.Face; }
+        bool n = In(0, 1), e = In(1, 0), so = In(0, -1), w = In(-1, 0);
         TileBase fill = Or(s.CeilingFill, s.CeilingTop);
+        int sides = (n ? 1 : 0) + (e ? 1 : 0) + (so ? 1 : 0) + (w ? 1 : 0);
 
-        if (e && w && !n && !so) return In(0, -1) || In(1, -1) || In(-1, -1) ? Or(s.CeilingTop, fill) : Or(s.CeilingBottom, fill);
-        if (n && so && !e && !w) return In(1, 0) || In(1, 1) || In(1, -1) ? Or(s.CeilingLeft, fill) : Or(s.CeilingRight, fill);
-
-        // 모서리: 이어진 두 방향 사이 대각선이 안쪽이고 나머지 두 방향이 안쪽이 아니면 바깥(볼록), 아니면 안쪽(오목)
-        if (e && so && !n && !w) return Outer(1, -1) ? Or(s.CeilingOuterTL, fill) : Or(s.CeilingInnerTL, fill);
-        if (w && so && !n && !e) return Outer(-1, -1) ? Or(s.CeilingOuterTR, fill) : Or(s.CeilingInnerTR, fill);
-        if (e && n && !so && !w) return Outer(1, 1) ? Or(s.CeilingOuterBL, fill) : Or(s.CeilingInnerBL, fill);
-        if (w && n && !so && !e) return Outer(-1, 1) ? Or(s.CeilingOuterBR, fill) : Or(s.CeilingInnerBR, fill);
+        if (sides == 1)
+        {
+            if (so) return Or(s.CeilingTop, fill);
+            if (n) return Or(s.CeilingBottom, fill);
+            if (e) return Or(s.CeilingLeft, fill);
+            return Or(s.CeilingRight, fill);
+        }
+        if (sides == 2)
+        {
+            if (n && w) return Or(s.CeilingInnerTL, fill);
+            if (n && e) return Or(s.CeilingInnerTR, fill);
+            if (so && w) return Or(s.CeilingInnerBL, fill);
+            if (so && e) return Or(s.CeilingInnerBR, fill);
+            return fill; // 위아래 또는 좌우 양쪽이 안쪽인 한 칸 벽
+        }
+        if (sides == 0)
+        {
+            if (In(1, -1)) return Or(s.CeilingOuterTL, fill);
+            if (In(-1, -1)) return Or(s.CeilingOuterTR, fill);
+            if (In(1, 1)) return Or(s.CeilingOuterBL, fill);
+            if (In(-1, 1)) return Or(s.CeilingOuterBR, fill);
+        }
         return fill;
-
-        bool Outer(int dx, int dy) => In(dx, dy) && !In(-dx, 0) && !In(0, -dy);
     }
 
     private static TileBase Pick(TileBase[] tiles, int x, int y, int seed)

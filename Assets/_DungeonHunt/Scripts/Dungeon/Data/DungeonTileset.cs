@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 // 층 타일셋 (코드 오토타일용). FloorConfig.Tileset에 넣으면 방/복도 벽을 코드가 칸마다 골라 칠함.
-// 칸 종류: 바닥 / 벽 정면(위 벽, 바닥 쪽부터 1줄 2줄...) / 아래 벽 앞면 / 천장(벽 윗면) / 틈.
+// 칸 종류: 바닥 / 벽 정면(위 벽, 바닥 쪽부터 1줄 2줄...) / 천장(벽 윗면) / 틈.
+// 아래 벽은 3/4 시점에서 윗면만 보이므로 캐릭터를 가리는 앞면 칸도 천장 타일로 칠함 (위가 바닥이면 C_B).
 // 칸이 비어 있으면 같은 분류의 기본 칸으로 대체 → 아트를 일부만 넣어도 깨지지 않음.
 // 층끼리 같은 에셋을 써도 됨. 타일 ID는 Docs/ArtResourceList(타일셋) 표와 같음.
 [CreateAssetMenu(fileName = "DungeonTileset", menuName = "Dungeon/Dungeon Tileset")]
@@ -42,12 +43,9 @@ public class DungeonTileset : ScriptableObject
     [Tooltip("W1 바닥에 닿는 줄")] public FaceRow FaceLow = new FaceRow();
     [Tooltip("W2 그 위 줄들 (위 벽 두께 4 이상이면 이 줄이 반복). 비우면 W1을 반복")] public FaceRow FaceHigh = new FaceRow();
 
-    [Header("아래 벽 앞면 B (캐릭터 위에 그림, 충돌 없음)")]
-    public FaceRow Front = new FaceRow();
-
     [Header("천장 C (벽 윗면, 충돌)")]
     [Tooltip("C_T 위 벽 띠")] public TileBase CeilingTop;
-    [Tooltip("C_B 아래 벽 띠")] public TileBase CeilingBottom;
+    [Tooltip("C_B 아래 벽 띠 (캐릭터를 가리는 앞면 칸, 위가 바닥)")] public TileBase CeilingBottom;
     [Tooltip("C_L 왼쪽 벽")] public TileBase CeilingLeft;
     [Tooltip("C_R 오른쪽 벽")] public TileBase CeilingRight;
     [Tooltip("C_OTL 바깥 모서리 왼쪽 위")] public TileBase CeilingOuterTL;
@@ -58,10 +56,12 @@ public class DungeonTileset : ScriptableObject
     [Tooltip("C_ITR 안쪽 모서리 오른쪽 위")] public TileBase CeilingInnerTR;
     [Tooltip("C_IBL 안쪽 모서리 왼쪽 아래")] public TileBase CeilingInnerBL;
     [Tooltip("C_IBR 안쪽 모서리 오른쪽 아래")] public TileBase CeilingInnerBR;
-    [Tooltip("위 패턴에 안 맞는 천장 (T자 등, 보통 안 나옴)")] public TileBase CeilingFill;
+    [Tooltip("C_Fill 천장 채움: 안쪽에 안 닿는 천장(두꺼운 벽 바깥 줄, 벽 너머 빈 공간), 위 패턴에 안 맞는 칸")] public TileBase CeilingFill;
 
     [Header("틈 G")]
-    [Tooltip("룸 사이 빈 공간 (여러 장이면 랜덤). 미방문 룸 가림 덮개도 첫 번째 칸을 씀")] public TileBase[] Gap = new TileBase[0];
+    [Tooltip("미방문 룸 가림 덮개 (첫 번째 칸). 벽 너머 빈 공간은 C_Fill로 칠하고, C_Fill이 비었을 때만 이 칸(여러 장이면 랜덤)")] public TileBase[] Gap = new TileBase[0];
+    [Tooltip("층 바닥 바깥으로 벽 너머를 몇 칸 더 칠할지. 카메라가 룸 끝에 붙어도 배경색이 안 보일 만큼 (화면 가로 절반 정도)")]
+    [Min(0)] public int VoidMargin = 8;
 
     public TileBase FogTile => Gap != null && Gap.Length > 0 ? Gap[0] : null;
 }
