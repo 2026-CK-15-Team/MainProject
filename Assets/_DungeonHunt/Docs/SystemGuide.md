@@ -175,7 +175,7 @@ Cleared ─ 재방문 자유
 | 새 스탯 | `StatId`에 추가 → `PlayerStats.BaseValue/Clamp` → 쓰는 쪽에서 `stats.Get()` |
 | 아티팩트 특수 효과 | `GameEvents` 구독하는 컴포넌트를 만들고 장착 상태(`ArtifactSystem.Slots`)를 보고 동작. 스탯만이면 `Modifiers`로 충분 |
 | 새 몬스터 아키타입 | `MonsterArchetype` 추가 → `MonsterBehaviour` 상속 클래스 → `MonsterBehaviour.Create`에 연결 |
-| 보스 패턴 | `BossPatternKind` 추가 후 `FinalBoss.DirectionFor/Execute`, 또는 BossDefinition 패턴 목록 데이터로 |
+| 보스 패턴 | `BossPatternKind` 추가 후 `FinalBoss.Fire/DrawTelegraph`, 또는 BossDefinition 패턴 목록 데이터로 |
 | 새 룸 종류 | 생성기 `RoomType` → `FloorDirector.MapRole/CreateContent` → `RoomContent` 상속 |
 | UI 교체 | 해당 `UIView`의 `Build()` 수정 |
 | 화면 효과 추가 | `DungeonLensEffects`에 파라미터 → `PostEffectsDriver`에서 전역 값 → `Shaders/DungeonLensEffects.shader`에 함수 추가. URP 기본 효과(Film Grain, Lens Distortion 등)는 프로필에 Add Override만 |

@@ -195,6 +195,8 @@ public class WeaponController : MonoBehaviour
             ConeAngle = stats.GetWeapon(type, WeaponStat.ConeAngle),
             HitRadius = weapon.Definition.ProjectileHitRadius,
             KnockbackDistance = weapon.Definition.KnockbackDistance,
+            // 보스가 받는 피해 거리 배율은 맞히는 순간이 아니라 쏜 자리로 정함 (05 §8.7)
+            BossDistance = FinalBoss.Current != null ? Vector2.Distance(transform.position, FinalBoss.Current.Position) : 0f,
         };
     }
 

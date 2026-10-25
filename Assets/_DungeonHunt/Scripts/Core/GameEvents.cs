@@ -35,7 +35,7 @@ public static class GameEvents
 
     // 04 몬스터 / 05 보스
     public static Action<Monster> MonsterSpawned, MonsterAttackTelegraphed, MonsterAttackExecuted, MonsterContactDamage, MonsterDied;
-    public static Action BossEncounterStarted, BossPhaseChanged, BossDefeated;
+    public static Action BossEncounterStarted, BossDefeated;
 
     // 06 런, 저장
     public static Action SaveLoaded, RunStarted, RunCleared, RunOver, GameSaved;

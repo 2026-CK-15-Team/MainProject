@@ -5,6 +5,7 @@ public static class RandomStreams
     public const int ContentSalt = 0x0C0FFEE;
     public const int CombatSalt = 0x0BA771E;
     public const int LootSalt = 0x0A57F00;
+    public const int BossSalt = 0x0B055;
 
     public static int RunSeed { get; private set; }
 
@@ -13,6 +14,11 @@ public static class RandomStreams
 
     // 보상 추첨 (보상 풀, 아티팩트 ID, 상점 재고, 도박)
     public static System.Random Loot { get; private set; } = new System.Random(2);
+
+    // 보스 패턴 난수 (05 §8.5). 전투 난수와 따로, 조우 시작 때 초기화 → 같은 런 시드면 같은 패턴 순서
+    public static System.Random Boss { get; private set; } = new System.Random(3);
+
+    public static void BeginBoss() => Boss = new System.Random(SeedUtility.Combine(RunSeed, BossSalt));
 
     public static void Begin(int runSeed)
     {

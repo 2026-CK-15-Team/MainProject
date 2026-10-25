@@ -54,7 +54,7 @@ public class AudioService : MonoBehaviour
     private static readonly string[] Keys =
     {
         "shot_rifle", "shot_pistol", "shot_shotgun", "hit", "hit_crit", "kill", "telegraph", "player_hit", "player_die",
-        "dodge", "just_dodge", "reload", "lock", "clear", "coin", "heal", "artifact", "secret", "boss_phase", "ending", "ui_click", "bgm",
+        "dodge", "just_dodge", "reload", "lock", "clear", "coin", "heal", "artifact", "secret", "ending", "ui_click", "bgm",
     };
 
     private void Start()
@@ -82,7 +82,6 @@ public class AudioService : MonoBehaviour
         GameEvents.RunCurrencyGained += OnCurrency;
         GameEvents.ArtifactAcquired += OnArtifact;
         GameEvents.SecretRoomRevealed += OnSecret;
-        GameEvents.BossPhaseChanged += OnBossPhase;
         GameEvents.BossDefeated += OnBossDefeated;
         GameEvents.EndingTriggered += OnEnding;
         GameEvents.RunStarted += OnRunStarted;
@@ -110,7 +109,6 @@ public class AudioService : MonoBehaviour
         GameEvents.RunCurrencyGained -= OnCurrency;
         GameEvents.ArtifactAcquired -= OnArtifact;
         GameEvents.SecretRoomRevealed -= OnSecret;
-        GameEvents.BossPhaseChanged -= OnBossPhase;
         GameEvents.BossDefeated -= OnBossDefeated;
         GameEvents.EndingTriggered -= OnEnding;
         GameEvents.RunStarted -= OnRunStarted;
@@ -174,7 +172,6 @@ public class AudioService : MonoBehaviour
     private void OnCurrency(int amount) => Play("coin", 0.45f, UnityEngine.Random.Range(0.95f, 1.1f));
     private void OnArtifact(ArtifactDefinition def) => Play("artifact", 0.7f);
     private void OnSecret(RoomRuntime room) => Play("secret", 0.8f);
-    private void OnBossPhase() => Play("boss_phase", 0.9f);
     private void OnBossDefeated() => Play("clear", 1f, 0.8f);
     private void OnEnding() => Play("ending", 0.9f);
 
@@ -231,7 +228,6 @@ public class AudioService : MonoBehaviour
             case "heal": return Make(key, 0.3f, (t, d) => Arp(t, new[] { 440f, 554f, 659f }, 0.07f) * Env(t, d, 7f) * 0.5f);
             case "artifact": return Make(key, 0.6f, (t, d) => Arp(t, new[] { 392f, 523f, 659f, 784f, 1047f }, 0.08f) * Env(t, d, 3.5f) * 0.5f);
             case "secret": return Make(key, 0.7f, (t, d) => Arp(t, new[] { 523f, 622f, 740f, 880f }, 0.12f) * Env(t, d, 3f) * 0.5f);
-            case "boss_phase": return Make(key, 0.7f, (t, d) => (Square(t, 82f) * 0.6f + Noise() * 0.2f) * Env(t, d, 3f));
             case "ending": return Make(key, 1.5f, (t, d) => (Sine(t, 523f) + Sine(t, 659f) + Sine(t, 784f)) / 3f * Env(t, d, 1.5f));
             case "ui_click": return Make(key, 0.03f, (t, d) => Square(t, 1800f) * Env(t, d, 80f) * 0.4f);
             case "bgm": return MakeBgm();

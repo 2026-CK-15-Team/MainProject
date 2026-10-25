@@ -151,8 +151,34 @@ public static class ContentValidator
             }
             else if (content.Boss == null)
             {
-                Debug.LogWarning($"[검증] 마지막 층 BossDefinition 없음 (더미 기본값 사용)");
+                Debug.LogWarning($"[검증] 마지막 층 BossDefinition 없음 (기본값 사용)");
             }
+            else errors += ValidateBoss(content.Boss);
+        }
+        return errors;
+    }
+
+    // 05 보스 데이터 조건: 고정 순서 번호, 방향을 따라가는 패턴의 예고/회차 간격 >= 방향 잠금 시간 (04 §10)
+    private static int ValidateBoss(BossDefinition boss)
+    {
+        int errors = 0;
+        List<BossPatternData> patterns = boss.Patterns;
+        if (patterns == null || patterns.Count == 0) { Debug.LogWarning($"[검증] {boss.name}: 패턴 목록 비어 있음 → 기본 5종 사용", boss); return 0; }
+        float lockLead = boss.SniperReference != null ? boss.SniperReference.AimLockLeadTime : MonsterDefinition.CreateDefault(MonsterArchetype.Sniper).AimLockLeadTime;
+        foreach (int n in boss.FixedOrder ?? new int[0])
+            if (n < 1 || n > patterns.Count) errors += Error(boss, $"고정 순서의 패턴 번호 {n} 없음 (1~{patterns.Count})");
+        if (!patterns.Any(p => !p.LowHPOnly)) errors += Error(boss, "HP 50% 이상에서 쓸 패턴이 없음 (전부 LowHPOnly)");
+        for (int i = 0; i < patterns.Count; i++)
+        {
+            BossPatternData p = patterns[i];
+            string id = $"패턴 {i + 1}({p.Kind})";
+            bool tracks = p.Kind == BossPatternKind.AimedFan || p.Kind == BossPatternKind.Laser;
+            if (tracks && p.TelegraphDuration < lockLead) errors += Error(boss, $"{id}: 예고 {p.TelegraphDuration}초 < 방향 잠금 {lockLead}초");
+            if (tracks && p.Volleys > 1 && p.VolleyInterval < lockLead) errors += Error(boss, $"{id}: 회차 간격 {p.VolleyInterval}초 < 방향 잠금 {lockLead}초");
+            if (p.Volleys > 1 && p.VolleyInterval <= 0f) errors += Error(boss, $"{id}: 회차 간격 0 이하");
+            if (p.Kind != BossPatternKind.Laser && p.Speed <= 0f) errors += Error(boss, $"{id}: 탄속 0 이하");
+            if (p.Kind == BossPatternKind.GapRing && p.GapSize >= p.Count) errors += Error(boss, $"{id}: 빈틈 {p.GapSize}발 >= 링 {p.Count}발");
+            if (p.Kind == BossPatternKind.Splitter && p.SplitDistance <= 0f) errors += Error(boss, $"{id}: 분열 거리 0 이하");
         }
         return errors;
     }

@@ -8,16 +8,19 @@ public class TelegraphView
     private readonly List<LineRenderer> lines = new List<LineRenderer>();
     private Vector3 baseScale = Vector3.one;
     private SpriteRenderer pulsed;
+    private readonly int sortingOrder;
 
-    public TelegraphView(Transform owner)
+    // sortingOrder: 기본은 캐릭터 위. 보스는 바닥 위 캐릭터 아래 (05 §8.6 바닥 예고)
+    public TelegraphView(Transform owner, int sortingOrder = 250)
     {
         this.owner = owner;
+        this.sortingOrder = sortingOrder;
     }
 
     private LineRenderer GetLine(int index)
     {
         while (lines.Count <= index)
-            lines.Add(PlaceholderArt.CreateLine("Telegraph", owner, Color.red, 0.1f, 250));
+            lines.Add(PlaceholderArt.CreateLine("Telegraph", owner, Color.red, 0.1f, sortingOrder));
         return lines[index];
     }
 

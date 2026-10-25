@@ -17,6 +17,6 @@ MonoBehaviour:
   Sprite: {fileID: 0}
   PlaceholderColor: {r: 0.55, g: 0.1, b: 0.15, a: 1}
   HP: 0
-  Phase1Patterns: []
-  Phase2Patterns: []
-  UsePlaceholderPatterns: 1
+  BarrageReference: {fileID: 11400000, guid: 58718e26dc60359478187a0024d668bd, type: 2}
+  SniperReference: {fileID: 11400000, guid: 82d6f3413a1b80749ba919b2689aa9fd, type: 2}
+  ShooterReference: {fileID: 11400000, guid: 4d3736b5a34fcc34a87bcd1ee16c8785, type: 2}

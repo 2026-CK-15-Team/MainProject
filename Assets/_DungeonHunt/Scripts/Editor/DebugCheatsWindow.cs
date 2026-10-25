@@ -31,6 +31,14 @@ public class DebugCheatsWindow : EditorWindow
                 m.TakeDamage(new DamageInfo { Amount = 99999, Source = DamageSource.Player, AttackExecutionId = -1 });
         }
         if (GUILayout.Button("다음 층으로")) run?.ExitFloor();
+        FinalBoss boss = FinalBoss.Current;
+        if (boss != null && boss.State == BossState.Combat)
+        {
+            EditorGUILayout.LabelField("보스 HP", $"{boss.CurrentHP} / {boss.MaxHP}{(boss.IsLowHP ? " (후반)" : "")}");
+            if (GUILayout.Button("보스 HP 50% 바로 아래로"))
+                boss.TakeDamage(DamageInfo.Simple(Mathf.Max(1, boss.CurrentHP - Mathf.CeilToInt(boss.MaxHP * GameBalance.Current.Boss.LowHPThreshold) + 1), DamageSource.Player));
+            if (GUILayout.Button("보스 처치")) boss.TakeDamage(DamageInfo.Simple(boss.CurrentHP, DamageSource.Player));
+        }
         if (GUILayout.Button("영구 재화 +100") && GameServices.Save != null)
         {
             GameServices.Save.Data.PermanentCurrency += 100;

@@ -401,7 +401,7 @@ public class RunManager : MonoBehaviour
         StartCoroutine(BossEncounterRoutine(room));
     }
 
-    // 첫 RoomEntered → 페이드 아웃 중 잠금/배치 → 페이드 인 → 등장 연출 → Phase1 + 입력 재개 (05 §5.1)
+    // 첫 RoomEntered → 페이드 아웃 중 잠금/배치 → 페이드 인 → 등장 연출 → Combat + 입력 재개 (05 §5.1)
     private IEnumerator BossEncounterRoutine(FinalBossRoomController room)
     {
         IsTransitioning = true;

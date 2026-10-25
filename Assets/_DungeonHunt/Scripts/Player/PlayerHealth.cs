@@ -16,6 +16,7 @@ public struct IncomingAttack
     public UnityEngine.Object Owner;
     public int Damage;
     public bool IsContact;
+    public int AttackGroupId;  // 0이 아니면 같은 값의 공격에서 저스트회피 1회만 (05 §8.3)
 }
 
 // 01-3 생존. 현재 HP, 피격 후 무적, 사망을 소유함. 최대 HP는 01-4 최종값.
@@ -41,6 +42,7 @@ public class PlayerHealth : MonoBehaviour
     public event Action Died;
 
     private readonly List<IncomingAttack> pending = new List<IncomingAttack>();
+    private readonly HashSet<int> justDodgedGroups = new HashSet<int>();
     private float hitInvincibleUntil;
     private PlayerMovement movement;
     private PlayerStats stats;
@@ -60,6 +62,7 @@ public class PlayerHealth : MonoBehaviour
     public void ResetForNewRun()
     {
         pending.Clear();
+        justDodgedGroups.Clear();
         State = PlayerLifeState.Vulnerable;
         hitInvincibleUntil = 0f;
         effectInvincibleUntil = 0f;
@@ -80,8 +83,12 @@ public class PlayerHealth : MonoBehaviour
 
         bool dodgeInvincible = movement != null && movement.IsDodgeInvincible;
         // 저스트회피는 접촉 정보를 먼저 씀. 몬스터 접촉 피해는 대상 아님 (04 §3.1)
-        if (!attack.IsContact && dodgeInvincible && movement.TryTriggerJustDodge())
+        bool groupSpent = attack.AttackGroupId != 0 && justDodgedGroups.Contains(attack.AttackGroupId);
+        if (!attack.IsContact && dodgeInvincible && !groupSpent && movement.TryTriggerJustDodge())
+        {
+            if (attack.AttackGroupId != 0) justDodgedGroups.Add(attack.AttackGroupId);
             GetComponent<WeaponController>()?.OnJustDodge();
+        }
 
         if (dodgeInvincible || IsHitInvincible || IsEffectInvincible) return true;
 

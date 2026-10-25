@@ -1,10 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// 분열 설정 (05 §8.2 4번 분열탄). 분열 거리까지 날거나 그 전에 벽/플레이어에 닿으면 그 자리에서 분열
+public struct ProjectileSplit
+{
+    public float Distance;
+    public int Count;            // 월드축 균등 (0도부터)
+    public EnemyProjectileSpec Child;
+    public Color ChildColor;
+}
+
 // 몬스터/보스 투사체 (04 §9.4). 생성 순간 값을 스냅샷으로 가짐.
 // 벽, 플레이어(무적 중 포함), 최대 이동거리 중 하나에 닿으면 소멸. 다른 몬스터와는 충돌 안 함.
 public class EnemyProjectile : MonoBehaviour
 {
+    // 권총 상쇄 대상 아님 (05 §8.3 분열탄의 큰 탄). 권총 탄은 통과
+    public bool Uncancelable { get; set; }
+    // 같은 값의 공격은 저스트회피가 1회만 발동 (05 §8.3 보스 패턴 회차 ID). 0이면 제한 없음
+    public int AttackGroupId { get; set; }
+    public ProjectileSplit? Split { get; set; }
+
     private static readonly List<EnemyProjectile> active = new List<EnemyProjectile>();
     private static int spawnCounter;
 
@@ -61,12 +76,13 @@ public class EnemyProjectile : MonoBehaviour
         if (dt <= 0f || removed) return;
 
         float step = Mathf.Min(spec.Speed * dt, spec.MaxDistance - travelled);
+        if (Split.HasValue) step = Mathf.Min(step, Split.Value.Distance - travelled);
         Vector2 from = transform.position;
         Vector2 to = from + direction * step;
 
         // 권총 도탄 상쇄는 같은 틱 플레이어 피격보다 먼저 (01-3 §7.2 1번)
         IReadOnlyList<Projectile> bullets = Projectile.Active;
-        for (int i = bullets.Count - 1; i >= 0; i--)
+        for (int i = Uncancelable ? -1 : bullets.Count - 1; i >= 0; i--)
         {
             Projectile bullet = bullets[i];
             if (bullet == null || bullet.IsRemoved || !bullet.CanCancelEnemyProjectiles) continue;
@@ -90,21 +106,43 @@ public class EnemyProjectile : MonoBehaviour
 
         if (wallT <= 1f && wallT <= playerT)
         {
-            GameServices.Feedback?.SpawnWallImpact(from + direction * wall.distance);
+            Vector2 at = from + direction * wall.distance;
+            GameServices.Feedback?.SpawnWallImpact(at);
+            if (Split.HasValue) SplitAt(at);
             Destroy(gameObject);
             return;
         }
         if (playerT <= 1f)
         {
-            player.Health.ReceiveAttack(new IncomingAttack { Attacker = OwnerMonster, Owner = Owner, Damage = spec.Damage, IsContact = false });
+            player.Health.ReceiveAttack(new IncomingAttack { Attacker = OwnerMonster, Owner = Owner, Damage = spec.Damage, IsContact = false, AttackGroupId = AttackGroupId });
+            if (Split.HasValue) SplitAt(from + (to - from) * playerT);
             Vanish();
             return;
         }
 
         transform.position = to;
         travelled += step;
+        if (Split.HasValue && travelled >= Split.Value.Distance - 1e-4f)
+        {
+            SplitAt(to);
+            RemoveSilently();
+            return;
+        }
         if (travelled >= spec.MaxDistance - 1e-4f)
             Vanish();
+    }
+
+    // 자식은 소유자와 회차 ID를 승계 → 보스 처치 때 RemoveOwnedBy로 함께 제거. 자식은 상쇄 규칙을 따름
+    private void SplitAt(Vector2 at)
+    {
+        ProjectileSplit split = Split.Value;
+        Split = null;
+        int count = Mathf.Max(1, split.Count);
+        for (int i = 0; i < count; i++)
+        {
+            EnemyProjectile child = Spawn(Owner, at, Geometry2D.FromAngle(360f / count * i), split.Child, split.ChildColor);
+            child.AttackGroupId = AttackGroupId;
+        }
     }
 
     // 상쇄 연출은 호출한 쪽이 냄

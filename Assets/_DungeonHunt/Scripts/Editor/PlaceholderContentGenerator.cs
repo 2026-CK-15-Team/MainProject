@@ -508,7 +508,10 @@ public static class PlaceholderContentGenerator
             if (f == 2)
             {
                 BossDefinition boss = CreateOrLoad<BossDefinition>($"{Root}/Monsters/Test_FinalBoss.asset");
-                boss.UsePlaceholderPatterns = true; // 패턴 미정 → 테스트용 더미
+                // 피해 기준: 탄막 패턴형(투사체, 접촉), 예고 후 저격형(레이저), 조준 사격형(선행 조준)
+                boss.BarrageReference = ba;
+                boss.SniperReference = sn;
+                boss.ShooterReference = sh;
                 EditorUtility.SetDirty(boss);
                 content.Boss = boss;
             }

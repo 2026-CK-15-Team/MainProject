@@ -152,7 +152,7 @@ public class Projectile : MonoBehaviour
         for (int i = enemies.Count - 1; i >= 0; i--)
         {
             EnemyProjectile enemy = enemies[i];
-            if (enemy == null || enemy.IsRemoved) continue;
+            if (enemy == null || enemy.IsRemoved || enemy.Uncancelable) continue;
             if (Geometry2D.SweepCircle(from, to, snapshot.HitRadius, enemy.transform.position, enemy.Radius) < 0f) continue;
             CancelWith(enemy);
             return true;

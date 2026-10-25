@@ -11,6 +11,7 @@ public struct AttackSnapshot
     public float ConeAngle;
     public float HitRadius;
     public float KnockbackDistance;
+    public float BossDistance;
 
     private static int nextId = 1;
     public static int NextId() => nextId++;
@@ -25,5 +26,6 @@ public struct AttackSnapshot
         HitPoint = hitPoint,
         KnockbackDirection = knockbackDirection,
         KnockbackDistance = KnockbackDistance,
+        BossDistance = BossDistance,
     };
 }

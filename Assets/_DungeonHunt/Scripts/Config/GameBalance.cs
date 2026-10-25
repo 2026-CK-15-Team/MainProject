@@ -237,19 +237,37 @@ public class FloorEndBalance
 [Serializable]
 public class BossBalance
 {
-    [Header("05 보스 (더미)")]
-    [Tooltip("BossDefinition에 HP가 없을 때 쓰는 기본 HP")]
-    public int HP = 1200;
-    [Tooltip("HP가 최대치의 이 비율 이하가 되면 2페이즈")]
-    [Range(0, 1)] public float PhaseTransitionThreshold = 0.5f;
+    [Header("05 최종보스 (완성 목표 착수값, TODO_BALANCE)")]
+    [Tooltip("BossDefinition에 HP가 없을 때 쓰는 HP")]
+    public int HP = 3000;
+    [Tooltip("몸체와 피격 판정 반경 (H). 일반 몬스터 몸체의 3~4배")]
+    public float BodyRadius = 1.2f;
+    [Tooltip("보스 위치: 방 바닥 중앙에서 북쪽으로 바닥 반높이의 이 비율만큼 (확정 0.5)")]
+    [Range(0, 1)] public float NorthOffsetRatio = 0.5f;
+    [Tooltip("HP가 최대치의 이 비율 미만이면 후반 규칙 (쉬는 시간 단축, LowHPOnly 패턴 추가). 상태 전환 아님")]
+    [Range(0, 1)] public float LowHPThreshold = 0.5f;
+    [Tooltip("HP 기준 이상일 때 패턴 마지막 발사부터 다음 예고까지 (초)")]
+    public float RestIntervalHigh = 3.2f;
+    [Tooltip("HP 기준 미만일 때 같은 값 (초)")]
+    public float RestIntervalLow = 2.2f;
+    [Tooltip("등장 연출 종료(전투 시작)부터 첫 예고까지 (초)")]
+    public float PostIntroWait = 3.2f;
+    [Tooltip("LowHPOnly 패턴의 추첨 가중치 (나머지 1)")]
+    public float LowOnlyWeight = 1.3f;
+    [Tooltip("추첨에서 빼는 직전 패턴 수 (확정 2)")]
+    public int RecentExclude = 2;
+    [Tooltip("보스 투사체 최대 비행 거리 (H). 분열탄은 분열 지점부터")]
+    public float ProjectileMaxDistance = 9f;
+    [Tooltip("거리 배율 1.0인 최대 거리 (H, 발사 순간 보스 중심~플레이어)")]
+    public float DamageFalloffNear = 3.2f;
+    [Tooltip("거리 배율이 최솟값에 닿는 거리 (H)")]
+    public float DamageFalloffFar = 8.2f;
+    [Tooltip("거리 배율 최솟값 (확정 0.8)")]
+    [Range(0, 1)] public float DamageFalloffMin = 0.8f;
     [Tooltip("사망 모션 길이 (초). 끝나면 몸체 제거. 개발 착수값")]
     public float DeathMotionDuration = 1.5f;
     [Tooltip("등장 연출 길이 (초). 개발 착수값")]
     public float IntroDuration = 1.5f;
-    [Tooltip("보스 몸체 접촉 피해")]
-    public int ContactDamage = 8;
-    [Tooltip("보스 피격, 접촉 반경 (H)")]
-    public float BodyRadius = 0.9f;
 }
 
 [Serializable]

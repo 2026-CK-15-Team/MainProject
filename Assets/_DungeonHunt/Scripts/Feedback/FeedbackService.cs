@@ -78,6 +78,7 @@ public class FeedbackService : MonoBehaviour
         Vector2Int key2 = Vector2Int.RoundToInt(position * 2f);
         var key = (info.AttackExecutionId, key2);
         Color color = info.IsCritical ? new Color(1f, 0.8f, 0.2f) : Color.white;
+        if (info.Reduced) color = Color.Lerp(color, new Color(0.55f, 0.75f, 1f), 0.65f); // 보스 거리 배율로 줄어든 피해
         float size = info.IsCritical ? 0.06f : 0.045f;
         if (info.AttackExecutionId >= 0 && damageNumbers.TryGetValue(key, out TimedEffect existing) && existing.Go != null)
         {

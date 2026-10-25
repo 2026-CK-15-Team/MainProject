@@ -34,7 +34,10 @@ public class FinalBossRoomController : RoomContent
         GameEvents.Raise(GameEvents.FloorGateRoomLocked, Runtime);
         FloorContent content = GameServices.Config != null ? GameServices.Config.GetFloor(Runtime.FloorIndex) : null;
         BossDefinition def = content != null ? content.Boss : null;
-        Boss = FinalBoss.Spawn(def, Runtime.SafeCenter(), Runtime);
+        // 방 바닥 중앙에서 북쪽으로 바닥 반높이의 NorthOffsetRatio만큼 (05 §3)
+        Rect floor = Runtime.InteriorRect;
+        Vector2 at = floor.center + Vector2.up * (floor.height * 0.5f * GameBalance.Current.Boss.NorthOffsetRatio);
+        Boss = FinalBoss.Spawn(def, at, Runtime);
     }
 
     private void OnBossDefeated() => defeatPending = true;

@@ -97,12 +97,21 @@ MonoBehaviour:
     - "2\uCE35 \uC784\uC2DC\uC774\uB984"
     - "3\uCE35 \uC784\uC2DC\uC774\uB984"
   Boss:
-    HP: 1200
-    PhaseTransitionThreshold: 0.5
+    HP: 3000
+    BodyRadius: 1.2
+    NorthOffsetRatio: 0.5
+    LowHPThreshold: 0.5
+    RestIntervalHigh: 3.2
+    RestIntervalLow: 2.2
+    PostIntroWait: 3.2
+    LowOnlyWeight: 1.3
+    RecentExclude: 2
+    ProjectileMaxDistance: 9
+    DamageFalloffNear: 3.2
+    DamageFalloffFar: 8.2
+    DamageFalloffMin: 0.8
     DeathMotionDuration: 1.5
     IntroDuration: 1.5
-    ContactDamage: 8
-    BodyRadius: 0.9
   Artifact:
     SlotCount: 6
     Tier1Threshold: 2
