@@ -91,7 +91,7 @@ public class CameraController : MonoBehaviour
     // 무방향 흔들림. 재발동 간격 안에서는 가장 강한 요청 하나만 (09 §5)
     public void Shake(float amplitude, float duration)
     {
-        float now = Time.unscaledTime;
+        float now = GameClock.WorldTime;
         float interval = GameBalance.Current.Feedback.HitShakeRetriggerInterval;
         bool active = now < shakeUntil;
         if (active && now - lastShakeTime < interval && amplitude <= shakeAmplitude) return;
@@ -111,12 +111,14 @@ public class CameraController : MonoBehaviour
             ApplyPosition(Vector2.zero);
             return;
         }
+        // 일시정지 중에는 추적 보간과 흔들림을 멈추고 그 자리 유지
+        if (GameClock.IsPaused) return;
 
         Vector2 target = (Vector2)player.transform.position + AimOffset(player);
         Rect? bounds = catchingUp ? catchupBounds : roomBounds;
         Vector2 clampedTarget = ClampToBounds(target, bounds);
         float smooth = catchingUp ? Balance.CombatEntryCatchupSmoothTime : Balance.FollowSmoothTime;
-        logicalPosition = Vector2.SmoothDamp(logicalPosition, clampedTarget, ref velocity, smooth, Mathf.Infinity, Time.unscaledDeltaTime);
+        logicalPosition = Vector2.SmoothDamp(logicalPosition, clampedTarget, ref velocity, smooth, Mathf.Infinity, GameClock.WorldDelta);
 
         if (catchingUp)
         {
@@ -147,7 +149,7 @@ public class CameraController : MonoBehaviour
 
     private Vector2 ShakeOffset()
     {
-        float now = Time.unscaledTime;
+        float now = GameClock.WorldTime;
         if (now >= shakeUntil || ShakeStrength01 <= 0f)
         {
             shakeOffsetCurrent = Vector2.zero;

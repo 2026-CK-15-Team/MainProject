@@ -4,6 +4,7 @@ using UnityEngine;
 // 전투 시뮬레이션 시계. 게임플레이 타이머는 Time.time 대신 이걸 씀.
 // - 일시정지/전환/저장 실패 같은 정지 사유가 하나라도 있으면 멈춤 (Time.timeScale도 0)
 // - 처치 히트스톱 중에는 전투 시간만 멈춤 (카메라 흔들림, UI, RunTime은 계속)
+// - WorldTime은 일시정지에만 멈추고 히트스톱 중에는 흐름 (카메라 추적/흔들림 같은 화면 연출용)
 public static class GameClock
 {
     private static readonly HashSet<string> pauseReasons = new HashSet<string>();
@@ -12,6 +13,10 @@ public static class GameClock
     // 전투 시뮬레이션 누적 시간 / 이번 프레임 진행량
     public static float CombatTime { get; private set; }
     public static float CombatDelta { get; private set; }
+
+    // 일시정지 동안만 멈추는 누적 시간 / 이번 프레임 진행량
+    public static float WorldTime { get; private set; }
+    public static float WorldDelta { get; private set; }
 
     public static bool IsPaused => pauseReasons.Count > 0;
     public static bool IsHitstop => hitstopRemaining > 0f;
@@ -45,6 +50,7 @@ public static class GameClock
         pauseReasons.Clear();
         hitstopRemaining = 0f;
         CombatDelta = 0f;
+        WorldDelta = 0f;
         Time.timeScale = 1f;
     }
 
@@ -55,8 +61,11 @@ public static class GameClock
         if (IsPaused)
         {
             CombatDelta = 0f;
+            WorldDelta = 0f;
             return;
         }
+        WorldDelta = unscaledDelta;
+        WorldTime += unscaledDelta;
         if (IsHitstop)
         {
             hitstopRemaining -= unscaledDelta;

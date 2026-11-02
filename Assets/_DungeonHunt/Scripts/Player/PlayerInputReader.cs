@@ -11,6 +11,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
 {
     // 차단 중이면 0. 비정지 모달(아티팩트 획득, 상점 등)은 시간이 흐르므로 여기서 막아야 캐릭터가 안 걸어감
     public Vector2 MoveInput => Blocked ? Vector2.zero : rawMoveInput;
+    // 일시정지 중에는 마지막 값 유지 (조준 방향, 카메라 조준 오프셋이 커서를 따라가지 않게)
     public Vector2 AimScreenPosition { get; private set; }
 
     // 공격 유지 입력 (차단과 재입력 대기 반영)
@@ -25,6 +26,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
 
     private PlayerControls controls;
     private Vector2 rawMoveInput;
+    private Vector2 rawAimScreenPosition;
     private bool attackHeldRaw;
     private bool attackLatch;
 
@@ -55,7 +57,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
 
     public void OnMove(InputAction.CallbackContext context) => rawMoveInput = context.ReadValue<Vector2>();
 
-    public void OnAimPosition(InputAction.CallbackContext context) => AimScreenPosition = context.ReadValue<Vector2>();
+    public void OnAimPosition(InputAction.CallbackContext context) => rawAimScreenPosition = context.ReadValue<Vector2>();
 
     public void OnAttack(InputAction.CallbackContext context)
     {
@@ -100,6 +102,7 @@ public class PlayerInputReader : MonoBehaviour, PlayerControls.IPlayerActions
 
     private void Update()
     {
+        if (!GameClock.IsPaused) AimScreenPosition = rawAimScreenPosition;
         bool reloadQueued = InputGate.KeyDown(Key.R);
         ReadWeaponKeys();
         int weapon = weaponQueued;
